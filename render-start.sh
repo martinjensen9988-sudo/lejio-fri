@@ -6,9 +6,25 @@ set -e
 # Change to project root
 cd /opt/render/project 2>/dev/null || cd "$(dirname "$0")" 2>/dev/null || true
 
-echo "📁 Project directory: $(pwd)"
+PROJ_DIR="$(pwd)"
+echo "📁 Project directory: $PROJ_DIR"
 echo "📦 Node: $(node --version)"
 echo "🔧 NPM: $(npm --version)"
+
+# Debug: List what's in the project directory
+echo "📂 Contents of $PROJ_DIR:"
+ls -la "$PROJ_DIR" | head -20
+echo ""
+
+# Debug: Check if package.json exists
+if [ -f "$PROJ_DIR/package.json" ]; then
+  echo "✅ Found package.json"
+else
+  echo "❌ ERROR: package.json not found in $PROJ_DIR"
+  echo "Attempting to list all .json files:"
+  find "$PROJ_DIR" -maxdepth 2 -name "*.json" -type f 2>/dev/null | head -20
+  exit 1
+fi
 
 # Step 1: Ensure dependencies are installed
 echo "📥 Checking dependencies..."
