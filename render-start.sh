@@ -26,36 +26,33 @@ else
   exit 1
 fi
 
-# Step 1: Ensure dependencies are installed
-echo "📥 Checking dependencies..."
-if [ ! -d "node_modules" ]; then
-  echo "⚠️  Installing npm dependencies..."
-  npm install --legacy-peer-deps || npm install || { echo "❌ Failed to install dependencies"; exit 1; }
-else
-  echo "✅ node_modules exists"
+# Step 1: Ensure we're in the right directory
+cd /opt/render/project 2>/dev/null || cd "$(dirname "$0")" 2>/dev/null || true
+
+PROJ_DIR="$(pwd)"
+echo "📁 Project directory: $PROJ_DIR"
+
+# Debug: List what's actually here
+echo "📂 Top-level files in $PROJ_DIR:"
+ls -la "$PROJ_DIR" | head -25
+echo ""
+
+# Check if package.json exists
+if [ ! -f "$PROJ_DIR/package.json" ]; then
+  echo "❌ package.json not found - checking git status..."
+  git status 2>/dev/null || echo "Not in git repo"
+  git log --oneline -3 2>/dev/null || echo "Cannot get git log"
+  exit 1
 fi
 
-# Step 2: Check for vite (needed to build)
-if [ ! -d "node_modules/vite" ]; then
-  echo "⚠️  Vite not available, reinstalling devDependencies..."
-  npm install --save-dev vite || npm install || { echo "❌ Failed to install vite"; exit 1; }
-fi
+echo "✅ package.json found"
+echo "📦 Node: $(node --version)"
+echo "🔧 NPM: $(npm --version)"
 
-# Step 3: Build React app
-if [ ! -f "dist/index.html" ]; then
-  echo "🏗️  Building React application..."
-  rm -rf dist dist-ssr .vite-cache 2>/dev/null || true
-  npm run build || { echo "❌ Build failed"; exit 1; }
-  echo "✅ Build complete"
-fi
+# Ensure dependencies are installed
+echo "📥 Checking/installing dependencies..."
+npm install --legacy-peer-deps --include=dev || npm install || { echo "❌ Failed to install dependencies"; exit 1; }
 
-# Step 4: Verify build result
-if [ ! -f "dist/index.html" ]; then
-  echo "⚠️  Warning: dist/index.html not found after build"
-  echo "📁  dist/ contents:"
-  ls -la dist/ 2>/dev/null | head -20 || echo "dist/ directory is empty"
-fi
-
-# Step 5: Start server
-echo "🚀 Starting application server..."
+# Start server
+echo "🚀 Starting application server on port ${PORT:-3000}..."
 exec node api/server.js
