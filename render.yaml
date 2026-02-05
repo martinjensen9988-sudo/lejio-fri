@@ -2,7 +2,7 @@ services:
   - type: web
     name: lejio-fri-web
     env: node
-    # Force rebuild: 2026-02-05T21:15:00Z - GDPR sessions
+    # Force rebuild: 2026-02-05T21:35:00Z - GDPR sessions fix
     region: copenhagen
     plan: standard
     # Build frontend during deploy
