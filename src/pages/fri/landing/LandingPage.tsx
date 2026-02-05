@@ -21,17 +21,17 @@ export function FriLandingPage() {
             </div>
           </div>
           <div className="hidden md:flex gap-4 items-center">
-            <Link to="/fri/features">
+            <Link to="/features">
               <Button variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10">Alle funktioner</Button>
             </Link>
-            <Link to="/fri/login">
+            <Link to="/login">
               <Button variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10">Log ind</Button>
             </Link>
-            <Link to="/fri/signup">
+            <Link to="/signup">
               <Button className="bg-white text-black hover:bg-white/90">Kom i gang</Button>
             </Link>
           </div>
-          <Link to="/fri/signup" className="md:hidden">
+          <Link to="/signup" className="md:hidden">
             <Button className="bg-white text-black hover:bg-white/90">Kom i gang</Button>
           </Link>
         </div>
@@ -52,12 +52,12 @@ export function FriLandingPage() {
               Skab en premium oplevelse for dine kunder med et stilrent, hurtigt og sikkert system, der samler flåde, bookinger og fakturaer i ét kontrolcenter.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
-              <Link to="/fri/trial">
+              <Link to="/trial">
                 <Button size="lg" className="gap-2 bg-white text-black hover:bg-white/90">
                   Start gratis prøveperiode <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
-              <Link to="/fri/features">
+              <Link to="/features">
                 <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
                   Se alle features
                 </Button>
@@ -137,7 +137,7 @@ export function FriLandingPage() {
             <p className="text-sm uppercase tracking-[0.3em] text-white/50">Eksklusiv funktionalitet</p>
             <h2 className="text-3xl md:text-4xl font-semibold mt-3">Alt du forventer af en premium platform</h2>
           </div>
-          <Link to="/fri/features" className="hidden md:inline-flex">
+          <Link to="/features" className="hidden md:inline-flex">
             <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">Se alle features</Button>
           </Link>
         </div>
@@ -186,7 +186,7 @@ export function FriLandingPage() {
                   <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Grundlæggende analytik</li>
                   <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Email support</li>
                 </ul>
-                <Link to="/fri/signup?tier=professional">
+                <Link to="/signup?tier=professional">
                     <Button className="w-full border-white/20 text-white hover:bg-white/10" variant="outline">Vælg plan</Button>
                 </Link>
               </CardContent>
@@ -211,7 +211,7 @@ export function FriLandingPage() {
                   <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Branding tilpasning</li>
                   <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Email + Slack support</li>
                 </ul>
-                <Link to="/fri/signup?tier=business">
+                <Link to="/signup?tier=business">
                   <Button className="w-full bg-white text-black hover:bg-white/90">Kom i gang</Button>
                 </Link>
               </CardContent>
@@ -234,7 +234,7 @@ export function FriLandingPage() {
                   <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Custom domæne</li>
                   <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />24/7 prioritets support</li>
                 </ul>
-                <Link to="/fri/signup?tier=enterprise">
+                <Link to="/signup?tier=enterprise">
                     <Button className="w-full border-white/20 text-white hover:bg-white/10" variant="outline">Kontakt os</Button>
                 </Link>
               </CardContent>
@@ -249,7 +249,7 @@ export function FriLandingPage() {
           <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent p-10 text-center">
             <h2 className="text-4xl font-semibold mb-4">Klar til en premium oplevelse?</h2>
             <p className="text-white/70 mb-8">14 dages gratis prøve. Ingen kreditkort. Opsætning på få minutter.</p>
-            <Link to="/fri/trial">
+            <Link to="/trial">
               <Button size="lg" className="bg-white text-black hover:bg-white/90">
                 Start gratis prøveperiode
               </Button>

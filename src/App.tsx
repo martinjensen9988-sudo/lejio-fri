@@ -93,12 +93,16 @@ export default function App() {
                 {/* Debug route */}
         <Route path="/debug" element={<div className="p-8"><h1>Debug: App is working! (v2)</h1><p>This is the NEW compiled version</p></div>} />
                 {/* Lejio Fri - Main Platform */}
-                <Route path="/" element={<Navigate to="/fri" replace />} />
-                <Route path="/fri" element={<FriLandingPage />} />
-                <Route path="/fri/trial" element={<FriTrialPage />} />
-                <Route path="/fri/features" element={<FriFeaturesPage />} />
-                <Route path="/fri/login" element={<FriLoginPage />} />
-                <Route path="/fri/signup" element={<FriSignupPage />} />
+                <Route path="/" element={<FriLandingPage />} />
+                <Route path="/fri" element={<Navigate to="/" replace />} />
+                <Route path="/trial" element={<FriTrialPage />} />
+                <Route path="/fri/trial" element={<Navigate to="/trial" replace />} />
+                <Route path="/features" element={<FriFeaturesPage />} />
+                <Route path="/fri/features" element={<Navigate to="/features" replace />} />
+                <Route path="/login" element={<FriLoginPage />} />
+                <Route path="/fri/login" element={<Navigate to="/login" replace />} />
+                <Route path="/signup" element={<FriSignupPage />} />
+                <Route path="/fri/signup" element={<Navigate to="/signup" replace />} />
                 <Route path="/fri/tenant/signup" element={<TenantSignupPage />} />
                 <Route path="/fri/dashboard" element={
                   <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
