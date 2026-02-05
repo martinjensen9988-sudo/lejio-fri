@@ -12,10 +12,27 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Determine correct dist path
-const distPath = fs.existsSync(path.join(__dirname, '../dist')) 
-  ? path.join(__dirname, '../dist')
-  : path.join(__dirname, '../../dist');
+// Determine correct dist path - try multiple locations
+let distPath;
+const possiblePaths = [
+  path.resolve(__dirname, '../dist'),           // From api/server.js: ../dist
+  path.resolve(__dirname, '../../dist'),        // From api/server.js via src: ../../dist  
+  path.resolve(process.cwd(), 'dist'),          // From current working directory
+  path.resolve('/opt/render/project/dist'),     // Render absolute path
+];
+
+for (const p of possiblePaths) {
+  if (fs.existsSync(p) && fs.existsSync(path.join(p, 'index.html'))) {
+    distPath = p;
+    break;
+  }
+}
+
+if (!distPath) {
+  console.warn('⚠️  dist/index.html not found in any expected location');
+  console.warn('Searched:', possiblePaths);
+  distPath = possiblePaths[0]; // Fallback
+}
 
 console.log('📁 Serving static files from:', distPath);
 app.use(express.static(distPath));
