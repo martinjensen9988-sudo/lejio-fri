@@ -83,28 +83,46 @@ app.post('/api/admin/migrate', async (req, res) => {
 // API routes - dynamically load all API handlers that exist
 const apiRoutes = {};
 const apiDir = __dirname;
-const dirs = fs.readdirSync(apiDir);
 
-dirs.forEach(dir => {
-  const dir_path = path.join(apiDir, dir);
-  const stat = fs.statSync(dir_path);
-  
-  // Only process directories that have an index.js file
-  if (stat.isDirectory() && fs.existsSync(path.join(dir_path, 'index.js'))) {
-    // Convert directory name to kebab-case for route
-    const routeName = dir
-      .replace(/([A-Z])/g, '-$1')
-      .toLowerCase()
-      .replace(/^-/, '');
+// Skip these directories to avoid issues
+const skipDirs = new Set(['node_modules', '.git', '.gitignore', 'dist', '.deployment', 'package.json', 'package-lock.json']);
+
+try {
+  const dirs = fs.readdirSync(apiDir);
+
+  dirs.forEach(dir => {
+    // Skip problematic directories
+    if (skipDirs.has(dir) || dir.startsWith('.')) {
+      return;
+    }
+
+    const dir_path = path.join(apiDir, dir);
     
     try {
-      apiRoutes[`/api/${routeName}`] = require(`./${dir}/index.js`);
-      console.log(`✓ Loaded API route: /api/${routeName}`);
+      const stat = fs.statSync(dir_path);
+      
+      // Only process directories that have an index.js file
+      if (stat.isDirectory() && fs.existsSync(path.join(dir_path, 'index.js'))) {
+        // Convert directory name to kebab-case for route
+        const routeName = dir
+          .replace(/([A-Z])/g, '-$1')
+          .toLowerCase()
+          .replace(/^-/, '');
+        
+        try {
+          apiRoutes[`/api/${routeName}`] = require(`./${dir}/index.js`);
+          console.log(`✓ Loaded API route: /api/${routeName}`);
+        } catch (err) {
+          console.warn(`✗ Failed to load /api/${routeName}:`, err.message);
+        }
+      }
     } catch (err) {
-      console.warn(`✗ Failed to load /api/${routeName}:`, err.message);
+      console.warn(`✗ Failed to stat ${dir}:`, err.message);
     }
-  }
-});
+  });
+} catch (err) {
+  console.error('Error scanning API directory:', err.message);
+}
 
 // Register API routes - convert Azure Functions format to Express
 Object.entries(apiRoutes).forEach(([routePath, handler]) => {
