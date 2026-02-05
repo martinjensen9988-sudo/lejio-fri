@@ -1,20 +1,4 @@
-const sql = require('mssql');
-
-const config = {
-  server: process.env.DB_SERVER,
-  database: process.env.DB_NAME,
-  authentication: {
-    type: 'default',
-    options: {
-      userName: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    }
-  },
-  options: {
-    encrypt: true,
-    trustServerCertificate: false
-  }
-};
+const pool = require('../db.js');
 
 module.exports = async function (context, req) {
   context.res.headers = {
@@ -32,42 +16,36 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    let pool = await sql.connect(config);
-
     let query = `
       SELECT 
         b.id, 
         b.vehicle_id, 
-        b.customer_id, 
-        b.pickup_date, 
-        b.return_date, 
+        b.customer_name, 
+        b.start_date, 
+        b.end_date, 
         b.total_price, 
         b.status,
         v.make,
         v.model,
-        c.full_name as customer_name,
-        c.email as customer_email
+        b.email as customer_email
       FROM fri_bookings b
       JOIN fri_vehicles v ON b.vehicle_id = v.id
-      JOIN fri_customers c ON b.customer_id = c.id
-      WHERE b.lessor_id = @lessorId
+      WHERE b.lessor_id = $1
     `;
 
-    const request = pool.request().input('lessorId', sql.UniqueIdentifier, lessorId);
+    const params = [lessorId];
 
     if (status) {
-      query += ' AND b.status = @status';
-      request.input('status', sql.NVarChar(50), status);
+      query += ' AND b.status = $2';
+      params.push(status);
     }
 
-    query += ' ORDER BY b.pickup_date DESC';
+    query += ' ORDER BY b.start_date DESC';
 
-    const result = await request.query(query);
-
-    await pool.close();
+    const result = await pool.query(query, params);
 
     context.res.status = 200;
-    context.res.body = result.recordset || [];
+    context.res.body = result.rows || [];
 
     return context.res;
   } catch (error) {

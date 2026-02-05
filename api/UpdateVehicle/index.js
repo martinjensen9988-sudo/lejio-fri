@@ -1,20 +1,4 @@
-const sql = require('mssql');
-
-const config = {
-  server: process.env.DB_SERVER,
-  database: process.env.DB_NAME,
-  authentication: {
-    type: 'default',
-    options: {
-      userName: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    }
-  },
-  options: {
-    encrypt: true,
-    trustServerCertificate: false
-  }
-};
+const pool = require('../db.js');
 
 module.exports = async function (context, req) {
   context.res.headers = {
@@ -23,7 +7,7 @@ module.exports = async function (context, req) {
   };
 
   try {
-    const { id, lessor_id, make, model, year, license_plate, daily_rate, fuel_type, transmission, status } = req.body;
+    const { id, lessor_id, make, model, year, license_plate, daily_rate, availability_status } = req.body;
 
     if (!id || !lessor_id) {
       context.res.status = 400;
@@ -31,70 +15,65 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    let pool = await sql.connect(config);
-
     // Verify ownership
-    const ownerCheck = await pool.request()
-      .input('id', sql.UniqueIdentifier, id)
-      .input('lessorId', sql.UniqueIdentifier, lessor_id)
-      .query('SELECT id FROM fri_vehicles WHERE id = @id AND lessor_id = @lessorId');
+    const ownerCheck = await pool.query(
+      'SELECT id FROM fri_vehicles WHERE id = $1 AND lessor_id = $2',
+      [id, lessor_id]
+    );
 
-    if (ownerCheck.recordset.length === 0) {
-      await pool.close();
+    if (ownerCheck.rows.length === 0) {
       context.res.status = 403;
       context.res.body = { error: "Unauthorized" };
       return context.res;
     }
 
     const updates = [];
-    const request = pool.request()
-      .input('id', sql.UniqueIdentifier, id);
+    const params = [id]; // $1 is always the vehicle id
+    let paramCount = 2;
 
     if (make !== undefined) {
-      updates.push('make = @make');
-      request.input('make', sql.NVarChar(100), make);
+      updates.push(`make = $${paramCount}`);
+      params.push(make);
+      paramCount++;
     }
     if (model !== undefined) {
-      updates.push('model = @model');
-      request.input('model', sql.NVarChar(100), model);
+      updates.push(`model = $${paramCount}`);
+      params.push(model);
+      paramCount++;
     }
     if (year !== undefined) {
-      updates.push('year = @year');
-      request.input('year', sql.Int, year);
+      updates.push(`year = $${paramCount}`);
+      params.push(year);
+      paramCount++;
     }
     if (license_plate !== undefined) {
-      updates.push('license_plate = @licensePlate');
-      request.input('licensePlate', sql.NVarChar(50), license_plate);
+      updates.push(`license_plate = $${paramCount}`);
+      params.push(license_plate);
+      paramCount++;
     }
     if (daily_rate !== undefined) {
-      updates.push('daily_rate = @dailyRate');
-      request.input('dailyRate', sql.Decimal(10, 2), daily_rate);
+      updates.push(`daily_rate = $${paramCount}`);
+      params.push(daily_rate);
+      paramCount++;
     }
-    if (fuel_type !== undefined) {
-      updates.push('fuel_type = @fuelType');
-      request.input('fuelType', sql.NVarChar(50), fuel_type);
-    }
-    if (transmission !== undefined) {
-      updates.push('transmission = @transmission');
-      request.input('transmission', sql.NVarChar(50), transmission);
-    }
-    if (status !== undefined) {
-      updates.push('status = @status');
-      request.input('status', sql.NVarChar(50), status);
+    if (availability_status !== undefined) {
+      updates.push(`availability_status = $${paramCount}`);
+      params.push(availability_status);
+      paramCount++;
     }
 
-    updates.push('updated_at = GETUTCDATE()');
+    updates.push(`updated_at = CURRENT_TIMESTAMP`);
 
     if (updates.length === 1) {
-      await pool.close();
       context.res.status = 400;
       context.res.body = { error: "No fields to update" };
       return context.res;
     }
 
-    await request.query(`UPDATE fri_vehicles SET ${updates.join(', ')} WHERE id = @id`);
-
-    await pool.close();
+    await pool.query(
+      `UPDATE fri_vehicles SET ${updates.join(', ')} WHERE id = $1`,
+      params
+    );
 
     context.res.status = 200;
     context.res.body = { message: "Vehicle updated successfully" };

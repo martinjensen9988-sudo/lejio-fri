@@ -1,21 +1,5 @@
-const sql = require('mssql');
+const pool = require('../db.js');
 const { v4: uuidv4 } = require('uuid');
-
-const config = {
-  server: process.env.DB_SERVER,
-  database: process.env.DB_NAME,
-  authentication: {
-    type: 'default',
-    options: {
-      userName: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    }
-  },
-  options: {
-    encrypt: true,
-    trustServerCertificate: false
-  }
-};
 
 module.exports = async function (context, req) {
   context.res.headers = {
@@ -24,7 +8,7 @@ module.exports = async function (context, req) {
   };
 
   try {
-    const { lessor_id, make, model, year, license_plate, daily_rate, fuel_type, transmission } = req.body;
+    const { lessor_id, make, model, year, license_plate, daily_rate } = req.body;
 
     if (!lessor_id || !make || !model || !year || !license_plate || !daily_rate) {
       context.res.status = 400;
@@ -34,26 +18,12 @@ module.exports = async function (context, req) {
 
     const vehicleId = uuidv4();
 
-    let pool = await sql.connect(config);
-
-    await pool.request()
-      .input('id', sql.UniqueIdentifier, vehicleId)
-      .input('lessorId', sql.UniqueIdentifier, lessor_id)
-      .input('make', sql.NVarChar(100), make)
-      .input('model', sql.NVarChar(100), model)
-      .input('year', sql.Int, year)
-      .input('licensePlate', sql.NVarChar(50), license_plate)
-      .input('dailyRate', sql.Decimal(10, 2), daily_rate)
-      .input('fuelType', sql.NVarChar(50), fuel_type || null)
-      .input('transmission', sql.NVarChar(50), transmission || null)
-      .query(`
-        INSERT INTO fri_vehicles 
-        (id, lessor_id, make, model, year, license_plate, daily_rate, fuel_type, transmission, status, is_active)
-        VALUES 
-        (@id, @lessorId, @make, @model, @year, @licensePlate, @dailyRate, @fuelType, @transmission, 'available', 1)
-      `);
-
-    await pool.close();
+    await pool.query(`
+      INSERT INTO fri_vehicles 
+      (id, lessor_id, make, model, year, license_plate, daily_rate, availability_status, is_active)
+      VALUES 
+      ($1, $2, $3, $4, $5, $6, $7, 'available', TRUE)
+    `, [vehicleId, lessor_id, make, model, year, license_plate, daily_rate]);
 
     context.res.status = 201;
     context.res.body = { id: vehicleId, message: "Vehicle created successfully" };

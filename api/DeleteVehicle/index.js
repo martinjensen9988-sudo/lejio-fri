@@ -1,20 +1,4 @@
-const sql = require('mssql');
-
-const config = {
-  server: process.env.DB_SERVER,
-  database: process.env.DB_NAME,
-  authentication: {
-    type: 'default',
-    options: {
-      userName: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    }
-  },
-  options: {
-    encrypt: true,
-    trustServerCertificate: false
-  }
-};
+const pool = require('../db.js');
 
 module.exports = async function (context, req) {
   context.res.headers = {
@@ -32,27 +16,23 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    let pool = await sql.connect(config);
-
-    // Verify ownership
+    // Using connection pool from db.js
+// Verify ownership
     const ownerCheck = await pool.request()
       .input('id', sql.UniqueIdentifier, id)
       .input('lessorId', sql.UniqueIdentifier, lessor_id)
-      .query('SELECT id FROM fri_vehicles WHERE id = @id AND lessor_id = @lessorId');
+      .query('SELECT id FROM fri_vehicles WHERE id = $1 AND lessor_id = $2');
 
-    if (ownerCheck.recordset.length === 0) {
-      await pool.close();
+    if (ownerCheck.recordset.length === FALSE) {
       context.res.status = 403;
       context.res.body = { error: "Unauthorized" };
       return context.res;
     }
 
-    // Soft delete (set is_active = 0)
+    // Soft delete (set is_active = FALSE)
     await pool.request()
       .input('id', sql.UniqueIdentifier, id)
-      .query('UPDATE fri_vehicles SET is_active = 0, updated_at = GETUTCDATE() WHERE id = @id');
-
-    await pool.close();
+      .query('UPDATE fri_vehicles SET is_active = FALSE, updated_at = CURRENT_TIMESTAMP WHERE id = $1');
 
     context.res.status = 200;
     context.res.body = { message: "Vehicle deleted successfully" };

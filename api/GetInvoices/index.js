@@ -1,20 +1,4 @@
-const sql = require('mssql');
-
-const config = {
-  server: process.env.DB_SERVER,
-  database: process.env.DB_NAME,
-  authentication: {
-    type: 'default',
-    options: {
-      userName: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    }
-  },
-  options: {
-    encrypt: true,
-    trustServerCertificate: false
-  }
-};
+const pool = require('../db.js');
 
 module.exports = async function (context, req) {
   context.res.headers = {
@@ -32,9 +16,8 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    let pool = await sql.connect(config);
-
-    let query = `
+    // Using connection pool from db.js
+let query = `
       SELECT 
         i.id, 
         i.invoice_number, 
@@ -47,13 +30,13 @@ module.exports = async function (context, req) {
         c.email as customer_email
       FROM fri_invoices i
       JOIN fri_customers c ON i.customer_id = c.id
-      WHERE i.lessor_id = @lessorId
+      WHERE i.lessor_id = $1
     `;
 
     const request = pool.request().input('lessorId', sql.UniqueIdentifier, lessorId);
 
     if (status) {
-      query += ' AND i.status = @status';
+      query += ' AND i.status = $2';
       request.input('status', sql.NVarChar(50), status);
     }
 
@@ -61,10 +44,8 @@ module.exports = async function (context, req) {
 
     const result = await request.query(query);
 
-    await pool.close();
-
     context.res.status = 200;
-    context.res.body = result.recordset || [];
+    context.res.body = result.rows || [];
 
     return context.res;
   } catch (error) {

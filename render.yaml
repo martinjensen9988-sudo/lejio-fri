@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: lejio-fri-web
+    env: node
+    region: copenhagen
+    plan: standard
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 5432
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSL
+        value: 'true'
+
+  - type: pserv
+    name: lejio-fri-db
+    ipAllowList: []
+    plan: standard
+    region: copenhagen
+    postgresVersion: 15

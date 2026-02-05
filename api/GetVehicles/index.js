@@ -1,20 +1,4 @@
-const sql = require('mssql');
-
-const config = {
-  server: process.env.DB_SERVER,
-  database: process.env.DB_NAME,
-  authentication: {
-    type: 'default',
-    options: {
-      userName: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    }
-  },
-  options: {
-    encrypt: true,
-    trustServerCertificate: false
-  }
-};
+const pool = require('../db.js');
 
 module.exports = async function (context, req) {
   context.res.headers = {
@@ -31,32 +15,25 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    let pool = await sql.connect(config);
-
-    const result = await pool.request()
-      .input('lessorId', sql.UniqueIdentifier, lessorId)
-      .query(`
-        SELECT 
-          id, 
-          make, 
-          model, 
-          year, 
-          license_plate, 
-          daily_rate, 
-          status, 
-          odometer,
-          insurance_expiry,
-          registration_expiry,
-          image_url
-        FROM fri_vehicles 
-        WHERE lessor_id = @lessorId AND is_active = 1
-        ORDER BY created_at DESC
-      `);
-
-    await pool.close();
+    const result = await pool.query(`
+      SELECT 
+        id, 
+        make, 
+        model, 
+        year, 
+        license_plate, 
+        daily_rate, 
+        availability_status as status, 
+        last_mileage as odometer,
+        created_at,
+        updated_at
+      FROM fri_vehicles 
+      WHERE lessor_id = $1 AND is_active = TRUE
+      ORDER BY created_at DESC
+    `, [lessorId]);
 
     context.res.status = 200;
-    context.res.body = result.recordset || [];
+    context.res.body = result.rows || [];
 
     return context.res;
   } catch (error) {

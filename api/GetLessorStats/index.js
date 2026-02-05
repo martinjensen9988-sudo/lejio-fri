@@ -1,20 +1,4 @@
-const sql = require('mssql');
-
-const config = {
-  server: process.env.DB_SERVER,
-  database: process.env.DB_NAME,
-  authentication: {
-    type: 'default',
-    options: {
-      userName: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    }
-  },
-  options: {
-    encrypt: true,
-    trustServerCertificate: false
-  }
-};
+const pool = require('../db.js');
 
 module.exports = async function (context, req) {
   context.res.headers = {
@@ -31,33 +15,30 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    let pool = await sql.connect(config);
-
-    // Get vehicle count
+    // Using connection pool from db.js
+// Get vehicle count
     const vehiclesResult = await pool.request()
       .input('lessorId', sql.UniqueIdentifier, lessorId)
-      .query('SELECT COUNT(*) as count FROM fri_vehicles WHERE lessor_id = @lessorId AND is_active = 1');
+      .query('SELECT COUNT(*) as count FROM fri_vehicles WHERE lessor_id = $1 AND is_active = TRUE');
     
     // Get bookings this month
     const bookingsResult = await pool.request()
       .input('lessorId', sql.UniqueIdentifier, lessorId)
       .input('startDate', sql.DateTime2, new Date(new Date().getFullYear(), new Date().getMonth(), 1))
       .input('endDate', sql.DateTime2, new Date())
-      .query('SELECT COUNT(*) as count FROM fri_bookings WHERE lessor_id = @lessorId AND MONTH(created_at) = MONTH(@endDate) AND YEAR(created_at) = YEAR(@endDate)');
+      .query('SELECT COUNT(*) as count FROM fri_bookings WHERE lessor_id = $1 AND MONTH(created_at) = MONTH($2) AND YEAR(created_at) = YEAR($2)');
 
     // Get revenue this month
     const revenueResult = await pool.request()
       .input('lessorId', sql.UniqueIdentifier, lessorId)
       .input('startDate', sql.DateTime2, new Date(new Date().getFullYear(), new Date().getMonth(), 1))
       .input('endDate', sql.DateTime2, new Date())
-      .query('SELECT SUM(net_amount) as total FROM fri_invoices WHERE lessor_id = @lessorId AND status = \'paid\' AND MONTH(invoice_date) = MONTH(@endDate) AND YEAR(invoice_date) = YEAR(@endDate)');
+      .query('SELECT SUM(net_amount) as total FROM fri_invoices WHERE lessor_id = $1 AND status = \'paid\' AND MONTH(invoice_date) = MONTH($2) AND YEAR(invoice_date) = YEAR($2)');
 
     // Get outstanding invoices
     const outstandingResult = await pool.request()
       .input('lessorId', sql.UniqueIdentifier, lessorId)
-      .query('SELECT SUM(net_amount) as total FROM fri_invoices WHERE lessor_id = @lessorId AND status IN (\'sent\', \'overdue\')');
-
-    await pool.close();
+      .query('SELECT SUM(net_amount) as total FROM fri_invoices WHERE lessor_id = $1 AND status IN (\'sent\', \'overdue\')');
 
     context.res.status = 200;
     context.res.body = {
