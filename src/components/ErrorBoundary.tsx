@@ -44,7 +44,7 @@ class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-2xl">
             <div className="text-center">
               <div className="flex justify-center mb-4">
                 <div className="rounded-full bg-red-100 p-4">
@@ -56,11 +56,22 @@ class ErrorBoundary extends Component<Props, State> {
                 Vi beklager. Der opstod en uventet fejl. Prøv venligst igen eller kontakt support.
               </p>
 
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {this.state.error && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-left">
-                  <p className="text-sm font-mono text-red-800 break-words">
+                  <p className="text-sm font-bold text-red-900 mb-2">Fejl detaljer:</p>
+                  <p className="text-sm text-red-800 break-words font-mono">
                     {this.state.error.message}
                   </p>
+                  {this.state.error.stack && (
+                    <details className="mt-3">
+                      <summary className="cursor-pointer text-sm text-red-700 font-semibold">
+                        Stack trace
+                      </summary>
+                      <pre className="mt-2 text-xs text-red-700 overflow-auto max-h-48 bg-white p-2 rounded border border-red-300">
+                        {this.state.error.stack}
+                      </pre>
+                    </details>
+                  )}
                 </div>
               )}
 
