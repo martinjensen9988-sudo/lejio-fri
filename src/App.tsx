@@ -9,8 +9,8 @@ import { AdminAuthProvider } from "@/hooks/useAdminAuth";
 import { FriAuthProvider } from "@/providers/FriAuthProvider";
 import { BrandProvider } from "@/providers/BrandContext";
 
-// FORCE NEW BUILD - DO NOT REMOVE - 2026-02-04-v2-debug-deployment-fix
-const APP_VERSION = "2026.02.04.002";
+// FORCE NEW BUILD - DO NOT REMOVE - 2026-02-05-v3-tenant-fix
+const APP_VERSION = "2026.02.05.003";
 import { TenantProvider } from "@/hooks/useTenant";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import NotFound from "./pages/NotFound";
