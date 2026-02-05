@@ -9,7 +9,7 @@
                     "build:dev":  "vite build --mode development",
                     "lint":  "eslint .",
                     "preview":  "vite preview",
-                    "start":  "node api/server.js",
+                    "start":  "bash render-start.sh",
                     "server":  "node api/server.js"
                 },
     "dependencies":  {
