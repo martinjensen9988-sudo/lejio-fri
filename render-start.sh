@@ -1,52 +1,45 @@
 #!/bin/bash
 
-# Render start script - ensures dependencies and build happen before server starts
+# Render start script - build React app before starting server
 set -e
 
 # Change to project root
 cd /opt/render/project 2>/dev/null || cd "$(dirname "$0")" 2>/dev/null || true
 
-echo "📁 Working directory: $(pwd)"
-echo "✅ Node version: $(node --version)"
-echo "✅ NPM version: $(npm --version)"
+echo "📁 Project directory: $(pwd)"
+echo "📦 Node: $(node --version)"
+echo "🔧 NPM: $(npm --version)"
 
-# Verify node_modules exists and has dependencies
-echo "🔍 Checking dependencies..."
-if [ ! -d "node_modules" ] || [ ! -f "node_modules/express/package.json" ]; then
-  echo "⚠️  node_modules incomplete - installing ALL dependencies..."
-  # Install with --production=false to ensure devDependencies (like vite) are installed
-  npm install --production=false || npm install || { echo "❌ npm install failed"; exit 1; }
-  echo "✅ Dependencies installed"
+# Step 1: Ensure dependencies are installed
+echo "📥 Checking dependencies..."
+if [ ! -d "node_modules" ]; then
+  echo "⚠️  Installing npm dependencies..."
+  npm install --legacy-peer-deps || npm install || { echo "❌ Failed to install dependencies"; exit 1; }
 else
-  echo "✅ Dependencies already installed"
-  
-  # Check if vite (needed for build) is installed
-  if [ ! -d "node_modules/vite" ]; then
-    echo "⚠️  Vite not found - reinstalling dependencies..."
-    npm install --production=false || npm install || { echo "❌ npm install failed"; exit 1; }
-    echo "✅ Dependencies installed"
-  fi
+  echo "✅ node_modules exists"
 fi
 
-# Check if dist needs to be built
-echo "🔍 Checking if dist/ needs rebuilding..."
-if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
-  echo "⚠️  dist/ missing or incomplete - running build..."
-  echo "🔨 Building with npm..."
+# Step 2: Check for vite (needed to build)
+if [ ! -d "node_modules/vite" ]; then
+  echo "⚠️  Vite not available, reinstalling devDependencies..."
+  npm install --save-dev vite || npm install || { echo "❌ Failed to install vite"; exit 1; }
+fi
+
+# Step 3: Build React app
+if [ ! -f "dist/index.html" ]; then
+  echo "🏗️  Building React application..."
+  rm -rf dist dist-ssr .vite-cache 2>/dev/null || true
   npm run build || { echo "❌ Build failed"; exit 1; }
-  
   echo "✅ Build complete"
-  if [ -f "dist/index.html" ]; then
-    echo "✅ dist/index.html created successfully ($(wc -c < dist/index.html) bytes)"
-  else
-    echo "❌ dist/index.html missing after build"
-    echo "📁 Contents of dist/:"
-    ls -la dist/ 2>/dev/null || echo "(dist/ directory not found)"
-    exit 1
-  fi
-else
-  echo "✅ dist/ already built - skipping build"
 fi
 
-echo "🚀 Starting server from: $(pwd)/api/server.js"
+# Step 4: Verify build result
+if [ ! -f "dist/index.html" ]; then
+  echo "⚠️  Warning: dist/index.html not found after build"
+  echo "📁  dist/ contents:"
+  ls -la dist/ 2>/dev/null | head -20 || echo "dist/ directory is empty"
+fi
+
+# Step 5: Start server
+echo "🚀 Starting application server..."
 exec node api/server.js
