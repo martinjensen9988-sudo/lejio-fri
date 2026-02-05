@@ -1,25 +1,24 @@
 const pool = require('../db');
 const crypto = require('crypto');
 
-function generateToken(userId, email) {
-  return Buffer.from(JSON.stringify({
-    user_id: userId,
-    lessor_id: userId,
-    email,
-    iat: Date.now()
-  })).toString("base64");
+// Generate secure random session ID
+function generateSessionId() {
+  return crypto.randomBytes(32).toString('hex');
 }
 
 function hashPassword(password) {
   return crypto.createHash("sha256").update(password).digest("hex");
 }
 
-function setCookie(token) {
+function setCookie(sessionId, isSecure) {
   const maxAge = 30 * 24 * 60 * 60;
-  return `lejio_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
+  const secure = isSecure ? '; Secure' : '';
+  return `lejio_sid=${sessionId}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${secure}`;
 }
 
 module.exports = async function (context, req) {
+  const isSecure = req.headers['x-forwarded-proto'] === 'https';
+  
   context.res.headers = {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": req.headers.origin || "*",
@@ -71,9 +70,18 @@ module.exports = async function (context, req) {
     );
 
     const user = result.rows[0];
-    const token = generateToken(user.id, user.email);
 
-    context.res.headers["Set-Cookie"] = setCookie(token);
+    // Create server-side session (GDPR compliant)
+    const sessionId = generateSessionId();
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    
+    await pool.query(
+      `INSERT INTO fri_sessions (id, user_id, expires_at, ip_address, user_agent)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [sessionId, user.id, expiresAt, req.headers['x-forwarded-for'] || 'unknown', req.headers['user-agent'] || 'unknown']
+    );
+
+    context.res.headers["Set-Cookie"] = setCookie(sessionId, isSecure);
     context.res.status = 201;
     context.res.body = {
       success: true,
@@ -83,15 +91,13 @@ module.exports = async function (context, req) {
         full_name: user.full_name,
         lessor_id: user.id,
         user_type: user.user_type,
-        company_name: user.company_name,
-        cvr_number: user.cvr_number,
       },
     };
     return context.res;
   } catch (err) {
     console.error('Signup error:', err);
     context.res.status = 500;
-    context.res.body = { error: err.message };
+    context.res.body = { error: "Der opstod en fejl" };
     return context.res;
   }
 };

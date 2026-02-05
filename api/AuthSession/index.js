@@ -27,19 +27,40 @@ module.exports = async function (context, req) {
   };
 
   try {
-    // Get token from cookie
+    // Get session ID from cookie (GDPR compliant - only session ID, no user data)
     const cookies = parseCookies(req.headers.cookie);
-    const token = cookies.lejio_session;
+    const sessionId = cookies.lejio_sid;
 
-    if (!token) {
+    if (!sessionId) {
       context.res.status = 200;
       context.res.body = { user: null };
       return context.res;
     }
 
-    // Decode token
-    const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
-    const userId = decoded.user_id || decoded.lessor_id;
+    // Look up session in database
+    const sessionResult = await pool.query(
+      'SELECT user_id, expires_at FROM fri_sessions WHERE id = $1',
+      [sessionId]
+    );
+
+    if (sessionResult.rows.length === 0) {
+      context.res.status = 200;
+      context.res.body = { user: null };
+      return context.res;
+    }
+
+    const session = sessionResult.rows[0];
+    
+    // Check if session has expired
+    if (new Date(session.expires_at) < new Date()) {
+      // Clean up expired session
+      await pool.query('DELETE FROM fri_sessions WHERE id = $1', [sessionId]);
+      context.res.status = 200;
+      context.res.body = { user: null };
+      return context.res;
+    }
+
+    const userId = session.user_id;
 
     // Check test users first
     if (testUsers[userId]) {
@@ -49,19 +70,21 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    // Check database
-    const result = await pool.query(
+    // Get user from database
+    const userResult = await pool.query(
       'SELECT id, email, full_name, user_type, company_name, cvr_number FROM fri_users WHERE id = $1',
       [userId]
     );
 
-    if (result.rows.length === 0) {
+    if (userResult.rows.length === 0) {
+      // User no longer exists - clean up session
+      await pool.query('DELETE FROM fri_sessions WHERE id = $1', [sessionId]);
       context.res.status = 200;
       context.res.body = { user: null };
       return context.res;
     }
 
-    const user = result.rows[0];
+    const user = userResult.rows[0];
     context.res.status = 200;
     context.res.body = {
       user: {
@@ -70,8 +93,6 @@ module.exports = async function (context, req) {
         full_name: user.full_name,
         lessor_id: user.id,
         user_type: user.user_type || 'professionel',
-        company_name: user.company_name,
-        cvr_number: user.cvr_number,
       }
     };
     return context.res;

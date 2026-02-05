@@ -40,6 +40,22 @@ CREATE TABLE IF NOT EXISTS fri_users (
 CREATE INDEX IF NOT EXISTS idx_fri_users_email ON fri_users(email);
 
 -- ============================================================================
+-- 1c. SESSIONS TABLE (GDPR compliant - server-side sessions)
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS fri_sessions (
+    id VARCHAR(64) PRIMARY KEY,
+    user_id UUID NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    ip_address VARCHAR(45),
+    user_agent TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_fri_sessions_user_id ON fri_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_fri_sessions_expires ON fri_sessions(expires_at);
+
+-- ============================================================================
 -- 2. LESSOR TABLES
 -- ============================================================================
 
