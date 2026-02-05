@@ -1,10 +1,14 @@
 module.exports = async function (context, req) {
-  // Logout is just client-side (clear token from localStorage)
-  // This endpoint can be called for logging but doesn't need to do anything
-  
+  // Clear the session cookie
   context.res = {
     status: 200,
-    body: { message: "Logged out successfully" }
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": req.headers.origin || "*",
+      "Access-Control-Allow-Credentials": "true",
+      "Set-Cookie": "lejio_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0"
+    },
+    body: { success: true, message: "Logget ud" }
   };
   
   return context.res;

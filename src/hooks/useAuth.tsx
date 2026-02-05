@@ -1,8 +1,6 @@
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
-import { safeStorage } from '@/lib/safeStorage';
 
-const SESSION_KEY = 'lejio-session';
-const API_BASE = import.meta.env.PROD ? '' : '';
+const API_BASE = '';
 
 // User type
 export interface AuthUser {
@@ -61,50 +59,53 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Helper functions
-const getStoredSession = (): { session: Session; profile: Profile } | null => {
-  try {
-    const stored = safeStorage.getItem(SESSION_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (e) {
-    console.error('Error reading session:', e);
-  }
-  return null;
-};
-
-const saveSession = (session: Session, profile: Profile) => {
-  try {
-    safeStorage.setItem(SESSION_KEY, JSON.stringify({ session, profile }));
-  } catch (e) {
-    console.error('Error saving session:', e);
-  }
-};
-
-const clearSession = () => {
-  try {
-    safeStorage.removeItem(SESSION_KEY);
-  } catch (e) {
-    console.error('Error clearing session:', e);
-  }
-};
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Load session from localStorage on mount
+  // Check session on mount
   useEffect(() => {
-    const stored = getStoredSession();
-    if (stored) {
-      setSession(stored.session);
-      setUser(stored.session.user);
-      setProfile(stored.profile);
-    }
-    setLoading(false);
+    const checkSession = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/api/auth-session`, {
+          credentials: 'include',
+        });
+        const data = await response.json();
+        
+        if (data.user) {
+          const userData = data.user;
+          setUser(userData);
+          setSession({ access_token: 'cookie', user: userData });
+          setProfile({
+            id: userData.id,
+            email: userData.email,
+            full_name: userData.full_name,
+            user_type: userData.user_type || 'professionel',
+            cvr_number: userData.cvr_number || null,
+            company_name: userData.company_name || null,
+            lessor_id: userData.lessor_id || userData.id,
+            phone: null,
+            address: null,
+            city: null,
+            postal_code: null,
+            avatar_url: null,
+            payment_gateway: null,
+            insurance_company: null,
+            insurance_policy_number: null,
+            trial_ends_at: null,
+            subscription_status: 'active',
+          });
+        }
+      } catch (e) {
+        console.error('Session check error:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSession();
   }, []);
 
   const signUp = useCallback(async (
@@ -119,27 +120,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await fetch(`${API_BASE}/api/auth-signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password, fullName, userType, cvrNumber, companyName }),
       });
 
       const data = await response.json();
       
       if (!response.ok) {
-        return { error: new Error(data.error || 'Signup fejlede') };
+        return { error: new Error(data.error || 'Tilmelding fejlede') };
       }
 
-      // Save session and profile
-      const newSession: Session = {
-        access_token: data.token,
-        user: data.user,
-      };
-      const newProfile: Profile = {
-        id: data.user.id,
-        email: data.user.email,
+      // Set user state from response
+      const userData = data.user;
+      setUser(userData);
+      setSession({ access_token: 'cookie', user: userData });
+      setProfile({
+        id: userData.id,
+        email: userData.email,
         full_name: fullName,
         user_type: userType,
         cvr_number: cvrNumber || null,
         company_name: companyName || null,
+        lessor_id: userData.id,
         phone: null,
         address: null,
         city: null,
@@ -150,18 +152,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         insurance_policy_number: null,
         trial_ends_at: null,
         subscription_status: 'active',
-        lessor_id: data.user.id,
-      };
-
-      setSession(newSession);
-      setUser(data.user);
-      setProfile(newProfile);
-      saveSession(newSession, newProfile);
+      });
 
       return { error: null };
     } catch (e) {
       console.error('Signup error:', e);
-      return { error: e instanceof Error ? e : new Error('Signup fejlede') };
+      return { error: e instanceof Error ? e : new Error('Tilmelding fejlede') };
     }
   }, []);
 
@@ -170,6 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await fetch(`${API_BASE}/api/auth-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
@@ -179,18 +176,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return { error: new Error(data.error || 'Login fejlede') };
       }
 
-      // Save session and profile
-      const newSession: Session = {
-        access_token: data.token,
-        user: data.user,
-      };
-      const newProfile: Profile = {
-        id: data.user.id,
-        email: data.user.email,
-        full_name: data.user.full_name || data.user.email.split('@')[0],
-        user_type: data.user.user_type || 'professionel',
-        cvr_number: data.user.cvr_number || null,
-        company_name: data.user.company_name || null,
+      // Set user state from response
+      const userData = data.user;
+      setUser(userData);
+      setSession({ access_token: 'cookie', user: userData });
+      setProfile({
+        id: userData.id,
+        email: userData.email,
+        full_name: userData.full_name || userData.email.split('@')[0],
+        user_type: userData.user_type || 'professionel',
+        cvr_number: userData.cvr_number || null,
+        company_name: userData.company_name || null,
+        lessor_id: userData.lessor_id || userData.id,
         phone: null,
         address: null,
         city: null,
@@ -201,13 +198,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         insurance_policy_number: null,
         trial_ends_at: null,
         subscription_status: 'active',
-        lessor_id: data.user.lessor_id || data.user.id,
-      };
-
-      setSession(newSession);
-      setUser(data.user);
-      setProfile(newProfile);
-      saveSession(newSession, newProfile);
+      });
 
       return { error: null };
     } catch (e) {
@@ -217,28 +208,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signOut = useCallback(async () => {
+    try {
+      await fetch(`${API_BASE}/api/auth-logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (e) {
+      console.error('Logout error:', e);
+    }
     setUser(null);
     setSession(null);
     setProfile(null);
-    clearSession();
   }, []);
 
   const updateProfile = useCallback(async (updates: Partial<Profile>) => {
-    if (!user) return { error: new Error('Not authenticated') };
+    if (!user) return { error: new Error('Ikke logget ind') };
 
     // Update local state
-    setProfile(prev => {
-      if (!prev) return null;
-      const updated = { ...prev, ...updates };
-      // Also update stored session
-      if (session) {
-        saveSession(session, updated);
-      }
-      return updated;
-    });
-
+    setProfile(prev => prev ? { ...prev, ...updates } : null);
     return { error: null };
-  }, [user, session]);
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{

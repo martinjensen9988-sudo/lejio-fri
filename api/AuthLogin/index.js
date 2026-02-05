@@ -3,8 +3,8 @@ const crypto = require("crypto");
 
 // Test users (always available)
 const testUsers = {
-  "martin@lejio.dk": { id: "test-martin", email: "martin@lejio.dk", full_name: "Martin Jensen", lessor_id: "test-martin" },
-  "test@example.com": { id: "test-user", email: "test@example.com", full_name: "Test User", lessor_id: "test-user" },
+  "martin@lejio.dk": { id: "test-martin", email: "martin@lejio.dk", full_name: "Martin Jensen", lessor_id: "test-martin", user_type: "professionel" },
+  "test@example.com": { id: "test-user", email: "test@example.com", full_name: "Test User", lessor_id: "test-user", user_type: "professionel" },
 };
 
 function generateToken(userId, email) {
@@ -20,10 +20,17 @@ function hashPassword(password) {
   return crypto.createHash("sha256").update(password).digest("hex");
 }
 
+function setCookie(token) {
+  // Cookie valid for 30 days
+  const maxAge = 30 * 24 * 60 * 60;
+  return `lejio_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
+}
+
 module.exports = async function (context, req) {
   context.res.headers = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": req.headers.origin || "*",
+    "Access-Control-Allow-Credentials": "true",
   };
 
   try {
@@ -39,16 +46,16 @@ module.exports = async function (context, req) {
     if (testUsers[email] && password === "test") {
       const user = testUsers[email];
       const token = generateToken(user.id, user.email);
+      context.res.headers["Set-Cookie"] = setCookie(token);
       context.res.status = 200;
       context.res.body = {
-        session: {
-          access_token: token,
-          user: {
-            id: user.id,
-            email: user.email,
-            full_name: user.full_name,
-            lessor_id: user.lessor_id,
-          },
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          full_name: user.full_name,
+          lessor_id: user.lessor_id,
+          user_type: user.user_type,
         },
       };
       return context.res;
@@ -56,13 +63,13 @@ module.exports = async function (context, req) {
 
     // Check database for user
     const result = await pool.query(
-      'SELECT id, email, full_name, password_hash FROM fri_users WHERE email = $1',
+      'SELECT id, email, full_name, password_hash, user_type, company_name, cvr_number FROM fri_users WHERE email = $1',
       [email.toLowerCase()]
     );
 
     if (result.rows.length === 0) {
       context.res.status = 401;
-      context.res.body = { error: "Invalid email or password" };
+      context.res.body = { error: "Forkert email eller adgangskode" };
       return context.res;
     }
 
@@ -71,21 +78,23 @@ module.exports = async function (context, req) {
 
     if (user.password_hash !== passwordHash) {
       context.res.status = 401;
-      context.res.body = { error: "Invalid email or password" };
+      context.res.body = { error: "Forkert email eller adgangskode" };
       return context.res;
     }
 
     const token = generateToken(user.id, user.email);
+    context.res.headers["Set-Cookie"] = setCookie(token);
     context.res.status = 200;
     context.res.body = {
-      session: {
-        access_token: token,
-        user: {
-          id: user.id,
-          email: user.email,
-          full_name: user.full_name,
-          lessor_id: user.id,
-        },
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name,
+        lessor_id: user.id,
+        user_type: user.user_type || 'professionel',
+        company_name: user.company_name,
+        cvr_number: user.cvr_number,
       },
     };
     return context.res;
