@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     companyName?: string
   ) => {
     try {
-      const response = await fetch(`${API_BASE}/api/AuthSignup`, {
+      const response = await fetch(`${API_BASE}/api/auth-signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, fullName, userType, cvrNumber, companyName }),
@@ -167,7 +167,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = useCallback(async (email: string, password: string) => {
     try {
-      const response = await fetch(`${API_BASE}/api/AuthLogin`, {
+      const response = await fetch(`${API_BASE}/api/auth-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
