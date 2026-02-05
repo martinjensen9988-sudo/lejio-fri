@@ -16,26 +16,44 @@ app.use(express.json());
 let distPath;
 const possiblePaths = [
   '/opt/render/project/dist',                   // Render production (PRIORITY)
-  path.resolve(__dirname, '../../dist'),        // From api/server.js: up 2 dirs
-  path.resolve(__dirname, '../dist'),           // From api/server.js: up 1 dir
+  '/opt/render/project/src/dist',               // Render if project is in src subdir
+  path.resolve(__dirname, '../../dist'),        // From api/server.js going up 2 dirs to root
+  path.resolve(__dirname, '../../src/dist'),    // From api/server.js going up to root, then src/dist
+  path.resolve(__dirname, '../dist'),           // From api/server.js going up 1 dir (if server is in api/)
   path.resolve(process.cwd(), 'dist'),          // From current working directory
+  path.resolve(process.cwd(), 'src/dist'),      // From current working directory src subdir
 ];
 
+console.log(`🔍 Current working directory: ${process.cwd()}`);
+console.log(`🔍 __dirname: ${__dirname}`);
+
 for (const p of possiblePaths) {
-  if (fs.existsSync(p) && fs.existsSync(path.join(p, 'index.html'))) {
+  const indexPath = path.join(p, 'index.html');
+  const exists = fs.existsSync(indexPath);
+  console.log(`  - ${p}: ${exists ? '✅ EXISTS' : '❌ not found'}`);
+  
+  if (exists) {
     distPath = p;
     break;
   }
 }
 
 if (!distPath) {
-  console.warn('⚠️  dist/index.html not found in any expected location');
-  console.warn('Searched:', possiblePaths);
-  distPath = possiblePaths[0]; // Fallback
+  console.warn('⚠️  dist/index.html not found in any location. Will use fallback path.');
+  console.warn('⚠️  This means static files and React app will NOT be served correctly.');
+  distPath = possiblePaths[0];
 }
 
 console.log('📁 Serving static files from:', distPath);
 app.use(express.static(distPath));
+
+// LogMiddleware to see what's being requested
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/api')) {
+    console.log(`📝 Request: ${req.method} ${req.path}`);
+  }
+  next();
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -129,7 +147,7 @@ Object.entries(apiRoutes).forEach(([routePath, handler]) => {
   app.get(routePath, async (req, res) => {
     const context = { res: { status: 200, headers: {}, body: {} } };
     try {
-      await handler(context, { query: req.query, body: req.body, params: req.params });
+      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
       res.status(context.res.status || 200);
       Object.entries(context.res.headers || {}).forEach(([key, value]) => {
         res.set(key, value);
@@ -144,7 +162,7 @@ Object.entries(apiRoutes).forEach(([routePath, handler]) => {
   app.post(routePath, async (req, res) => {
     const context = { res: { status: 200, headers: {}, body: {} } };
     try {
-      await handler(context, { query: req.query, body: req.body, params: req.params });
+      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
       res.status(context.res.status || 200);
       Object.entries(context.res.headers || {}).forEach(([key, value]) => {
         res.set(key, value);
@@ -159,7 +177,7 @@ Object.entries(apiRoutes).forEach(([routePath, handler]) => {
   app.put(routePath, async (req, res) => {
     const context = { res: { status: 200, headers: {}, body: {} } };
     try {
-      await handler(context, { query: req.query, body: req.body, params: req.params });
+      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
       res.status(context.res.status || 200);
       Object.entries(context.res.headers || {}).forEach(([key, value]) => {
         res.set(key, value);
@@ -174,7 +192,7 @@ Object.entries(apiRoutes).forEach(([routePath, handler]) => {
   app.delete(routePath, async (req, res) => {
     const context = { res: { status: 200, headers: {}, body: {} } };
     try {
-      await handler(context, { query: req.query, body: req.body, params: req.params });
+      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
       res.status(context.res.status || 200);
       Object.entries(context.res.headers || {}).forEach(([key, value]) => {
         res.set(key, value);
