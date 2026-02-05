@@ -32,6 +32,8 @@ const TenantContext = createContext<TenantContextType | undefined>(undefined);
  * - lejio-fri.dk → null (root domain)
  * - localhost:5173 → null (local dev)
  * - gray-hill-06c5ae603.6.azurestaticapps.net → null (Azure SWA root)
+ * - lejio-fri.onrender.com → null (root domain, not a tenant)
+ * - martinbiludlejning.lejio-fri.onrender.com → martinbiludlejning
  */
 function extractSubdomain(): string | null {
   if (typeof window === 'undefined') return null;
@@ -49,10 +51,22 @@ function extractSubdomain(): string | null {
     return null;
   }
 
+  // Render deployment: *.onrender.com
+  if (hostname.endsWith('.onrender.com')) {
+    // Root domain like lejio-fri.onrender.com should not be treated as a tenant
+    const subdomain = parts[0];
+    if (subdomain === 'lejio-fri') {
+      return null; // This is the root domain, not a tenant subdomain
+    }
+    // But martinbiludlejning.lejio-fri.onrender.com should return the full first part
+    // Only if it's not the main platform domain
+    return subdomain;
+  }
+
   // Production: *.lejio-fri.dk
   if (hostname.endsWith('lejio-fri.dk')) {
     const subdomain = parts[0];
-    return subdomain !== 'www' ? subdomain : null;
+    return subdomain !== 'www' && subdomain !== 'lejio-fri' ? subdomain : null;
   }
 
   // Custom domain (future): *.example.com
