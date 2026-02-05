@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Render start script - build React app before starting server
-# Deploy timestamp: 2026-02-05T21:15:00Z - GDPR sessions
+# Deploy timestamp: 2026-02-05T21:30:00Z - Fix sessions table
 set -e
 
 # Change to project root - try multiple paths
