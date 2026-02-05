@@ -3,51 +3,51 @@
 # Render start script - build React app before starting server
 set -e
 
-# Change to project root
-cd /opt/render/project 2>/dev/null || cd "$(dirname "$0")" 2>/dev/null || true
+# Change to project root - try multiple paths
+if [ -d "/opt/render/project/src" ] && [ -f "/opt/render/project/src/package.json" ]; then
+  cd /opt/render/project/src
+  echo "📁 Found app in /opt/render/project/src"
+elif [ -d "/opt/render/project" ] && [ -f "/opt/render/project/package.json" ]; then
+  cd /opt/render/project
+  echo "📁 Found app in /opt/render/project"
+elif [ -d "src" ] && [ -f "src/package.json" ]; then
+  cd src
+  echo "📁 Found app in ./src"
+else
+  # Fallback to local directory
+  cd "$(dirname "$0")" 2>/dev/null || true
+  echo "📁 Using directory: $(pwd)"
+fi
 
 PROJ_DIR="$(pwd)"
-echo "📁 Project directory: $PROJ_DIR"
+echo "🗂️  Project directory: $PROJ_DIR"
 echo "📦 Node: $(node --version)"
 echo "🔧 NPM: $(npm --version)"
 
-# Debug: List what's in the project directory
-echo "📂 Contents of $PROJ_DIR:"
-ls -la "$PROJ_DIR" | head -20
-echo ""
-
 # Debug: Check if package.json exists
-if [ -f "$PROJ_DIR/package.json" ]; then
-  echo "✅ Found package.json"
-else
+if [ ! -f "package.json" ]; then
   echo "❌ ERROR: package.json not found in $PROJ_DIR"
-  echo "Attempting to list all .json files:"
-  find "$PROJ_DIR" -maxdepth 2 -name "*.json" -type f 2>/dev/null | head -20
-  exit 1
-fi
-
-# Step 1: Ensure we're in the right directory
-cd /opt/render/project 2>/dev/null || cd "$(dirname "$0")" 2>/dev/null || true
-
-PROJ_DIR="$(pwd)"
-echo "📁 Project directory: $PROJ_DIR"
-
-# Debug: List what's actually here
-echo "📂 Top-level files in $PROJ_DIR:"
-ls -la "$PROJ_DIR" | head -25
-echo ""
-
-# Check if package.json exists
-if [ ! -f "$PROJ_DIR/package.json" ]; then
-  echo "❌ package.json not found - checking git status..."
-  git status 2>/dev/null || echo "Not in git repo"
-  git log --oneline -3 2>/dev/null || echo "Cannot get git log"
+  echo "📂 Contents of current directory:"
+  ls -la | head -25
   exit 1
 fi
 
 echo "✅ package.json found"
-echo "📦 Node: $(node --version)"
-echo "🔧 NPM: $(npm --version)"
+
+# Script to run from the src directory, so find the root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Find the root - go up from src if needed
+if [ -d "$SCRIPT_DIR/api" ]; then
+  ROOT_DIR="$SCRIPT_DIR"
+elif [ -d "$SCRIPT_DIR/../api" ]; then
+  ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+else
+  ROOT_DIR="$SCRIPT_DIR"
+fi
+
+echo "🔍 Script location: $SCRIPT_DIR"
+echo "📍 Project root: $ROOT_DIR"
 
 # Ensure dependencies are installed
 echo "📥 Checking/installing dependencies..."
@@ -69,6 +69,7 @@ fi
 
 echo "✅ dist/index.html ready"
 
-# Start server
+# Start server from the root directory with correct path to api/server.js
 echo "🚀 Starting application server on port ${PORT:-3000}..."
+cd "$ROOT_DIR"
 exec node api/server.js
