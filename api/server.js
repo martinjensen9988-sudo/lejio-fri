@@ -19,7 +19,6 @@ app.get('/api/health', (req, res) => {
 });
 
 // API routes - dynamically load all API handlers that exist
-const fs = require('fs');
 const apiRoutes = {};
 const apiDir = __dirname;
 const dirs = fs.readdirSync(apiDir);
