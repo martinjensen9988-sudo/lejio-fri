@@ -12,12 +12,12 @@ export function FriLandingPage() {
       <nav className="sticky top-0 z-50 backdrop-blur-lg bg-white/5 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.35)]">
-              <Crown className="h-5 w-5 text-white" />
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500 flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.5)] animate-pulse">
+              <Crown className="h-7 w-7 text-amber-900 drop-shadow-lg" />
             </div>
             <div>
-              <div className="text-xl font-semibold">Din platform</div>
-              <div className="text-xs text-amber-200/80">White‑label biludlejning</div>
+              <div className="text-xl font-bold bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-200 bg-clip-text text-transparent">Din platform</div>
+              <div className="text-xs text-amber-300/90">White‑label biludlejning</div>
             </div>
           </div>
           <div className="hidden md:flex gap-4 items-center">
@@ -65,16 +65,16 @@ export function FriLandingPage() {
             </div>
             <div className="grid grid-cols-3 gap-6 mt-10">
               <div>
-                <p className="text-2xl font-semibold">98%</p>
-                <p className="text-sm text-white/60">Kundetilfredshed</p>
+                <p className="text-2xl font-bold bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">98%</p>
+                <p className="text-sm text-amber-200/60">Kundetilfredshed</p>
               </div>
               <div>
-                <p className="text-2xl font-semibold">2 min</p>
-                <p className="text-sm text-white/60">Opsætningstid</p>
+                <p className="text-2xl font-bold bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">2 min</p>
+                <p className="text-sm text-amber-200/60">Opsætningstid</p>
               </div>
               <div>
-                <p className="text-2xl font-semibold">24/7</p>
-                <p className="text-sm text-white/60">Overvågning</p>
+                <p className="text-2xl font-bold bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">24/7</p>
+                <p className="text-sm text-amber-200/60">Overvågning</p>
               </div>
             </div>
           </div>
@@ -134,8 +134,8 @@ export function FriLandingPage() {
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="flex items-end justify-between gap-6 mb-10">
           <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-white/50">Eksklusiv funktionalitet</p>
-            <h2 className="text-3xl md:text-4xl font-semibold mt-3">Alt du forventer af en premium platform</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-amber-400/70">Eksklusiv funktionalitet</p>
+            <h2 className="text-3xl md:text-4xl font-semibold mt-3">Alt du forventer af en <span className="bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">premium</span> platform</h2>
           </div>
           <Link to="/features" className="hidden md:inline-flex">
             <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">Se alle features</Button>
@@ -150,12 +150,12 @@ export function FriLandingPage() {
             { title: 'Teamsamarbejde', text: 'Rolle‑baseret adgang og audit‑logs til kontrol.' },
             { title: 'White‑label', text: 'Din branding, dine farver, dit domæne, din oplevelse.' },
           ].map((item) => (
-            <Card key={item.title} className="bg-white/5 border-white/10 text-white">
+            <Card key={item.title} className="bg-white/5 border-amber-500/20 text-white hover:border-amber-500/40 transition-colors">
               <CardHeader>
-                <CardTitle>{item.title}</CardTitle>
+                <CardTitle className="text-amber-100">{item.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-white/70">{item.text}</p>
+                <p className="text-amber-100/60">{item.text}</p>
               </CardContent>
             </Card>
           ))}
@@ -163,79 +163,79 @@ export function FriLandingPage() {
       </section>
 
       {/* Pricing */}
-      <section className="py-16 border-t border-white/10">
+      <section className="py-16 border-t border-amber-500/20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
-            <p className="text-sm uppercase tracking-[0.3em] text-white/50">Priser</p>
-            <h2 className="text-3xl md:text-4xl font-semibold mt-3">En plan til enhver ambition</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-amber-400/70">Priser</p>
+            <h2 className="text-3xl md:text-4xl font-semibold mt-3">En plan til enhver <span className="bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">ambition</span></h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="bg-white/5 border-white/10 text-white">
+            <Card className="bg-white/5 border-amber-500/20 text-white">
               <CardHeader>
-                <CardTitle>Professional</CardTitle>
-                <CardDescription className="text-white/60">Solo og små flåder</CardDescription>
+                <CardTitle className="text-amber-100">Professional</CardTitle>
+                <CardDescription className="text-amber-100/60">Solo og små flåder</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="mb-6">
-                  <span className="text-4xl font-semibold">kr. 599</span>
-                  <span className="text-white/60">/måned</span>
+                  <span className="text-4xl font-bold bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">kr. 599</span>
+                  <span className="text-amber-200/60">/måned</span>
                 </div>
                 <ul className="space-y-3 mb-6 text-white/80">
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />10 køretøjer</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />3 teammedlemmer</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Grundlæggende analytik</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Email support</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />10 køretøjer</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />3 teammedlemmer</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />Grundlæggende analytik</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />Email support</li>
                 </ul>
                 <Link to="/signup?tier=professional">
-                    <Button className="w-full border-white/20 text-white hover:bg-white/10" variant="outline">Vælg plan</Button>
+                    <Button className="w-full border-amber-500/30 text-amber-100 hover:bg-amber-500/10" variant="outline">Vælg plan</Button>
                 </Link>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-b from-white/10 to-white/5 border-indigo-400/50 text-white shadow-2xl">
+            <Card className="bg-gradient-to-b from-amber-500/20 to-white/5 border-amber-400/50 text-white shadow-[0_0_40px_rgba(245,158,11,0.2)]">
               <CardHeader>
-                <div className="bg-white text-black px-3 py-1 rounded-full text-sm w-fit mb-2">Mest populær</div>
-                <CardTitle>Business</CardTitle>
-                <CardDescription className="text-white/60">Voksende virksomheder</CardDescription>
+                <div className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black px-3 py-1 rounded-full text-sm w-fit mb-2 font-semibold">Mest populær</div>
+                <CardTitle className="text-amber-100">Business</CardTitle>
+                <CardDescription className="text-amber-100/60">Voksende virksomheder</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="mb-6">
-                  <span className="text-4xl font-semibold">kr. 999</span>
-                  <span className="text-white/60">/måned</span>
+                  <span className="text-4xl font-bold bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">kr. 999</span>
+                  <span className="text-amber-200/60">/måned</span>
                 </div>
                 <ul className="space-y-3 mb-6 text-white/80">
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />50 køretøjer</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />10 teammedlemmer</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Avanceret analytik</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />API adgang (read‑only)</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Branding tilpasning</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Email + Slack support</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />50 køretøjer</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />10 teammedlemmer</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />Avanceret analytik</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />API adgang (read‑only)</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />Branding tilpasning</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />Email + Slack support</li>
                 </ul>
                 <Link to="/signup?tier=business">
-                  <Button className="w-full bg-white text-black hover:bg-white/90">Kom i gang</Button>
+                  <Button className="w-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110 font-semibold">Kom i gang</Button>
                 </Link>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/5 border-white/10 text-white">
+            <Card className="bg-white/5 border-amber-500/20 text-white">
               <CardHeader>
-                <CardTitle>Enterprise</CardTitle>
-                <CardDescription className="text-white/60">Større netværk</CardDescription>
+                <CardTitle className="text-amber-100">Enterprise</CardTitle>
+                <CardDescription className="text-amber-100/60">Større netværk</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="mb-6">
-                  <span className="text-4xl font-semibold">kr. 1.499</span>
-                  <span className="text-white/60">/måned</span>
+                  <span className="text-4xl font-bold bg-gradient-to-r from-amber-300 to-yellow-200 bg-clip-text text-transparent">kr. 1.499</span>
+                  <span className="text-amber-200/60">/måned</span>
                 </div>
                 <ul className="space-y-3 mb-6 text-white/80">
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Ubegrænsede køretøjer</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Ubegrænsede brugere</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Fuldt API + webhooks</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />Custom domæne</li>
-                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-300" />24/7 prioritets support</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />Ubegrænsede køretøjer</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />Ubegrænsede brugere</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />Fuldt API + webhooks</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />Custom domæne</li>
+                  <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />24/7 prioritets support</li>
                 </ul>
                 <Link to="/signup?tier=enterprise">
-                    <Button className="w-full border-white/20 text-white hover:bg-white/10" variant="outline">Kontakt os</Button>
+                    <Button className="w-full border-amber-500/30 text-amber-100 hover:bg-amber-500/10" variant="outline">Kontakt os</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -246,11 +246,16 @@ export function FriLandingPage() {
       {/* CTA */}
       <section className="py-16">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent p-10 text-center">
-            <h2 className="text-4xl font-semibold mb-4">Klar til en premium oplevelse?</h2>
-            <p className="text-white/70 mb-8">14 dages gratis prøve. Ingen kreditkort. Opsætning på få minutter.</p>
+          <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/20 to-transparent p-10 text-center shadow-[0_0_60px_rgba(245,158,11,0.15)]">
+            <div className="flex justify-center mb-6">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500 flex items-center justify-center shadow-[0_0_40px_rgba(245,158,11,0.5)]">
+                <Crown className="h-9 w-9 text-amber-900" />
+              </div>
+            </div>
+            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-200 bg-clip-text text-transparent">Klar til en premium oplevelse?</h2>
+            <p className="text-amber-100/70 mb-8">14 dages gratis prøve. Ingen kreditkort. Opsætning på få minutter.</p>
             <Link to="/trial">
-              <Button size="lg" className="bg-white text-black hover:bg-white/90">
+              <Button size="lg" className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110 font-semibold shadow-[0_0_20px_rgba(245,158,11,0.4)]">
                 Start gratis prøveperiode
               </Button>
             </Link>
@@ -259,8 +264,8 @@ export function FriLandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center text-white/60">
+      <footer className="border-t border-amber-500/20 py-8">
+        <div className="max-w-7xl mx-auto px-4 text-center text-amber-200/50">
           <p>© 2026 Din platform. Alle rettigheder forbeholdt.</p>
         </div>
       </footer>
