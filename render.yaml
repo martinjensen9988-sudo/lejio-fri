@@ -4,7 +4,8 @@ services:
     env: node
     region: copenhagen
     plan: standard
-    startCommand: bash render-start.sh
+    buildCommand: npm install --legacy-peer-deps --include=dev && npm run build
+    startCommand: node api/server.js
     envVars:
       - key: NODE_ENV
         value: production
