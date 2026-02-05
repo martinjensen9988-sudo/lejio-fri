@@ -13,7 +13,7 @@ export interface CreateLessorAccountInput {
  */
 export async function createLessorAccount(input: CreateLessorAccountInput) {
   try {
-    return await azureApi.post('/lessor-accounts/create', {
+    return await azureApi.post('/lessor-accounts-create', {
       user_id: input.user_id,
       company_name: input.company_name,
       custom_domain: input.custom_domain,
