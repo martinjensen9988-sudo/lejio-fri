@@ -1,13 +1,22 @@
 const pool = require("../db");
+const { getSessionUserId } = require("../session");
 
 module.exports = async function (context, req) {
   context.res.headers = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": req.headers.origin || "*",
+    "Access-Control-Allow-Credentials": "true",
   };
 
   try {
     const { page_id, block_type, position, config } = req.body;
+    const userId = await getSessionUserId(req);
+
+    if (!userId) {
+      context.res.status = 401;
+      context.res.body = { error: "Not authenticated" };
+      return context.res;
+    }
 
     if (!page_id || !block_type) {
       context.res.status = 400;
@@ -15,9 +24,12 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-  // Check page exists
-  const pageCheck = await pool.query('SELECT id FROM fri_pages WHERE id = $1::uuid', [page_id]);
-  if (pageCheck.rows.length === 0) {
+    // Check page ownership
+    const pageCheck = await pool.query(
+      'SELECT id FROM fri_pages WHERE id = $1::uuid AND lessor_id = $2',
+      [page_id, userId]
+    );
+    if (pageCheck.rows.length === 0) {
       context.res.status = 404;
       context.res.body = { error: "Page not found" };
       return context.res;

@@ -1,45 +1,26 @@
 const pool = require("../db");
-
-function parseCookies(cookieHeader) {
-  const cookies = {};
-  if (!cookieHeader) return cookies;
-  cookieHeader.split(';').forEach(cookie => {
-    const [name, value] = cookie.trim().split('=');
-    if (name && value) cookies[name] = value;
-  });
-  return cookies;
-}
-
-async function resolveLessorId(req) {
-  if (req.body?.lessor_id) return req.body.lessor_id;
-  if (req.query?.lessor_id) return req.query.lessor_id;
-
-  const cookies = parseCookies(req.headers.cookie);
-  const sessionId = cookies.lejio_sid;
-  if (!sessionId) return null;
-
-  const sessionResult = await pool.query(
-    'SELECT user_id FROM fri_sessions WHERE id = $1',
-    [sessionId]
-  );
-
-  if (sessionResult.rows.length === 0) return null;
-  return sessionResult.rows[0].user_id;
-}
+const { getSessionUserId } = require("../session");
 
 module.exports = async function (context, req) {
   context.res.headers = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": req.headers.origin || "*",
+    "Access-Control-Allow-Credentials": "true",
   };
 
   try {
     const { title, slug, meta_description, blocks } = req.body || {};
-    const lessor_id = await resolveLessorId(req);
+    const lessor_id = await getSessionUserId(req);
 
-    if (!lessor_id || !title || !slug) {
+    if (!lessor_id) {
+      context.res.status = 401;
+      context.res.body = { error: "Not authenticated" };
+      return context.res;
+    }
+
+    if (!title || !slug) {
       context.res.status = 400;
-      context.res.body = { error: "lessor_id, title, and slug required" };
+      context.res.body = { error: "title and slug required" };
       return context.res;
     }
 

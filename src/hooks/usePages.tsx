@@ -27,14 +27,10 @@ export function usePages(lessorId?: string) {
   const [loading, setLoading] = useState(false);
 
   const getPages = useCallback(async () => {
-    if (!lessorId) {
-      console.warn("lessorId required for getPages");
-      return [];
-    }
-
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE}/get-pages?lessor_id=${lessorId}`, {
+      const query = lessorId ? `?lessor_id=${lessorId}` : "";
+      const response = await fetch(`${API_BASE}/get-pages${query}`, {
         credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to fetch pages");
@@ -51,14 +47,11 @@ export function usePages(lessorId?: string) {
 
   const getPageById = useCallback(
     async (pageId: string) => {
-      if (!lessorId) return null;
-
       setLoading(true);
       try {
-        const response = await fetch(
-          `${API_BASE}/get-pages?lessor_id=${lessorId}&page_id=${pageId}`,
-          { credentials: "include" }
-        );
+        const base = `${API_BASE}/get-pages?page_id=${pageId}`;
+        const url = lessorId ? `${base}&lessor_id=${lessorId}` : base;
+        const response = await fetch(url, { credentials: "include" });
         if (!response.ok) return null;
         const data = await response.json();
         return data[0] || null;
@@ -85,7 +78,7 @@ export function usePages(lessorId?: string) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ lessor_id, title, slug, meta_description }),
+          body: JSON.stringify({ title, slug, meta_description }),
         });
         if (!response.ok) throw new Error("Failed to create page");
         const newPage = await response.json();
