@@ -13,37 +13,39 @@ echo "✅ NPM version: $(npm --version)"
 # Verify node_modules exists and has dependencies
 echo "🔍 Checking dependencies..."
 if [ ! -d "node_modules" ] || [ ! -f "node_modules/express/package.json" ]; then
-  echo "⚠️  node_modules incomplete - installing dependencies..."
-  npm install || { echo "❌ npm install failed"; exit 1; }
+  echo "⚠️  node_modules incomplete - installing ALL dependencies..."
+  # Install with --production=false to ensure devDependencies (like vite) are installed
+  npm install --production=false || npm install || { echo "❌ npm install failed"; exit 1; }
   echo "✅ Dependencies installed"
 else
   echo "✅ Dependencies already installed"
+  
+  # Check if vite (needed for build) is installed
+  if [ ! -d "node_modules/vite" ]; then
+    echo "⚠️  Vite not found - reinstalling dependencies..."
+    npm install --production=false || npm install || { echo "❌ npm install failed"; exit 1; }
+    echo "✅ Dependencies installed"
+  fi
 fi
 
 # Check if dist needs to be built
 echo "🔍 Checking if dist/ needs rebuilding..."
-if [ ! -d "dist" ] || [ ! -f "dist/index.html" ] || [ ! -f "dist/api" ]; then
+if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
   echo "⚠️  dist/ missing or incomplete - running build..."
   echo "🔨 Building with npm..."
   npm run build || { echo "❌ Build failed"; exit 1; }
   
   echo "✅ Build complete"
   if [ -f "dist/index.html" ]; then
-    echo "✅ dist/index.html created successfully"
+    echo "✅ dist/index.html created successfully ($(wc -c < dist/index.html) bytes)"
   else
     echo "❌ dist/index.html missing after build"
     echo "📁 Contents of dist/:"
     ls -la dist/ 2>/dev/null || echo "(dist/ directory not found)"
     exit 1
   fi
-  
-  if [ -d "dist/api" ]; then
-    echo "✅ dist/api directory exists"
-  else
-    echo "⚠️  dist/api directory not found (expected if using api/server.js)"
-  fi
 else
-  echo "✅ dist/ already built"
+  echo "✅ dist/ already built - skipping build"
 fi
 
 echo "🚀 Starting server from: $(pwd)/api/server.js"
