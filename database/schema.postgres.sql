@@ -280,3 +280,38 @@ CREATE INDEX IF NOT EXISTS idx_fri_tenants_slug ON fri_tenants(slug);
 CREATE INDEX IF NOT EXISTS idx_fri_tenants_subdomain ON fri_tenants(subdomain);
 CREATE INDEX IF NOT EXISTS idx_fri_tenants_domain ON fri_tenants(domain);
 CREATE INDEX IF NOT EXISTS idx_fri_tenants_status ON fri_tenants(status);
+
+-- ============================================================================
+-- 11. PAGE BUILDER TABLES
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS fri_pages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    lessor_id VARCHAR(36) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL,
+    meta_description TEXT,
+    is_published BOOLEAN NOT NULL DEFAULT FALSE,
+    published_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id) ON DELETE CASCADE,
+    CONSTRAINT uq_fri_page_slug UNIQUE (lessor_id, slug)
+);
+
+CREATE INDEX IF NOT EXISTS idx_fri_pages_lessor ON fri_pages(lessor_id);
+CREATE INDEX IF NOT EXISTS idx_fri_pages_published ON fri_pages(lessor_id, is_published);
+
+CREATE TABLE IF NOT EXISTS fri_page_blocks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    page_id UUID NOT NULL,
+    block_type VARCHAR(50) NOT NULL,
+    position INTEGER NOT NULL DEFAULT 0,
+    config JSONB NOT NULL DEFAULT '{}',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (page_id) REFERENCES fri_pages(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_fri_page_blocks_page ON fri_page_blocks(page_id);
+CREATE INDEX IF NOT EXISTS idx_fri_page_blocks_type ON fri_page_blocks(block_type);

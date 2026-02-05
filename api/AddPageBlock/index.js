@@ -1,5 +1,4 @@
-// Mock pages storage with blocks
-const mockPages = {};
+const pool = require("../db");
 
 module.exports = async function (context, req) {
   context.res.headers = {
@@ -16,29 +15,37 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    const page = mockPages[page_id];
-    if (!page) {
+    // Check page exists
+    const pageCheck = await pool.query('SELECT id FROM fri_pages WHERE id = $1::uuid', [page_id]);
+    if (pageCheck.rows.length === 0) {
       context.res.status = 404;
       context.res.body = { error: "Page not found" };
       return context.res;
     }
 
-    const blockId = `block-${Date.now()}`;
-    const newBlock = {
-      id: blockId,
-      page_id,
-      block_type,
-      position: position !== undefined ? position : (page.blocks?.length || 0),
-      config: config || {},
-    };
+    // Get max position if not provided
+    let blockPosition = position;
+    if (blockPosition === undefined) {
+      const maxPos = await pool.query(
+        'SELECT COALESCE(MAX(position), -1) as max_pos FROM fri_page_blocks WHERE page_id = $1::uuid',
+        [page_id]
+      );
+      blockPosition = maxPos.rows[0].max_pos + 1;
+    }
 
-    if (!page.blocks) page.blocks = [];
-    page.blocks.push(newBlock);
+    // Insert block
+    const result = await pool.query(
+      `INSERT INTO fri_page_blocks (page_id, block_type, config, position)
+       VALUES ($1::uuid, $2, $3, $4)
+       RETURNING *`,
+      [page_id, block_type, JSON.stringify(config || {}), blockPosition]
+    );
 
     context.res.status = 201;
-    context.res.body = newBlock;
+    context.res.body = result.rows[0];
     return context.res;
   } catch (error) {
+    console.error('AddPageBlock error:', error);
     context.res.status = 500;
     context.res.body = { error: error.message };
     return context.res;

@@ -1,5 +1,4 @@
-// Mock pages storage
-const mockPages = {};
+const pool = require("../db");
 
 module.exports = async function (context, req) {
   context.res.headers = {
@@ -8,35 +7,53 @@ module.exports = async function (context, req) {
   };
 
   try {
-    const { page_id, block_id, config, position } = req.body;
+    const { block_id, config, position } = req.body;
 
-    if (!page_id || !block_id) {
+    if (!block_id) {
       context.res.status = 400;
-      context.res.body = { error: "page_id and block_id required" };
+      context.res.body = { error: "block_id required" };
       return context.res;
     }
 
-    const page = mockPages[page_id];
-    if (!page) {
-      context.res.status = 404;
-      context.res.body = { error: "Page not found" };
-      return context.res;
-    }
-
-    const block = page.blocks?.find(b => b.id === block_id);
-    if (!block) {
+    // Check block exists
+    const blockCheck = await pool.query('SELECT id FROM fri_page_blocks WHERE id = $1::uuid', [block_id]);
+    if (blockCheck.rows.length === 0) {
       context.res.status = 404;
       context.res.body = { error: "Block not found" };
       return context.res;
     }
 
-    if (config) block.config = config;
-    if (position !== undefined) block.position = position;
+    // Build update query dynamically
+    const updates = [];
+    const values = [];
+    let paramCount = 1;
+
+    if (config !== undefined) {
+      updates.push(`config = $${paramCount++}`);
+      values.push(JSON.stringify(config));
+    }
+    if (position !== undefined) {
+      updates.push(`position = $${paramCount++}`);
+      values.push(position);
+    }
+
+    if (updates.length === 0) {
+      context.res.status = 400;
+      context.res.body = { error: "No fields to update" };
+      return context.res;
+    }
+
+    values.push(block_id);
+    const result = await pool.query(
+      `UPDATE fri_page_blocks SET ${updates.join(', ')} WHERE id = $${paramCount}::uuid RETURNING *`,
+      values
+    );
 
     context.res.status = 200;
-    context.res.body = block;
+    context.res.body = result.rows[0];
     return context.res;
   } catch (error) {
+    console.error('UpdatePageBlock error:', error);
     context.res.status = 500;
     context.res.body = { error: error.message };
     return context.res;

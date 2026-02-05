@@ -305,6 +305,224 @@ export function BlockSettings({ block, onUpdate }: BlockSettingsProps) {
           </div>
         );
 
+      case "gallery":
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Titel</label>
+              <Input
+                value={config.title || ""}
+                onChange={(e) => handleChange("title", e.target.value)}
+                placeholder="Galleri"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Undertitel</label>
+              <Input
+                value={config.subtitle || ""}
+                onChange={(e) => handleChange("subtitle", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Kolonner</label>
+              <select
+                value={config.columns || 3}
+                onChange={(e) => handleChange("columns", parseInt(e.target.value))}
+                className="w-full border rounded p-2"
+              >
+                <option value={2}>2 kolonner</option>
+                <option value={3}>3 kolonner</option>
+                <option value={4}>4 kolonner</option>
+              </select>
+            </div>
+          </div>
+        );
+
+      case "stats":
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Titel</label>
+              <Input
+                value={config.title || ""}
+                onChange={(e) => handleChange("title", e.target.value)}
+                placeholder="Hvorfor vælge os?"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Undertitel</label>
+              <Input
+                value={config.subtitle || ""}
+                onChange={(e) => handleChange("subtitle", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Baggrundsfarve
+              </label>
+              <input
+                type="color"
+                value={config.bg_color || "#f9fafb"}
+                onChange={(e) => handleChange("bg_color", e.target.value)}
+                className="w-12 h-10 border rounded"
+              />
+            </div>
+          </div>
+        );
+
+      case "video":
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Video URL</label>
+              <Input
+                value={config.video_url || ""}
+                onChange={(e) => handleChange("video_url", e.target.value)}
+                placeholder="https://youtube.com/watch?v=..."
+              />
+              <p className="text-xs text-gray-500 mt-1">YouTube eller Vimeo URL</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Titel (valgfri)</label>
+              <Input
+                value={config.title || ""}
+                onChange={(e) => handleChange("title", e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case "divider":
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Stil</label>
+              <select
+                value={config.style || "line"}
+                onChange={(e) => handleChange("style", e.target.value)}
+                className="w-full border rounded p-2"
+              >
+                <option value="line">Linje</option>
+                <option value="space">Kun mellemrum</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Højde (px)</label>
+              <Input
+                type="number"
+                value={config.height || 40}
+                onChange={(e) => handleChange("height", parseInt(e.target.value))}
+                min={10}
+                max={200}
+              />
+            </div>
+          </div>
+        );
+
+      case "social":
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Titel</label>
+              <Input
+                value={config.title || ""}
+                onChange={(e) => handleChange("title", e.target.value)}
+                placeholder="Følg os"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Facebook URL</label>
+              <Input
+                value={config.facebook || ""}
+                onChange={(e) => handleChange("facebook", e.target.value)}
+                placeholder="https://facebook.com/..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Instagram URL</label>
+              <Input
+                value={config.instagram || ""}
+                onChange={(e) => handleChange("instagram", e.target.value)}
+                placeholder="https://instagram.com/..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Twitter URL</label>
+              <Input
+                value={config.twitter || ""}
+                onChange={(e) => handleChange("twitter", e.target.value)}
+                placeholder="https://twitter.com/..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">LinkedIn URL</label>
+              <Input
+                value={config.linkedin || ""}
+                onChange={(e) => handleChange("linkedin", e.target.value)}
+                placeholder="https://linkedin.com/..."
+              />
+            </div>
+          </div>
+        );
+
+      case "faq":
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Titel</label>
+              <Input
+                value={config.title || ""}
+                onChange={(e) => handleChange("title", e.target.value)}
+                placeholder="Ofte stillede spørgsmål"
+              />
+            </div>
+            <p className="text-xs text-gray-500">
+              FAQ-punkter kan tilpasses via databasen
+            </p>
+          </div>
+        );
+
+      case "map":
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Titel</label>
+              <Input
+                value={config.title || ""}
+                onChange={(e) => handleChange("title", e.target.value)}
+                placeholder="Find os"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Adresse</label>
+              <Input
+                value={config.address || ""}
+                onChange={(e) => handleChange("address", e.target.value)}
+                placeholder="Storgade 1, 1234 By"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Højde (px)</label>
+              <Input
+                type="number"
+                value={config.height || 400}
+                onChange={(e) => handleChange("height", parseInt(e.target.value))}
+                min={200}
+                max={600}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={config.show_address || false}
+                onChange={(e) => handleChange("show_address", e.target.checked)}
+                id="show_address"
+              />
+              <label htmlFor="show_address" className="text-sm">Vis adresse under kort</label>
+            </div>
+          </div>
+        );
+
       case "testimonial":
       case "footer":
       default:

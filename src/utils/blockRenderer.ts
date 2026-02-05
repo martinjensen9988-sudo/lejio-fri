@@ -10,12 +10,19 @@ import {
   CTABlock,
   TestimonialBlock,
   FooterBlock,
+  GalleryBlock,
+  StatsBlock,
+  VideoBlock,
+  DividerBlock,
+  SocialBlock,
+  FAQBlock,
+  MapBlock,
 } from '@/components/BlockComponents';
 
 interface BlockData {
   id: string;
   block_type: string;
-  config: Record<string, string | number | boolean | undefined>;
+  config: Record<string, any>;
 }
 
 interface LessorData {
@@ -56,6 +63,21 @@ export function renderBlock(
       return React.createElement(TestimonialBlock, { key: id, config });
     case 'footer':
       return React.createElement(FooterBlock, { key: id, config, lessor });
+    // New block types
+    case 'gallery':
+      return React.createElement(GalleryBlock, { key: id, config });
+    case 'stats':
+      return React.createElement(StatsBlock, { key: id, config });
+    case 'video':
+      return React.createElement(VideoBlock, { key: id, config });
+    case 'divider':
+      return React.createElement(DividerBlock, { key: id, config });
+    case 'social':
+      return React.createElement(SocialBlock, { key: id, config });
+    case 'faq':
+      return React.createElement(FAQBlock, { key: id, config });
+    case 'map':
+      return React.createElement(MapBlock, { key: id, config });
     default:
       return React.createElement('div', {
         key: id,

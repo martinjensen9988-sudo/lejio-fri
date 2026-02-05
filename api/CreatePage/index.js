@@ -1,4 +1,4 @@
-const { readPages, writePages } = require("../storage");
+const pool = require("../db");
 
 module.exports = async function (context, req) {
   context.res.headers = {
@@ -7,7 +7,7 @@ module.exports = async function (context, req) {
   };
 
   try {
-    const { lessor_id, title, slug, meta_description } = req.body;
+    const { lessor_id, title, slug, meta_description, blocks } = req.body;
 
     if (!lessor_id || !title || !slug) {
       context.res.status = 400;
@@ -15,37 +15,66 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    const pages = readPages();
-    
     // Check if slug already exists for this lessor
-    for (const page of Object.values(pages)) {
-      if (page.lessor_id === lessor_id && page.slug === slug) {
-        context.res.status = 409;
-        context.res.body = { error: "Page with this slug already exists" };
-        return context.res;
+    const existingSlug = await pool.query(
+      'SELECT id FROM fri_pages WHERE lessor_id = $1 AND slug = $2',
+      [lessor_id, slug]
+    );
+
+    if (existingSlug.rows.length > 0) {
+      context.res.status = 409;
+      context.res.body = { error: "Page with this slug already exists" };
+      return context.res;
+    }
+
+    // Create the page
+    const result = await pool.query(
+      `INSERT INTO fri_pages (lessor_id, slug, title, meta_description, is_published, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, false, NOW(), NOW())
+       RETURNING *`,
+      [lessor_id, slug, title, meta_description || ""]
+    );
+
+    const newPage = result.rows[0];
+
+    // Insert blocks if provided
+    if (blocks && Array.isArray(blocks) && blocks.length > 0) {
+      for (let i = 0; i < blocks.length; i++) {
+        const block = blocks[i];
+        await pool.query(
+          `INSERT INTO fri_page_blocks (page_id, block_type, config, position)
+           VALUES ($1, $2, $3, $4)`,
+          [newPage.id, block.block_type, JSON.stringify(block.config || {}), i]
+        );
       }
     }
 
-    const pageId = `page-${Date.now()}`;
-    const newPage = {
-      id: pageId,
-      lessor_id,
-      slug,
-      title,
-      meta_description: meta_description || "",
-      is_published: false,
-      blocks: [],
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    pages[pageId] = newPage;
-    writePages(pages);
+    // Fetch page with blocks
+    const pageWithBlocks = await pool.query(
+      `SELECT p.*, 
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', pb.id,
+              'block_type', pb.block_type,
+              'config', pb.config,
+              'position', pb.position
+            ) ORDER BY pb.position
+          ) FILTER (WHERE pb.id IS NOT NULL), 
+          '[]'
+        ) as blocks
+       FROM fri_pages p
+       LEFT JOIN fri_page_blocks pb ON pb.page_id = p.id
+       WHERE p.id = $1
+       GROUP BY p.id`,
+      [newPage.id]
+    );
 
     context.res.status = 201;
-    context.res.body = newPage;
+    context.res.body = pageWithBlocks.rows[0];
     return context.res;
   } catch (error) {
+    console.error('CreatePage error:', error);
     context.res.status = 500;
     context.res.body = { error: error.message };
     return context.res;
