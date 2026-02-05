@@ -4,9 +4,9 @@ services:
     env: node
     region: copenhagen
     plan: standard
-    # Deployment refresh: 2026-02-05T14:36:00Z
-    buildCommand: npm install --legacy-peer-deps --include=dev && npm run build
-    startCommand: node api/server.js
+    # Note: render-start.sh handles build if needed, so buildCommand is optional
+    buildCommand: npm install --legacy-peer-deps --include=dev
+    startCommand: bash render-start.sh
     envVars:
       - key: NODE_ENV
         value: production

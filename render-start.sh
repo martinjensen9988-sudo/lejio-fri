@@ -53,6 +53,22 @@ echo "🔧 NPM: $(npm --version)"
 echo "📥 Checking/installing dependencies..."
 npm install --legacy-peer-deps --include=dev || npm install || { echo "❌ Failed to install dependencies"; exit 1; }
 
+# Check if dist/index.html exists - if not, build it
+if [ ! -f "dist/index.html" ]; then
+  echo "⚠️  dist/index.html not found, building React app..."
+  npm run build || { echo "❌ Build failed"; exit 1; }
+  echo "✅ Build complete"
+  
+  if [ ! -f "dist/index.html" ]; then
+    echo "❌ Build succeeded but dist/index.html still missing!"
+    echo "📁 dist/ contents:"
+    ls -la dist/ 2>/dev/null || echo "dist/ directory not found"
+    exit 1
+  fi
+fi
+
+echo "✅ dist/index.html ready"
+
 # Start server
 echo "🚀 Starting application server on port ${PORT:-3000}..."
 exec node api/server.js
