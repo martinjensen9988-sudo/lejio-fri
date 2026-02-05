@@ -16,9 +16,12 @@ app.use(express.json());
 let distPath;
 const possiblePaths = [
   '/opt/render/project/dist',                   // Render production (PRIORITY)
+  '/opt/render/project/src/dist',               // Render if project is in src subdir
   path.resolve(__dirname, '../../dist'),        // From api/server.js going up 2 dirs to root
+  path.resolve(__dirname, '../../src/dist'),    // From api/server.js going up to root, then src/dist
   path.resolve(__dirname, '../dist'),           // From api/server.js going up 1 dir (if server is in api/)
   path.resolve(process.cwd(), 'dist'),          // From current working directory
+  path.resolve(process.cwd(), 'src/dist'),      // From current working directory src subdir
 ];
 
 console.log(`🔍 Current working directory: ${process.cwd()}`);
