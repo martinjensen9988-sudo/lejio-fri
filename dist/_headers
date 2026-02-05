@@ -1,0 +1,31 @@
+# No cache for HTML files - always fetch fresh
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+# No cache for root
+/
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Cache static assets with content hashes for 1 year
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Cache service worker for 5 minutes (needs shorter cache for updates)
+/registerSW.js
+  Cache-Control: public, max-age=300
+/sw.js
+  Cache-Control: public, max-age=300
+
+# Cache favicon and icons for 1 week
+/favicon.ico
+  Cache-Control: public, max-age=604800
+/favicon.png
+  Cache-Control: public, max-age=604800
+/pwa-*.png
+  Cache-Control: public, max-age=604800
+
+# Cache placeholder for 1 week
+/placeholder.svg
+  Cache-Control: public, max-age=604800
