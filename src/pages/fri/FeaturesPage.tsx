@@ -26,7 +26,8 @@ import {
   MessageSquare,
   Package,
   Truck,
-  TrendingDown
+  TrendingDown,
+  Crown
 } from 'lucide-react';
 
 export function FriFeaturesPage() {
@@ -333,19 +334,24 @@ export function FriFeaturesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-[#0b0f1a] text-white">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_45%)]" />
+      
       {/* Navigation */}
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
+      <nav className="sticky top-0 z-50 backdrop-blur-lg bg-white/5 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/fri" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Din platform
+          <Link to="/fri" className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.35)]">
+              <Crown className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-xl font-bold">Din platform</span>
           </Link>
           <div className="flex gap-4">
             <Link to="/fri/login">
-              <Button variant="ghost">Log ind</Button>
+              <Button variant="ghost" className="text-white/80 hover:text-amber-100 hover:bg-white/10">Log ind</Button>
             </Link>
             <Link to="/fri/trial">
-              <Button>Start prøveperiode</Button>
+              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">Start prøveperiode</Button>
             </Link>
           </div>
         </div>
@@ -354,14 +360,14 @@ export function FriFeaturesPage() {
       {/* Hero */}
       <section className="max-w-7xl mx-auto px-4 py-16 md:py-24">
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-6 leading-tight">
-            Alle funktioner i <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">platformen</span>
+          <h1 className="text-5xl md:text-6xl font-black text-white mb-6 leading-tight">
+            Alle funktioner i <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-300">platformen</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+          <p className="text-xl text-white/70 max-w-2xl mx-auto mb-8">
             En komplet løsning til bilutlejning. Ingen skjulte funktioner – alt er inkluderet i din plan.
           </p>
           <Link to="/fri/trial">
-            <Button size="lg" className="gap-2">
+            <Button size="lg" className="gap-2 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
               Start gratis prøveperiode <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
@@ -372,21 +378,21 @@ export function FriFeaturesPage() {
           {features.map((feature, index) => {
             const IconComponent = iconMap[feature.category];
             return (
-              <Card key={index} className="bg-white/80 backdrop-blur-sm hover:shadow-lg transition-shadow h-full">
+              <Card key={index} className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all h-full">
                 <CardHeader>
                   <div className="flex items-start justify-between mb-2">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                      {IconComponent && <IconComponent className="h-6 w-6 text-blue-600" />}
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-500/20 border border-amber-500/30">
+                      {IconComponent && <IconComponent className="h-6 w-6 text-amber-300" />}
                     </div>
                   </div>
-                  <CardTitle className="text-xl">{feature.category}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
+                  <CardTitle className="text-xl text-white">{feature.category}</CardTitle>
+                  <CardDescription className="text-white/60">{feature.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
                     {feature.features.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                        <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <li key={i} className="flex items-start gap-2 text-sm text-white/70">
+                        <CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -399,80 +405,80 @@ export function FriFeaturesPage() {
       </section>
 
       {/* Comparison Section */}
-      <section className="bg-white/50 backdrop-blur-sm py-16 border-t border-gray-200">
+      <section className="bg-white/5 backdrop-blur-sm py-16 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Hvad er inkluderet på din plan?</h2>
+          <h2 className="text-3xl font-bold text-center text-white mb-12">Hvad er inkluderet på din plan?</h2>
           
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b-2 border-gray-300">
-                  <th className="text-left py-4 px-4 font-semibold text-gray-900">Funktion</th>
-                  <th className="text-center py-4 px-4 font-semibold text-gray-900">Professional</th>
-                  <th className="text-center py-4 px-4 font-semibold text-gray-900">Business</th>
-                  <th className="text-center py-4 px-4 font-semibold text-gray-900">Enterprise</th>
+                <tr className="border-b-2 border-amber-500/30">
+                  <th className="text-left py-4 px-4 font-semibold text-white">Funktion</th>
+                  <th className="text-center py-4 px-4 font-semibold text-white">Professional</th>
+                  <th className="text-center py-4 px-4 font-semibold text-white">Business</th>
+                  <th className="text-center py-4 px-4 font-semibold text-white">Enterprise</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 px-4 text-gray-900 font-semibold">Flådestyring</td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
+                <tr className="border-b border-white/10 hover:bg-white/5">
+                  <td className="py-4 px-4 text-white font-semibold">Flådestyring</td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 px-4 text-gray-900 font-semibold">Bookinger</td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
+                <tr className="border-b border-white/10 hover:bg-white/5">
+                  <td className="py-4 px-4 text-white font-semibold">Bookinger</td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 px-4 text-gray-900 font-semibold">Fakturaering</td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
+                <tr className="border-b border-white/10 hover:bg-white/5">
+                  <td className="py-4 px-4 text-white font-semibold">Fakturaering</td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 px-4 text-gray-900 font-semibold">Grundlæggende analytik</td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
+                <tr className="border-b border-white/10 hover:bg-white/5">
+                  <td className="py-4 px-4 text-white font-semibold">Grundlæggende analytik</td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 px-4 text-gray-900 font-semibold">Avanceret analytik</td>
-                  <td className="text-center py-4 px-4">–</td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
+                <tr className="border-b border-white/10 hover:bg-white/5">
+                  <td className="py-4 px-4 text-white font-semibold">Avanceret analytik</td>
+                  <td className="text-center py-4 px-4 text-white/40">–</td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 px-4 text-gray-900 font-semibold">Teammedlemmer</td>
-                  <td className="text-center py-4 px-4">3</td>
-                  <td className="text-center py-4 px-4">10</td>
-                  <td className="text-center py-4 px-4">Ubegrænset</td>
+                <tr className="border-b border-white/10 hover:bg-white/5">
+                  <td className="py-4 px-4 text-white font-semibold">Teammedlemmer</td>
+                  <td className="text-center py-4 px-4 text-white/70">3</td>
+                  <td className="text-center py-4 px-4 text-white/70">10</td>
+                  <td className="text-center py-4 px-4 text-white/70">Ubegrænset</td>
                 </tr>
-                <tr className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 px-4 text-gray-900 font-semibold">API adgang</td>
-                  <td className="text-center py-4 px-4">–</td>
-                  <td className="text-center py-4 px-4">Read-only</td>
-                  <td className="text-center py-4 px-4">Fuldt</td>
+                <tr className="border-b border-white/10 hover:bg-white/5">
+                  <td className="py-4 px-4 text-white font-semibold">API adgang</td>
+                  <td className="text-center py-4 px-4 text-white/40">–</td>
+                  <td className="text-center py-4 px-4 text-white/70">Read-only</td>
+                  <td className="text-center py-4 px-4 text-white/70">Fuldt</td>
                 </tr>
-                <tr className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 px-4 text-gray-900 font-semibold">Branding tilpasning</td>
-                  <td className="text-center py-4 px-4">–</td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
-                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-green-600 mx-auto" /></td>
+                <tr className="border-b border-white/10 hover:bg-white/5">
+                  <td className="py-4 px-4 text-white font-semibold">Branding tilpasning</td>
+                  <td className="text-center py-4 px-4 text-white/40">–</td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
+                  <td className="text-center py-4 px-4"><CheckCircle2 className="w-5 h-5 text-amber-400 mx-auto" /></td>
                 </tr>
-                <tr className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 px-4 text-gray-900 font-semibold">Prioritets support</td>
-                  <td className="text-center py-4 px-4">–</td>
-                  <td className="text-center py-4 px-4">Email + Slack</td>
-                  <td className="text-center py-4 px-4">24/7 prioritets</td>
+                <tr className="border-b border-white/10 hover:bg-white/5">
+                  <td className="py-4 px-4 text-white font-semibold">Prioritets support</td>
+                  <td className="text-center py-4 px-4 text-white/40">–</td>
+                  <td className="text-center py-4 px-4 text-white/70">Email + Slack</td>
+                  <td className="text-center py-4 px-4 text-white/70">24/7 prioritets</td>
                 </tr>
-                <tr className="hover:bg-gray-50">
-                  <td className="py-4 px-4 text-gray-900 font-semibold">SLA garanteret uptime</td>
-                  <td className="text-center py-4 px-4">–</td>
-                  <td className="text-center py-4 px-4">–</td>
-                  <td className="text-center py-4 px-4">99.9%</td>
+                <tr className="hover:bg-white/5">
+                  <td className="py-4 px-4 text-white font-semibold">SLA garanteret uptime</td>
+                  <td className="text-center py-4 px-4 text-white/40">–</td>
+                  <td className="text-center py-4 px-4 text-white/40">–</td>
+                  <td className="text-center py-4 px-4 text-white/70">99.9%</td>
                 </tr>
               </tbody>
             </table>
@@ -481,14 +487,14 @@ export function FriFeaturesPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-16">
+      <section className="bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border-y border-amber-500/30 py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-6">Klar til at se det hele i aktion?</h2>
-          <p className="text-xl mb-8">
+          <h2 className="text-4xl font-bold mb-6 text-white">Klar til at se det hele i aktion?</h2>
+          <p className="text-xl mb-8 text-white/70">
             Prøv alle funktioner helt gratis i 14 dage. Intet kreditkort påkrævet.
           </p>
           <Link to="/fri/trial">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
+            <Button size="lg" className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
               Start gratis prøveperiode
             </Button>
           </Link>
@@ -496,43 +502,43 @@ export function FriFeaturesPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-[#070a12] text-white py-12 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h4 className="font-bold text-lg mb-4">Om platformen</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link to="/fri" className="hover:text-white">Hjem</Link></li>
-                <li><Link to="/fri/features" className="hover:text-white">Funktioner</Link></li>
-                <li><Link to="/fri/landing" className="hover:text-white">Priser</Link></li>
+              <h4 className="font-bold text-lg mb-4 text-amber-200">Om platformen</h4>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><Link to="/fri" className="hover:text-amber-300">Hjem</Link></li>
+                <li><Link to="/fri/features" className="hover:text-amber-300">Funktioner</Link></li>
+                <li><Link to="/fri/landing" className="hover:text-amber-300">Priser</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-lg mb-4">Support</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="mailto:support@yourdomain.com" className="hover:text-white">support@yourdomain.com</a></li>
-                <li><a href="#" className="hover:text-white">Dokumentation</a></li>
-                <li><a href="#" className="hover:text-white">FAQ</a></li>
+              <h4 className="font-bold text-lg mb-4 text-amber-200">Support</h4>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><a href="mailto:support@yourdomain.com" className="hover:text-amber-300">support@yourdomain.com</a></li>
+                <li><a href="#" className="hover:text-amber-300">Dokumentation</a></li>
+                <li><a href="#" className="hover:text-amber-300">FAQ</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-lg mb-4">Juridisk</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white">Privatlivspolitik</a></li>
-                <li><a href="#" className="hover:text-white">Vilkår & betingelser</a></li>
-                <li><a href="#" className="hover:text-white">GDPR</a></li>
+              <h4 className="font-bold text-lg mb-4 text-amber-200">Juridisk</h4>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><a href="#" className="hover:text-amber-300">Privatlivspolitik</a></li>
+                <li><a href="#" className="hover:text-amber-300">Vilkår & betingelser</a></li>
+                <li><a href="#" className="hover:text-amber-300">GDPR</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-lg mb-4">Kontakt</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
+              <h4 className="font-bold text-lg mb-4 text-amber-200">Kontakt</h4>
+              <ul className="space-y-2 text-sm text-white/60">
                 <li>Din virksomhed</li>
                 <li>Danmark</li>
-                <li><a href="tel:+4544889999" className="hover:text-white">+45 44 88 99 99</a></li>
+                <li><a href="tel:+4544889999" className="hover:text-amber-300">+45 44 88 99 99</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
+          <div className="border-t border-white/10 pt-8 text-center text-sm text-white/40">
             <p>© 2026 Din platform. Alle rettigheder forbeholdt.</p>
           </div>
         </div>

@@ -6,33 +6,33 @@ import { ArrowRight, Check, Crown, ShieldCheck, Sparkles, TrendingUp, Users, Wan
 export function FriLandingPage() {
   return (
     <div className="min-h-screen bg-[#0b0f1a] text-white">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.25),_transparent_45%),radial-gradient(circle_at_30%_30%,_rgba(56,189,248,0.2),_transparent_40%),radial-gradient(circle_at_80%_20%,_rgba(167,139,250,0.2),_transparent_40%)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.18),_transparent_45%),radial-gradient(circle_at_30%_30%,_rgba(99,102,241,0.2),_transparent_40%),radial-gradient(circle_at_80%_20%,_rgba(56,189,248,0.18),_transparent_40%)]" />
 
       {/* Navigation */}
       <nav className="sticky top-0 z-50 backdrop-blur-lg bg-white/5 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.35)]">
               <Crown className="h-5 w-5 text-white" />
             </div>
             <div>
               <div className="text-xl font-semibold">Din platform</div>
-              <div className="text-xs text-white/60">White‑label biludlejning</div>
+              <div className="text-xs text-amber-200/80">White‑label biludlejning</div>
             </div>
           </div>
           <div className="hidden md:flex gap-4 items-center">
-            <Link to="/features">
-              <Button variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10">Alle funktioner</Button>
+            <Link to="/fri/features">
+              <Button variant="ghost" className="text-white/80 hover:text-amber-100 hover:bg-white/10">Alle funktioner</Button>
             </Link>
-            <Link to="/login">
-              <Button variant="ghost" className="text-white/80 hover:text-white hover:bg-white/10">Log ind</Button>
+            <Link to="/fri/login">
+              <Button variant="ghost" className="text-white/80 hover:text-amber-100 hover:bg-white/10">Log ind</Button>
             </Link>
-            <Link to="/signup">
-              <Button className="bg-white text-black hover:bg-white/90">Kom i gang</Button>
+            <Link to="/fri/signup">
+              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">Kom i gang</Button>
             </Link>
           </div>
-          <Link to="/signup" className="md:hidden">
-            <Button className="bg-white text-black hover:bg-white/90">Kom i gang</Button>
+          <Link to="/fri/signup" className="md:hidden">
+            <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">Kom i gang</Button>
           </Link>
         </div>
       </nav>
@@ -41,8 +41,8 @@ export function FriLandingPage() {
       <section className="max-w-7xl mx-auto px-4 py-20">
         <div className="grid lg:grid-cols-[1.1fr,0.9fr] gap-14 items-center">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm text-white/80 mb-6">
-              <Sparkles className="h-4 w-4 text-cyan-300" />
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-amber-500/30 text-sm text-white/80 mb-6">
+              <Sparkles className="h-4 w-4 text-amber-300" />
               Eksklusivt design til premium udlejere
             </div>
             <h1 className="text-5xl md:text-6xl font-semibold tracking-tight leading-tight">
@@ -52,13 +52,13 @@ export function FriLandingPage() {
               Skab en premium oplevelse for dine kunder med et stilrent, hurtigt og sikkert system, der samler flåde, bookinger og fakturaer i ét kontrolcenter.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
-              <Link to="/trial">
-                <Button size="lg" className="gap-2 bg-white text-black hover:bg-white/90">
+              <Link to="/fri/trial">
+                <Button size="lg" className="gap-2 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
                   Start gratis prøveperiode <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
-              <Link to="/features">
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              <Link to="/fri/features">
+                <Button size="lg" variant="outline" className="border-amber-500/30 text-white hover:bg-white/10">
                   Se alle features
                 </Button>
               </Link>
@@ -79,7 +79,7 @@ export function FriLandingPage() {
             </div>
           </div>
           <div className="relative">
-            <div className="absolute -inset-6 bg-gradient-to-br from-indigo-500/30 to-cyan-400/20 blur-2xl rounded-full" />
+            <div className="absolute -inset-6 bg-gradient-to-br from-amber-500/30 to-yellow-400/20 blur-2xl rounded-full" />
             <Card className="relative bg-white/5 border border-white/10 backdrop-blur-xl text-white shadow-2xl">
               <CardHeader>
                 <CardTitle className="text-white">Executive Dashboard</CardTitle>
@@ -103,7 +103,7 @@ export function FriLandingPage() {
                       <p className="font-semibold">Audi Q8</p>
                       <p className="text-xs text-white/60">Udnyttelse 92%</p>
                     </div>
-                    <TrendingUp className="h-5 w-5 text-cyan-300" />
+                    <TrendingUp className="h-5 w-5 text-amber-300" />
                   </div>
                 </div>
               </CardContent>
