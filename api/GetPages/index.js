@@ -9,6 +9,7 @@ module.exports = async function (context, req) {
   try {
     const lessorId = req.query.lessor_id;
     const pageId = req.query.page_id;
+    const slug = req.query.slug;
 
     if (!lessorId) {
       context.res.status = 400;
@@ -16,54 +17,42 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    let pages = [];
-    
+<<<<<<< HEAD
+    const conditions = ['p.lessor_id = $1'];
+    const values = [lessorId];
+
     if (pageId) {
-      // Get specific page with its blocks
-      const pageResult = await pool.query(
-        `SELECT p.*, 
-          COALESCE(
-            json_agg(
-              json_build_object(
-                'id', pb.id,
-                'block_type', pb.block_type,
-                'config', pb.config,
-                'position', pb.position
-              ) ORDER BY pb.position
-            ) FILTER (WHERE pb.id IS NOT NULL), 
-            '[]'
-          ) as blocks
-         FROM fri_pages p
-         LEFT JOIN fri_page_blocks pb ON pb.page_id = p.id
-         WHERE p.id = $1::uuid AND p.lessor_id = $2
-         GROUP BY p.id`,
-        [pageId, lessorId]
-      );
-      pages = pageResult.rows;
-    } else {
-      // Get all pages for lessor
-      const pagesResult = await pool.query(
-        `SELECT p.*, 
-          COALESCE(
-            json_agg(
-              json_build_object(
-                'id', pb.id,
-                'block_type', pb.block_type,
-                'config', pb.config,
-                'position', pb.position
-              ) ORDER BY pb.position
-            ) FILTER (WHERE pb.id IS NOT NULL), 
-            '[]'
-          ) as blocks
-         FROM fri_pages p
-         LEFT JOIN fri_page_blocks pb ON pb.page_id = p.id
-         WHERE p.lessor_id = $1
-         GROUP BY p.id
-         ORDER BY p.updated_at DESC`,
-        [lessorId]
-      );
-      pages = pagesResult.rows;
+      values.push(pageId);
+      conditions.push(`p.id = $${values.length}::uuid`);
     }
+
+    if (slug) {
+      values.push(slug);
+      conditions.push(`p.slug = $${values.length}`);
+    }
+
+    const pagesResult = await pool.query(
+      `SELECT p.*, 
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', pb.id,
+              'block_type', pb.block_type,
+              'config', pb.config,
+              'position', pb.position
+            ) ORDER BY pb.position
+          ) FILTER (WHERE pb.id IS NOT NULL), 
+          '[]'
+        ) as blocks
+       FROM fri_pages p
+       LEFT JOIN fri_page_blocks pb ON pb.page_id = p.id
+       WHERE ${conditions.join(' AND ')}
+       GROUP BY p.id
+       ORDER BY p.updated_at DESC`,
+      values
+    );
+
+    const pages = pagesResult.rows;
 
     context.res.status = 200;
     context.res.body = pages;

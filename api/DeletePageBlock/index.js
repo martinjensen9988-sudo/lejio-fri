@@ -23,7 +23,7 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    await pool.query('DELETE FROM fri_page_blocks WHERE id = $1::uuid', [blockId]);
+  await pool.query('DELETE FROM fri_page_blocks WHERE id = $1::uuid', [blockId]);
 
     context.res.status = 200;
     context.res.body = { message: "Block deleted" };

@@ -15,9 +15,9 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    // Check page exists
-    const existing = await pool.query('SELECT id FROM fri_pages WHERE id = $1::uuid', [page_id]);
-    if (existing.rows.length === 0) {
+  // Check page exists
+  const existing = await pool.query('SELECT id FROM fri_pages WHERE id = $1::uuid', [page_id]);
+  if (existing.rows.length === 0) {
       context.res.status = 404;
       context.res.body = { error: "Page not found" };
       return context.res;
