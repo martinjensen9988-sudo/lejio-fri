@@ -48,6 +48,7 @@ const WorkshopModulesPublic = lazy(() => import("./pages/fri/workshop/WorkshopMo
 // Page Builder - lazy loaded
 const PagesDashboard = lazy(() => import("./pages/dashboard/PagesDashboard").then(m => ({ default: m.PagesDashboard })));
 const PageBuilder = lazy(() => import("./pages/dashboard/PageBuilder").then(m => ({ default: m.PageBuilder })));
+const PagePreview = lazy(() => import("./pages/dashboard/PagePreview").then(m => ({ default: m.PagePreview })));
 const PublicSiteRenderer = lazy(() => import("./pages/PublicSite").then(m => ({ default: m.PublicSiteRenderer })));
 
 // Optimized QueryClient configuration for better performance
@@ -156,6 +157,7 @@ export default function App() {
 
                 {/* Page Builder - Lejio Fri Dashboard */}
                 <Route path="/dashboard/pages" element={<PagesDashboard />} />
+                <Route path="/dashboard/pages/:id/preview" element={<PagePreview />} />
                 <Route path="/dashboard/pages/:id/edit" element={<PageBuilder />} />
 
                 {/* Page Renderer for published sites */}

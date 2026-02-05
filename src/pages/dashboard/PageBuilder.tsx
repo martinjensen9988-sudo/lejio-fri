@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { usePages } from "@/hooks/usePages";
 import { BlockSettings } from "@/components/PageBuilderSettings";
+import { renderBlock } from "@/utils/blockRenderer";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   DragDropContext,
@@ -13,7 +14,6 @@ import {
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
-import { renderBlock } from "@/utils/blockRenderer";
 import {
   Layout, Type, DollarSign, Car, Calendar, Mail, Image, MousePointer,
   Star, Menu, MapPin, HelpCircle, ImageIcon, BarChart3, Video, Minus,
@@ -120,12 +120,35 @@ export function PageBuilder() {
   const [history, setHistory] = useState<PageBlock[][]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
+  const previewLessor = useMemo(() => ({
+    name: profile?.company_name || profile?.full_name || "Your Company",
+    email: profile?.email,
+    phone: profile?.phone,
+  }), [profile]);
+
+  const previewVehicles = useMemo(() => ([
+    {
+      id: "preview-vehicle-1",
+      name: "Sample Vehicle",
+      description: "Example description for preview",
+      daily_rate: 499,
+      image: "",
+    },
+    {
+      id: "preview-vehicle-2",
+      name: "City Compact",
+      description: "Another example vehicle",
+      daily_rate: 349,
+      image: "",
+    },
+  ]), []);
+
   // Load page data
   useEffect(() => {
-    if (pageId) {
+    if (pageId && profile?.lessor_id) {
       loadPage();
     }
-  }, [pageId]);
+  }, [pageId, profile?.lessor_id]);
 
   // Load block types
   useEffect(() => {
@@ -308,8 +331,14 @@ export function PageBuilder() {
     const updatedBlocks = newBlocks.map((b, i) => ({ ...b, position: i }));
     setBlocks(updatedBlocks);
 
+    // Save new positions to API
+    if (!page) return;
     try {
-      await updateBlock(page?.id || "", draggableId, { position: destination.index });
+      await Promise.allSettled(
+        updatedBlocks.map((block) =>
+          updateBlock(page.id, block.id, { position: block.position })
+        )
+      );
     } catch (error) {
       console.error("Failed to reorder blocks:", error);
     }
@@ -532,7 +561,9 @@ export function PageBuilder() {
                 ) : (
                   blocks.sort((a, b) => a.position - b.position).map((block) => (
                     <div key={block.id}>
-                      {renderBlock(block)}
+                      {block.block_type === "vehicles"
+                        ? renderBlock(block, previewLessor, previewVehicles)
+                        : renderBlock(block, previewLessor)}
                     </div>
                   ))
                 )}

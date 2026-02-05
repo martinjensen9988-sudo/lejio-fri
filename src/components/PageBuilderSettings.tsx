@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +16,10 @@ interface BlockSettingsProps {
 
 export function BlockSettings({ block, onUpdate }: BlockSettingsProps) {
   const [config, setConfig] = useState<Record<string, string | number | boolean | undefined>>(block.config || {});
+
+  useEffect(() => {
+    setConfig(block.config || {});
+  }, [block.id, block.config]);
 
   const handleChange = (key: string, value: string | number | boolean | undefined) => {
     const newConfig = { ...config, [key]: value };

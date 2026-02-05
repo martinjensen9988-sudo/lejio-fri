@@ -51,7 +51,7 @@ export function PublicSiteRenderer({
     try {
       // Fetch page
       const pageRes = await fetch(
-        `/api/pages?lessor_id=${lessorId}&slug=${pageSlug}`
+        `/api/get-pages?lessor_id=${lessorId}&slug=${pageSlug}`
       );
       if (!pageRes.ok) throw new Error("Page not found");
       const pages = await pageRes.json();
