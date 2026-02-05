@@ -15,7 +15,7 @@ export function useFriStats() {
       if (!user?.lessor_id) throw new Error('No lessor_id');
       
       const response = await fetch(
-        `${API_BASE}/GetLessorStats?lessor_id=${user.lessor_id}`
+        `${API_BASE}/get-lessor-stats?lessor_id=${user.lessor_id}`
       );
       if (!response.ok) throw new Error('Failed to fetch stats');
       return response.json();
@@ -37,7 +37,7 @@ export function useFriVehicles() {
       if (!user?.lessor_id) throw new Error('No lessor_id');
       
       const response = await fetch(
-        `${API_BASE}/GetVehicles?lessor_id=${user.lessor_id}`
+        `${API_BASE}/get-vehicles?lessor_id=${user.lessor_id}`
       );
       if (!response.ok) throw new Error('Failed to fetch vehicles');
       return response.json();
@@ -56,7 +56,7 @@ export function useCreateVehicle() {
 
   return useMutation({
     mutationFn: async (vehicleData: any) => {
-      const response = await fetch(`${API_BASE}/CreateVehicle`, {
+      const response = await fetch(`${API_BASE}/create-vehicle`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -83,7 +83,7 @@ export function useUpdateVehicle() {
 
   return useMutation({
     mutationFn: async ({ id, ...vehicleData }: any) => {
-      const response = await fetch(`${API_BASE}/UpdateVehicle`, {
+      const response = await fetch(`${API_BASE}/update-vehicle`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -111,7 +111,7 @@ export function useDeleteVehicle() {
   return useMutation({
     mutationFn: async (vehicleId: string) => {
       const response = await fetch(
-        `${API_BASE}/DeleteVehicle?id=${vehicleId}&lessor_id=${user?.lessor_id}`,
+        `${API_BASE}/delete-vehicle?id=${vehicleId}&lessor_id=${user?.lessor_id}`,
         { method: 'DELETE' }
       );
       if (!response.ok) throw new Error('Failed to delete vehicle');
@@ -141,7 +141,7 @@ export function useFriBookings(status?: string) {
       if (!user?.lessor_id) throw new Error('No lessor_id');
       
       const response = await fetch(
-        `${API_BASE}/GetBookings?${queryParams}`
+        `${API_BASE}/get-bookings?${queryParams}`
       );
       if (!response.ok) throw new Error('Failed to fetch bookings');
       return response.json();
@@ -168,7 +168,7 @@ export function useFriInvoices(status?: string) {
       if (!user?.lessor_id) throw new Error('No lessor_id');
       
       const response = await fetch(
-        `${API_BASE}/GetInvoices?${queryParams}`
+        `${API_BASE}/get-invoices?${queryParams}`
       );
       if (!response.ok) throw new Error('Failed to fetch invoices');
       return response.json();

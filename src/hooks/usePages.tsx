@@ -34,7 +34,7 @@ export function usePages(lessorId?: string) {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE}/GetPages?lessor_id=${lessorId}`);
+      const response = await fetch(`${API_BASE}/get-pages?lessor_id=${lessorId}`);
       if (!response.ok) throw new Error("Failed to fetch pages");
       const data = await response.json();
       setPages(data || []);
@@ -54,7 +54,7 @@ export function usePages(lessorId?: string) {
       setLoading(true);
       try {
         const response = await fetch(
-          `${API_BASE}/GetPages?lessor_id=${lessorId}&page_id=${pageId}`
+          `${API_BASE}/get-pages?lessor_id=${lessorId}&page_id=${pageId}`
         );
         if (!response.ok) return null;
         const data = await response.json();
@@ -78,7 +78,7 @@ export function usePages(lessorId?: string) {
     ): Promise<Page> => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE}/CreatePage`, {
+        const response = await fetch(`${API_BASE}/create-page`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ lessor_id, title, slug, meta_description }),
@@ -101,7 +101,7 @@ export function usePages(lessorId?: string) {
     async (pageId: string, updates: Partial<Page>) => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE}/UpdatePage`, {
+        const response = await fetch(`${API_BASE}/update-page`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ page_id: pageId, ...updates }),
@@ -124,7 +124,7 @@ export function usePages(lessorId?: string) {
     async (pageId: string) => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE}/DeletePage?page_id=${pageId}`, {
+        const response = await fetch(`${API_BASE}/delete-page?page_id=${pageId}`, {
           method: "DELETE",
         });
         if (!response.ok) throw new Error("Failed to delete page");
@@ -155,7 +155,7 @@ export function usePages(lessorId?: string) {
     ): Promise<PageBlock> => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE}/AddPageBlock`, {
+        const response = await fetch(`${API_BASE}/add-page-block`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ page_id: pageId, block_type, position, config }),
@@ -182,7 +182,7 @@ export function usePages(lessorId?: string) {
     async (pageId: string, blockId: string, updates: Partial<PageBlock>) => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE}/UpdatePageBlock`, {
+        const response = await fetch(`${API_BASE}/update-page-block`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ page_id: pageId, block_id: blockId, ...updates }),
@@ -215,7 +215,7 @@ export function usePages(lessorId?: string) {
       setLoading(true);
       try {
         const response = await fetch(
-          `${API_BASE}/DeletePageBlock?page_id=${pageId}&block_id=${blockId}`,
+          `${API_BASE}/delete-page-block?page_id=${pageId}&block_id=${blockId}`,
           { method: "DELETE" }
         );
         if (!response.ok) throw new Error("Failed to delete block");
