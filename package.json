@@ -9,8 +9,8 @@
                     "build:dev":  "vite build --mode development",
                     "lint":  "eslint .",
                     "preview":  "vite preview",
-                    "start":  "node --require dotenv/config api/server.js",
-                    "server":  "node --require dotenv/config api/server.js"
+                    "start":  "node api/server.js",
+                    "server":  "node api/server.js"
                 },
     "dependencies":  {
                          "express":  "^4.18.2",
