@@ -1,25 +1,26 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
+import { useFriAuthContext } from "@/providers/FriAuthProvider";
 import { usePages, Page } from "@/hooks/usePages";
 import { renderBlock } from "@/utils/blockRenderer";
 
 export function PagePreview() {
   const { id: pageId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { profile } = useAuth();
-  const { getPageById } = usePages(profile?.lessor_id);
+  const { user } = useFriAuthContext();
+  const lessorId = user?.id || user?.lessor_id;
+  const { getPageById } = usePages(lessorId);
   const [page, setPage] = useState<Page | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const previewLessor = useMemo(() => ({
-    name: profile?.company_name || profile?.full_name || "Your Company",
-    description: profile?.company_name || "",
-    email: profile?.email,
-    phone: profile?.phone,
-  }), [profile]);
+    name: user?.company_name || user?.email || "Your Company",
+    description: user?.company_name || "",
+    email: user?.email,
+    phone: undefined,
+  }), [user]);
 
   const previewVehicles = useMemo(() => ([
     {
@@ -40,7 +41,7 @@ export function PagePreview() {
 
   useEffect(() => {
     const loadPage = async () => {
-      if (!pageId || !profile?.lessor_id) return;
+      if (!pageId) return;
       setLoading(true);
       setError(null);
       try {
@@ -59,7 +60,7 @@ export function PagePreview() {
     };
 
     loadPage();
-  }, [pageId, profile?.lessor_id, getPageById]);
+  }, [pageId, lessorId, getPageById]);
 
   if (loading) {
     return (

@@ -63,7 +63,7 @@ export function PagesDashboard() {
       navigate(`/dashboard/pages/${newPage.id}/edit`);
     } catch (error) {
       console.error("Failed to create page:", error);
-      alert("Kunne ikke oprette side");
+      alert(error instanceof Error ? error.message : "Kunne ikke oprette side");
     }
   };
 

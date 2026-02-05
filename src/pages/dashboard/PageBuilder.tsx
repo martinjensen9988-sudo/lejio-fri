@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/hooks/useAuth";
+import { useFriAuthContext } from "@/providers/FriAuthProvider";
 import { usePages } from "@/hooks/usePages";
 import { BlockSettings } from "@/components/PageBuilderSettings";
 import { renderBlock } from "@/utils/blockRenderer";
@@ -106,14 +106,16 @@ const TEMPLATES: Template[] = [
 export function PageBuilder() {
   const { id: pageId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { profile } = useAuth();
-  const { getPageById, addBlock, updateBlock, deleteBlock, publishPage } = usePages(profile?.lessor_id);
+  const { user } = useFriAuthContext();
+  const lessorId = user?.id || user?.lessor_id;
+  const { getPageById, addBlock, updateBlock, deleteBlock, publishPage } = usePages(lessorId);
   const [page, setPage] = useState<Page | null>(null);
   const [blocks, setBlocks] = useState<PageBlock[]>([]);
   const [blockTypes, setBlockTypes] = useState<BlockType[]>([]);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [showPalette, setShowPalette] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [showPreview, setShowPreview] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
@@ -121,10 +123,10 @@ export function PageBuilder() {
   const [historyIndex, setHistoryIndex] = useState(-1);
 
   const previewLessor = useMemo(() => ({
-    name: profile?.company_name || profile?.full_name || "Your Company",
-    email: profile?.email,
-    phone: profile?.phone,
-  }), [profile]);
+    name: user?.company_name || user?.email || "Your Company",
+    email: user?.email,
+    phone: undefined,
+  }), [user]);
 
   const previewVehicles = useMemo(() => ([
     {
@@ -145,10 +147,10 @@ export function PageBuilder() {
 
   // Load page data
   useEffect(() => {
-    if (pageId && profile?.lessor_id) {
+    if (pageId) {
       loadPage();
     }
-  }, [pageId, profile?.lessor_id]);
+  }, [pageId, lessorId]);
 
   // Load block types
   useEffect(() => {
@@ -168,10 +170,18 @@ export function PageBuilder() {
   const loadPage = async () => {
     if (!pageId) return;
     try {
+      setLoadError(null);
       const data = await getPageById(pageId);
+      if (!data) {
+        setPage(null);
+        setBlocks([]);
+        setLoadError("Siden kunne ikke findes eller du har ikke adgang.");
+        return;
+      }
       setPage(data);
       setBlocks(data?.blocks || []);
     } catch (error) {
+      setLoadError("Kunne ikke indlaese siden. Proev igen.");
       console.error("Failed to load page:", error);
     }
   };
@@ -354,6 +364,17 @@ export function PageBuilder() {
 
   const categories = [...new Set(blockTypes.map(t => t.category))];
 
+  if (loadError) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#0a0d14]">
+        <div className="text-center space-y-4 max-w-md">
+          <p className="text-white font-semibold">{loadError}</p>
+          <Button onClick={() => navigate("/dashboard/pages")}>Tilbage</Button>
+        </div>
+      </div>
+    );
+  }
+
   if (!page) {
     return (
       <div className="flex items-center justify-center h-screen bg-[#0a0d14]">
@@ -362,7 +383,7 @@ export function PageBuilder() {
             <div className="w-16 h-16 rounded-full border-4 border-amber-500/30 border-t-amber-500 animate-spin" />
             <Crown className="absolute inset-0 m-auto w-6 h-6 text-amber-400" />
           </div>
-          <p className="text-white/60 font-medium">Indlæser Page Builder...</p>
+          <p className="text-white/60 font-medium">Indlaeser Page Builder...</p>
         </div>
       </div>
     );

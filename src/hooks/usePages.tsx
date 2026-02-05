@@ -80,7 +80,10 @@ export function usePages(lessorId?: string) {
           credentials: "include",
           body: JSON.stringify({ title, slug, meta_description }),
         });
-        if (!response.ok) throw new Error("Failed to create page");
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => null);
+          throw new Error(errorBody?.error || "Failed to create page");
+        }
         const newPage = await response.json();
         setPages([...pages, newPage]);
         return newPage;
