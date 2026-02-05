@@ -98,8 +98,15 @@ export function useFriAuth(): UseFriAuthReturn {
         }
 
         const userData = await response.json();
-        // For signup, user needs email confirmation, so we don't auto-login
-        setUser(null);
+        // Set user after signup so we can create lessor account
+        if (userData.user) {
+          setUser(userData.user);
+          if (userData.session?.access_token) {
+            localStorage.setItem('fri-auth-token', userData.session.access_token);
+          }
+        } else if (userData.id) {
+          setUser(userData);
+        }
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
         setError(error);

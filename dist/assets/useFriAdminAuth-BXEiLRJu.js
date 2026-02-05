@@ -1,1 +1,0 @@
-import{r}from"./index-nqtonUOe.js";const t=r.createContext(void 0),e=()=>{const e=r.useContext(t);if(void 0===e)throw new Error("useFriAdminAuth must be used within FriAdminAuthProvider");return e};export{e as u};
