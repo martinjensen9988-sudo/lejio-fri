@@ -2,11 +2,11 @@ services:
   - type: web
     name: lejio-fri-web
     env: node
-    # Force rebuild: 2026-02-05T15:11:50Z
+    # Force rebuild: 2026-02-05T18:48:00Z
     region: copenhagen
     plan: standard
-    # Note: render-start.sh handles build if needed, so buildCommand is optional
-    buildCommand: npm install --legacy-peer-deps --include=dev
+    # Build frontend during deploy
+    buildCommand: npm install --legacy-peer-deps --include=dev && npm run build
     startCommand: bash render-start.sh
     envVars:
       - key: NODE_ENV
