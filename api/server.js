@@ -147,7 +147,7 @@ Object.entries(apiRoutes).forEach(([routePath, handler]) => {
   app.get(routePath, async (req, res) => {
     const context = { res: { status: 200, headers: {}, body: {} } };
     try {
-      await handler(context, { query: req.query, body: req.body, params: req.params });
+      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
       res.status(context.res.status || 200);
       Object.entries(context.res.headers || {}).forEach(([key, value]) => {
         res.set(key, value);
@@ -162,7 +162,7 @@ Object.entries(apiRoutes).forEach(([routePath, handler]) => {
   app.post(routePath, async (req, res) => {
     const context = { res: { status: 200, headers: {}, body: {} } };
     try {
-      await handler(context, { query: req.query, body: req.body, params: req.params });
+      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
       res.status(context.res.status || 200);
       Object.entries(context.res.headers || {}).forEach(([key, value]) => {
         res.set(key, value);
@@ -177,7 +177,7 @@ Object.entries(apiRoutes).forEach(([routePath, handler]) => {
   app.put(routePath, async (req, res) => {
     const context = { res: { status: 200, headers: {}, body: {} } };
     try {
-      await handler(context, { query: req.query, body: req.body, params: req.params });
+      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
       res.status(context.res.status || 200);
       Object.entries(context.res.headers || {}).forEach(([key, value]) => {
         res.set(key, value);
@@ -192,7 +192,7 @@ Object.entries(apiRoutes).forEach(([routePath, handler]) => {
   app.delete(routePath, async (req, res) => {
     const context = { res: { status: 200, headers: {}, body: {} } };
     try {
-      await handler(context, { query: req.query, body: req.body, params: req.params });
+      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
       res.status(context.res.status || 200);
       Object.entries(context.res.headers || {}).forEach(([key, value]) => {
         res.set(key, value);
