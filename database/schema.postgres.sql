@@ -45,7 +45,7 @@ CREATE INDEX IF NOT EXISTS idx_fri_users_email ON fri_users(email);
 
 CREATE TABLE IF NOT EXISTS fri_sessions (
     id VARCHAR(64) PRIMARY KEY,
-    user_id UUID NOT NULL,
+    user_id VARCHAR(50) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMP NOT NULL,
     ip_address VARCHAR(45),

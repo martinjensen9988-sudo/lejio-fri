@@ -167,6 +167,34 @@ app.post('/api/admin/fix-pages', async (req, res) => {
   }
 });
 
+// Fix sessions table for mixed UUID/string user IDs
+app.post('/api/admin/fix-sessions', async (req, res) => {
+  try {
+    const db = require('./db');
+    
+    await db.query('DROP TABLE IF EXISTS fri_sessions CASCADE');
+    
+    await db.query(`
+      CREATE TABLE fri_sessions (
+        id VARCHAR(64) PRIMARY KEY,
+        user_id VARCHAR(50) NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP NOT NULL,
+        ip_address VARCHAR(45),
+        user_agent TEXT
+      )
+    `);
+    
+    await db.query('CREATE INDEX IF NOT EXISTS idx_fri_sessions_user_id ON fri_sessions(user_id)');
+    await db.query('CREATE INDEX IF NOT EXISTS idx_fri_sessions_expires ON fri_sessions(expires_at)');
+    
+    res.json({ success: true, message: 'Sessions table fixed' });
+  } catch (err) {
+    console.error('Fix sessions error:', err);
+    res.status(500).json({ error: 'Fix failed', details: err.message });
+  }
+});
+
 
 // API routes - dynamically load all API handlers that exist
 const apiRoutes = {};
