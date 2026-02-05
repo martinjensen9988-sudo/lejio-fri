@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Render start script - build React app before starting server
+# Deploy timestamp: 2026-02-05T14:56:00Z
 set -e
 
 # Change to project root - try multiple paths
