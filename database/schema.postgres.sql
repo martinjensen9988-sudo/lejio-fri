@@ -295,7 +295,6 @@ CREATE TABLE IF NOT EXISTS fri_pages (
     published_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id) ON DELETE CASCADE,
     CONSTRAINT uq_fri_page_slug UNIQUE (lessor_id, slug)
 );
 
