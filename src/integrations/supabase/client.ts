@@ -1,2 +1,3 @@
 // DEPRECATED - Use Azure client instead (src/integrations/azure/client.ts)
-throw new Error('Use @/integrations/azure/client instead of Supabase client');
+// Re-export from Azure client for backwards compatibility
+export { supabase } from '../azure/client';
