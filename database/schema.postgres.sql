@@ -22,6 +22,24 @@ CREATE TABLE IF NOT EXISTS fri_admins (
 CREATE INDEX IF NOT EXISTS idx_fri_admins_email ON fri_admins(email);
 
 -- ============================================================================
+-- 1b. USER AUTHENTICATION TABLE
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS fri_users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255),
+    user_type VARCHAR(20) DEFAULT 'professionel',
+    company_name VARCHAR(255),
+    cvr_number VARCHAR(20),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_fri_users_email ON fri_users(email);
+
+-- ============================================================================
 -- 2. LESSOR TABLES
 -- ============================================================================
 

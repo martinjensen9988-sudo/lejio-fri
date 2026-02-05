@@ -3,6 +3,10 @@
 
 import { BlobServiceClient } from "@azure/storage-blob";
 import { DefaultAzureCredential } from "@azure/identity";
+import { safeStorage } from "@/lib/safeStorage";
+
+// Session storage key
+const SESSION_KEY = 'lejio-fri-session';
 
 // Environment configuration
 const SQL_SERVER = import.meta.env.VITE_SQL_SERVER || "lejio-fri.database.windows.net";
@@ -44,10 +48,15 @@ export const azureApi: {
   async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${API_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
     
+    // Get stored session token
+    const sessionData = safeStorage.getItem(SESSION_KEY);
+    const token = sessionData ? JSON.parse(sessionData)?.access_token : null;
+    
     const response = await fetch(url, {
       ...options,
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
         ...options?.headers,
       },
     });

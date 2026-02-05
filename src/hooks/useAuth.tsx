@@ -1,8 +1,10 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { azureApi, supabase } from '@/integrations/azure/client';
+import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import { safeStorage } from '@/lib/safeStorage';
 
-// Local user type (NOT from Supabase)
+const SESSION_KEY = 'lejio-session';
+const API_BASE = import.meta.env.PROD ? '' : '';
+
+// User type
 export interface AuthUser {
   id: string;
   email?: string;
@@ -29,6 +31,12 @@ interface Profile {
   feature_flags?: Record<string, boolean>;
   account_banned_at?: string | null;
   account_banned_reason?: string | null;
+  lessor_id?: string | null;
+}
+
+interface Session {
+  access_token: string;
+  user: AuthUser;
 }
 
 export interface PaymentSettings {
@@ -41,7 +49,7 @@ export interface PaymentSettings {
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
@@ -53,59 +61,53 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper functions
+const getStoredSession = (): { session: Session; profile: Profile } | null => {
+  try {
+    const stored = safeStorage.getItem(SESSION_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error('Error reading session:', e);
+  }
+  return null;
+};
+
+const saveSession = (session: Session, profile: Profile) => {
+  try {
+    safeStorage.setItem(SESSION_KEY, JSON.stringify({ session, profile }));
+  } catch (e) {
+    console.error('Error saving session:', e);
+  }
+};
+
+const clearSession = () => {
+  try {
+    safeStorage.removeItem(SESSION_KEY);
+  } catch (e) {
+    console.error('Error clearing session:', e);
+  }
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-
-    if (data && !error) {
-      setProfile(data as Profile);
-    }
-  };
-
+  // Load session from localStorage on mount
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-
-        // Defer profile fetch with setTimeout to avoid deadlock
-        if (session?.user) {
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-          }, 0);
-        } else {
-          setProfile(null);
-        }
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-      setLoading(false);
-    }).catch((error) => {
-      console.error('Error getting session:', error);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    const stored = getStoredSession();
+    if (stored) {
+      setSession(stored.session);
+      setUser(stored.session.user);
+      setProfile(stored.profile);
+    }
+    setLoading(false);
   }, []);
 
-  const signUp = async (
+  const signUp = useCallback(async (
     email: string, 
     password: string, 
     fullName: string, 
@@ -113,97 +115,130 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     cvrNumber?: string,
     companyName?: string
   ) => {
-    const redirectUrl = `${window.location.origin}/`;
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName,
-          user_type: userType,
-        }
-      }
-    });
-
-    if (error) {
-      return { error };
-    }
-
-    // Send welcome email
     try {
-      await supabase.functions.invoke('send-welcome-email', {
-        body: {
-          email,
-          fullName,
-          userType,
-        }
+      const response = await fetch(`${API_BASE}/api/AuthSignup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, fullName, userType, cvrNumber, companyName }),
       });
-      console.log('Welcome email sent successfully');
-    } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
-      // Don't fail signup if email fails
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        return { error: new Error(data.error || 'Signup fejlede') };
+      }
+
+      // Save session and profile
+      const newSession: Session = {
+        access_token: data.token,
+        user: data.user,
+      };
+      const newProfile: Profile = {
+        id: data.user.id,
+        email: data.user.email,
+        full_name: fullName,
+        user_type: userType,
+        cvr_number: cvrNumber || null,
+        company_name: companyName || null,
+        phone: null,
+        address: null,
+        city: null,
+        postal_code: null,
+        avatar_url: null,
+        payment_gateway: null,
+        insurance_company: null,
+        insurance_policy_number: null,
+        trial_ends_at: null,
+        subscription_status: 'active',
+        lessor_id: data.user.id,
+      };
+
+      setSession(newSession);
+      setUser(data.user);
+      setProfile(newProfile);
+      saveSession(newSession, newProfile);
+
+      return { error: null };
+    } catch (e) {
+      console.error('Signup error:', e);
+      return { error: e instanceof Error ? e : new Error('Signup fejlede') };
     }
+  }, []);
 
-    // If Pro user, update profile with CVR info after signup
-    if (userType === 'professionel' && (cvrNumber || companyName)) {
-      // Wait a moment for the trigger to create the profile
-      setTimeout(async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          await supabase
-            .from('profiles')
-            .update({
-              cvr_number: cvrNumber,
-              company_name: companyName,
-            })
-            .eq('id', user.id);
-        }
-      }, 1000);
+  const signIn = useCallback(async (email: string, password: string) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/AuthLogin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        return { error: new Error(data.error || 'Login fejlede') };
+      }
+
+      // Save session and profile
+      const newSession: Session = {
+        access_token: data.token,
+        user: data.user,
+      };
+      const newProfile: Profile = {
+        id: data.user.id,
+        email: data.user.email,
+        full_name: data.user.full_name || data.user.email.split('@')[0],
+        user_type: data.user.user_type || 'professionel',
+        cvr_number: data.user.cvr_number || null,
+        company_name: data.user.company_name || null,
+        phone: null,
+        address: null,
+        city: null,
+        postal_code: null,
+        avatar_url: null,
+        payment_gateway: null,
+        insurance_company: null,
+        insurance_policy_number: null,
+        trial_ends_at: null,
+        subscription_status: 'active',
+        lessor_id: data.user.lessor_id || data.user.id,
+      };
+
+      setSession(newSession);
+      setUser(data.user);
+      setProfile(newProfile);
+      saveSession(newSession, newProfile);
+
+      return { error: null };
+    } catch (e) {
+      console.error('Login error:', e);
+      return { error: e instanceof Error ? e : new Error('Login fejlede') };
     }
+  }, []);
 
-    return { error: null };
-  };
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
-  };
-
-  const signOut = async () => {
-    // Clear local state first to ensure user is logged out immediately
+  const signOut = useCallback(async () => {
     setUser(null);
     setSession(null);
     setProfile(null);
-    
-    // Sign out from Supabase with scope 'local' to clear local storage
-    try {
-      await supabase.auth.signOut({ scope: 'local' });
-    } catch (error) {
-      console.error('Sign out error:', error);
-      // If signOut fails, manually clear localStorage to prevent auto-login
-      safeStorage.removeItem('sb-aqzggwewjttbkaqnbmrb-auth-token');
-    }
-  };
+    clearSession();
+  }, []);
 
-  const updateProfile = async (updates: Partial<Profile>) => {
+  const updateProfile = useCallback(async (updates: Partial<Profile>) => {
     if (!user) return { error: new Error('Not authenticated') };
 
-    const { error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', user.id);
+    // Update local state
+    setProfile(prev => {
+      if (!prev) return null;
+      const updated = { ...prev, ...updates };
+      // Also update stored session
+      if (session) {
+        saveSession(session, updated);
+      }
+      return updated;
+    });
 
-    if (!error) {
-      setProfile(prev => prev ? { ...prev, ...updates } : null);
-    }
-
-    return { error };
-  };
+    return { error: null };
+  }, [user, session]);
 
   return (
     <AuthContext.Provider value={{
