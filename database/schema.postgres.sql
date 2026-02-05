@@ -285,6 +285,10 @@ CREATE INDEX IF NOT EXISTS idx_fri_tenants_status ON fri_tenants(status);
 -- 11. PAGE BUILDER TABLES
 -- ============================================================================
 
+-- Drop existing tables to recreate without FK constraint
+DROP TABLE IF EXISTS fri_page_blocks CASCADE;
+DROP TABLE IF EXISTS fri_pages CASCADE;
+
 CREATE TABLE IF NOT EXISTS fri_pages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     lessor_id VARCHAR(36) NOT NULL,
