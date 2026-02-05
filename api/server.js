@@ -11,7 +11,14 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../dist')));
+
+// Determine correct dist path
+const distPath = fs.existsSync(path.join(__dirname, '../dist')) 
+  ? path.join(__dirname, '../dist')
+  : path.join(__dirname, '../../dist');
+
+console.log('📁 Serving static files from:', distPath);
+app.use(express.static(distPath));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -147,7 +154,12 @@ Object.entries(apiRoutes).forEach(([routePath, handler]) => {
 
 // Serve React app for all other routes (SPA)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
+  const indexPath = path.join(distPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).json({ error: 'index.html not found', path: indexPath });
+  }
 });
 
 // Start server
