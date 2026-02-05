@@ -43,6 +43,9 @@ CREATE INDEX IF NOT EXISTS idx_fri_users_email ON fri_users(email);
 -- 1c. SESSIONS TABLE (GDPR compliant - server-side sessions)
 -- ============================================================================
 
+-- Drop old sessions table if exists with wrong column type
+DROP TABLE IF EXISTS fri_sessions CASCADE;
+
 CREATE TABLE IF NOT EXISTS fri_sessions (
     id VARCHAR(64) PRIMARY KEY,
     user_id VARCHAR(50) NOT NULL,
