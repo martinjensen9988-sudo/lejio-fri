@@ -124,6 +124,49 @@ app.post('/api/admin/migrate', async (req, res) => {
   }
 });
 
+// Fix for page builder FK constraint
+app.post('/api/admin/fix-pages', async (req, res) => {
+  try {
+    const db = require('./db');
+    
+    // Drop and recreate fri_pages without FK constraint
+    await db.query('DROP TABLE IF EXISTS fri_page_blocks CASCADE');
+    await db.query('DROP TABLE IF EXISTS fri_pages CASCADE');
+    
+    await db.query(`
+      CREATE TABLE fri_pages (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        lessor_id VARCHAR(36) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) NOT NULL,
+        meta_description TEXT,
+        is_published BOOLEAN NOT NULL DEFAULT FALSE,
+        published_at TIMESTAMP,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT uq_fri_page_slug UNIQUE (lessor_id, slug)
+      )
+    `);
+    
+    await db.query(`
+      CREATE TABLE fri_page_blocks (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        page_id UUID NOT NULL REFERENCES fri_pages(id) ON DELETE CASCADE,
+        block_type VARCHAR(50) NOT NULL,
+        position INTEGER NOT NULL DEFAULT 0,
+        config JSONB NOT NULL DEFAULT '{}',
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    res.json({ success: true, message: 'Page builder tables fixed' });
+  } catch (err) {
+    console.error('Fix pages error:', err);
+    res.status(500).json({ error: 'Fix failed', details: err.message });
+  }
+});
+
 
 // API routes - dynamically load all API handlers that exist
 const apiRoutes = {};
