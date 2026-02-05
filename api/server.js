@@ -16,26 +16,41 @@ app.use(express.json());
 let distPath;
 const possiblePaths = [
   '/opt/render/project/dist',                   // Render production (PRIORITY)
-  path.resolve(__dirname, '../../dist'),        // From api/server.js: up 2 dirs
-  path.resolve(__dirname, '../dist'),           // From api/server.js: up 1 dir
+  path.resolve(__dirname, '../../dist'),        // From api/server.js going up 2 dirs to root
+  path.resolve(__dirname, '../dist'),           // From api/server.js going up 1 dir (if server is in api/)
   path.resolve(process.cwd(), 'dist'),          // From current working directory
 ];
 
+console.log(`🔍 Current working directory: ${process.cwd()}`);
+console.log(`🔍 __dirname: ${__dirname}`);
+
 for (const p of possiblePaths) {
-  if (fs.existsSync(p) && fs.existsSync(path.join(p, 'index.html'))) {
+  const indexPath = path.join(p, 'index.html');
+  const exists = fs.existsSync(indexPath);
+  console.log(`  - ${p}: ${exists ? '✅ EXISTS' : '❌ not found'}`);
+  
+  if (exists) {
     distPath = p;
     break;
   }
 }
 
 if (!distPath) {
-  console.warn('⚠️  dist/index.html not found in any expected location');
-  console.warn('Searched:', possiblePaths);
-  distPath = possiblePaths[0]; // Fallback
+  console.warn('⚠️  dist/index.html not found in any location. Will use fallback path.');
+  console.warn('⚠️  This means static files and React app will NOT be served correctly.');
+  distPath = possiblePaths[0];
 }
 
 console.log('📁 Serving static files from:', distPath);
 app.use(express.static(distPath));
+
+// LogMiddleware to see what's being requested
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/api')) {
+    console.log(`📝 Request: ${req.method} ${req.path}`);
+  }
+  next();
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
