@@ -2,6 +2,7 @@ services:
   - type: web
     name: lejio-fri-web
     env: node
+    # Force rebuild: 2026-02-05T15:11:50Z
     region: copenhagen
     plan: standard
     # Note: render-start.sh handles build if needed, so buildCommand is optional
