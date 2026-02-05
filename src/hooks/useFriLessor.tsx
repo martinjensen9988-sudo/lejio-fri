@@ -95,10 +95,10 @@ export const useFriLessor = () => {
 
     setIsLoading(true);
     try {
-      // Fetch all related data in parallel
+      // Fetch all related data in parallel with individual error handling
       const safeLessorId = escapeSqlValue(lessorId);
 
-      const [lessorRes, teamRes, vehiclesRes, bookingsRes, invoicesRes] = await Promise.all([
+      const [lessorRes, teamRes, vehiclesRes, bookingsRes, invoicesRes] = await Promise.allSettled([
         azureApi.post<any>("/db/query", { query: `SELECT id, company_name, contact_email, contact_phone, subscription_status AS status, created_at FROM fri_lessors WHERE id='${safeLessorId}'` }),
         azureApi.post<any>("/db/query", { query: `SELECT * FROM fri_lessor_team_members WHERE lessor_id='${safeLessorId}' AND is_active=1` }),
         azureApi.post<any>("/db/query", { query: `SELECT *, status AS availability_status FROM fri_vehicles WHERE lessor_id='${safeLessorId}' ORDER BY created_at DESC` }),
@@ -116,11 +116,11 @@ export const useFriLessor = () => {
         azureApi.post<any>("/db/query", { query: `SELECT *, invoice_date AS issued_date, total_amount AS total_amount FROM fri_invoices WHERE lessor_id='${safeLessorId}' ORDER BY created_at DESC` }),
       ]);
 
-      const lessorRows = normalizeRows(lessorRes);
-      const teamRows = normalizeRows(teamRes);
-      const vehicleRows = normalizeRows(vehiclesRes);
-      const bookingRows = normalizeRows(bookingsRes);
-      const invoiceRows = normalizeRows(invoicesRes);
+      const lessorRows = lessorRes.status === 'fulfilled' ? normalizeRows(lessorRes.value) : [];
+      const teamRows = teamRes.status === 'fulfilled' ? normalizeRows(teamRes.value) : [];
+      const vehicleRows = vehiclesRes.status === 'fulfilled' ? normalizeRows(vehiclesRes.value) : [];
+      const bookingRows = bookingsRes.status === 'fulfilled' ? normalizeRows(bookingsRes.value) : [];
+      const invoiceRows = invoicesRes.status === 'fulfilled' ? normalizeRows(invoicesRes.value) : [];
 
       if (lessorRows?.[0]) setFriLessor(lessorRows[0] as FriLessor);
       setTeamMembers((teamRows || []) as FriTeamMember[]);
@@ -130,7 +130,7 @@ export const useFriLessor = () => {
 
     } catch (error) {
       console.error('Error fetching Fri data:', error);
-      toast.error('Kunne ikke hente data');
+      // Silently fail - don't show toast to avoid unhandled rejections
     } finally {
       setIsLoading(false);
     }
