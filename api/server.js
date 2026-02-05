@@ -18,6 +18,44 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Database migration endpoint (admin)
+app.post('/api/admin/migrate', async (req, res) => {
+  try {
+    const db = require('./db');
+    const schemaPath = path.join(__dirname, '../database/schema.postgres.sql');
+    
+    // Check if schema file exists
+    if (!fs.existsSync(schemaPath)) {
+      return res.status(404).json({ error: 'Schema file not found' });
+    }
+    
+    // Read and execute schema
+    const schema = fs.readFileSync(schemaPath, 'utf-8');
+    const client = await db.connect();
+    
+    try {
+      await client.query(schema);
+      client.release();
+      
+      // Get table count
+      const result = await db.query('SELECT table_name FROM information_schema.tables WHERE table_schema = \'public\'');
+      res.json({ 
+        success: true, 
+        message: 'Database schema migrated successfully',
+        tables_created: result.rows.length,
+        tables: result.rows.map(r => r.table_name)
+      });
+    } catch (err) {
+      client.release();
+      throw err;
+    }
+  } catch (err) {
+    console.error('Migration error:', err);
+    res.status(500).json({ error: 'Migration failed', details: err.message });
+  }
+});
+
+
 // API routes - dynamically load all API handlers that exist
 const apiRoutes = {};
 const apiDir = __dirname;
