@@ -184,6 +184,15 @@ app.listen(PORT, () => {
   console.log(`🚀 LEJIO FRI server running on port ${PORT}`);
   console.log(`📦 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🗄️  Database: ${process.env.DB_HOST}`);
+  console.log(`📁 Static files: ${distPath}`);
+  
+  // Check if dist/index.html exists
+  const indexPath = path.join(distPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    console.log(`✅ Found index.html at ${indexPath}`);
+  } else {
+    console.warn(`⚠️  index.html NOT found at ${indexPath}`);
+  }
 });
 
 // Graceful shutdown
