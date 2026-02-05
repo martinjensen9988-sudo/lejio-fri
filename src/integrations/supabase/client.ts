@@ -1,2 +1,8 @@
 // DEPRECATED - Use Azure client instead (src/integrations/azure/client.ts)
-throw new Error('Use @/integrations/azure/client instead of Supabase client');
+// This is a compatibility shim for code still using Supabase client
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder_key';
+
+export const supabase = createClient(supabaseUrl, supabaseKey);

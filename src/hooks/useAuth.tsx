@@ -1,6 +1,8 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { azureApi } from '@/integrations/azure/client';
 import { safeStorage } from '@/lib/safeStorage';
+import { supabase } from '@/integrations/supabase/client';
+import type { User, Session } from '@supabase/supabase-js';
 
 // Local user type (NOT from Supabase)
 export interface AuthUser {
