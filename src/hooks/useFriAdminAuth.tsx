@@ -57,7 +57,7 @@ export const FriAdminAuthProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
 
-        const response = await fetch(`${apiBaseUrl}/AuthMe`, {
+        const response = await fetch(`${apiBaseUrl}/auth-me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -93,7 +93,7 @@ export const FriAdminAuthProvider = ({ children }: { children: ReactNode }) => {
       setError(null);
       setLoading(true);
 
-      const response = await fetch(`${apiBaseUrl}/AuthLogin`, {
+      const response = await fetch(`${apiBaseUrl}/auth-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
