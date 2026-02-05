@@ -1,0 +1,9 @@
+Last deployment attempt: February 5, 2026 14:30 UTC
+Reason: Fix React frontend serving issue
+Changes:
+- Removed duplicate server.js
+- Improved path resolution logging
+- Simplified build script with legacy-peer-deps flag
+- Included pre-built dist folder in git
+
+Expected result: React frontend should now be served from dist/index.html
