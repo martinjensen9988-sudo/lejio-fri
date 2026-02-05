@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 export function PagesDashboard() {
   const { profile } = useAuth();
   const navigate = useNavigate();
-  const { pages, createPage, deletePage, getPages } = usePages();
+  const { pages, createPage, deletePage, getPages } = usePages(profile?.lessor_id);
   const [displayPages, setDisplayPages] = useState(pages);
   const [loading, setLoading] = useState(false);
   const [showNewForm, setShowNewForm] = useState(false);

@@ -107,7 +107,7 @@ export function PageBuilder() {
   const { id: pageId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { profile } = useAuth();
-  const { getPageById, addBlock, updateBlock, deleteBlock, publishPage } = usePages();
+  const { getPageById, addBlock, updateBlock, deleteBlock, publishPage } = usePages(profile?.lessor_id);
   const [page, setPage] = useState<Page | null>(null);
   const [blocks, setBlocks] = useState<PageBlock[]>([]);
   const [blockTypes, setBlockTypes] = useState<BlockType[]>([]);
