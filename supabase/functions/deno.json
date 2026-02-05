@@ -1,0 +1,14 @@
+{
+  "tasks": {
+    "test": "deno test --allow-all"
+  },
+  "imports": {
+    "std/": "https://deno.land/std@0.168.0/",
+    "supabase/": "https://esm.sh/@supabase/supabase-js@2/"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  }
+}

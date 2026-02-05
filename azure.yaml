@@ -1,0 +1,32 @@
+name: lejio-fri
+description: Lejio Fri - White-label SaaS platform for car rental businesses
+
+metadata:
+  template: lejio-fri-azure@1.0.0
+  author: Martin Jensen
+  version: 1.0.0
+  category: Web App
+
+services:
+  api:
+    project: ./api
+    language: node
+    host: function
+  web:
+    project: .
+    language: nodejs
+    host: staticwebapp
+
+hooks:
+  prepackage:
+    windows: npm run build
+    posix: npm run build
+
+env:
+  REACT_APP_API_BASE: /api
+  VITE_SUPABASE_URL: ${{ SUPABASE_URL }}
+  VITE_SUPABASE_KEY: ${{ SUPABASE_KEY }}
+
+infra:
+  path: ./infra
+  template: main.bicep

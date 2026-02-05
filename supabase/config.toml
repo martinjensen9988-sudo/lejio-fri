@@ -1,0 +1,223 @@
+project_id = "aqzggwewjttbkaqnbmrb"
+
+[functions.fri-auth-signin]
+verify_jwt = false
+
+[functions.fri-auth-signup]
+verify_jwt = false
+
+[functions.fri-auth-me]
+verify_jwt = false
+
+[functions.fri-auth-signout]
+verify_jwt = false
+
+[functions.vehicle-lookup]
+verify_jwt = false
+
+[functions.generate-contract]
+verify_jwt = true
+
+[functions.sign-contract]
+verify_jwt = true
+
+[functions.send-booking-notification]
+verify_jwt = true
+
+[functions.send-booking-confirmation]
+verify_jwt = true
+
+[functions.send-contract-signed]
+verify_jwt = false
+
+[functions.process-payment]
+verify_jwt = true
+
+[functions.get-mapbox-token]
+verify_jwt = false
+
+[functions.payment-webhook]
+verify_jwt = false
+
+[functions.pay-platform-fees]
+verify_jwt = true
+
+[functions.platform-fee-webhook]
+verify_jwt = false
+
+[functions.send-payment-reminder]
+verify_jwt = false
+
+[functions.send-fee-payment-confirmation]
+verify_jwt = false
+
+[functions.send-demo-contract]
+verify_jwt = false
+
+[functions.send-message-notification]
+verify_jwt = true
+
+[functions.geocode-address]
+verify_jwt = true
+
+[functions.generate-damage-report-pdf]
+verify_jwt = true
+
+[functions.live-chat-ai]
+verify_jwt = false
+
+[functions.send-damage-report]
+verify_jwt = true
+
+[functions.send-admin-email]
+verify_jwt = true
+
+[functions.create-pro-checkout]
+verify_jwt = true
+
+[functions.check-pro-subscription]
+verify_jwt = true
+
+[functions.pro-customer-portal]
+verify_jwt = true
+
+[functions.send-trial-reminder]
+verify_jwt = false
+
+[functions.send-subscription-confirmation]
+verify_jwt = true
+
+[functions.cvr-lookup]
+verify_jwt = false
+
+[functions.calculate-fleet-settlement]
+verify_jwt = false
+
+[functions.generate-monthly-invoices]
+verify_jwt = false
+
+[functions.send-appeal-decision]
+verify_jwt = true
+
+[functions.check-trial-expiration]
+verify_jwt = false
+
+[functions.send-push-notification]
+verify_jwt = true
+
+[functions.get-vapid-public-key]
+verify_jwt = false
+
+[functions.process-recurring-rentals]
+verify_jwt = false
+
+[functions.gps-webhook]
+verify_jwt = false
+
+[functions.check-booking-milestones]
+verify_jwt = false
+
+[functions.get-payment-settings]
+verify_jwt = true
+
+[functions.save-payment-settings]
+verify_jwt = true
+
+[functions.analyze-dashboard]
+verify_jwt = true
+
+[functions.generate-corporate-invoice]
+verify_jwt = true
+
+[functions.generate-facebook-post]
+verify_jwt = true
+
+[functions.post-to-facebook]
+verify_jwt = true
+
+[functions.generate-sales-email]
+verify_jwt = true
+
+[functions.analyze-car-ad]
+verify_jwt = false
+
+[functions.cvr-search-industry]
+verify_jwt = false
+
+[functions.web-search-leads]
+verify_jwt = false
+
+[functions.analyze-sales-lead]
+verify_jwt = true
+
+[functions.send-sales-email]
+verify_jwt = true
+
+[functions.generate-invoice]
+verify_jwt = true
+
+[functions.generate-settlement-invoice]
+verify_jwt = true
+
+[functions.send-settlement-email]
+verify_jwt = true
+
+[functions.ai-price-suggestion]
+verify_jwt = false
+
+[functions.admin-update-vehicle]
+verify_jwt = false
+
+[functions.send-welcome-email]
+verify_jwt = false
+
+[functions.send-checkinout-email]
+verify_jwt = false
+
+[functions.send-booking-paid-confirmation]
+verify_jwt = false
+
+[functions.test-all-emails]
+verify_jwt = false
+
+[functions.send-critical-action-alert]
+verify_jwt = false
+
+[functions.create-booking]
+verify_jwt = true
+
+[functions.fleet-site]
+verify_jwt = false
+
+[functions.calculate-fleet-premium-stats]
+verify_jwt = false
+
+[functions.calculate-coverage-shortfalls]
+verify_jwt = false
+
+[functions.generate-settlement-pdf]
+verify_jwt = true
+
+[functions.generate-fleet-partner-contract]
+verify_jwt = true
+
+[functions.twilio-make-call]
+verify_jwt = false
+
+[functions.twilio-call-webhook]
+verify_jwt = false
+
+[functions.crm-send-email]
+verify_jwt = false
+
+[functions.twilio-incoming-call]
+verify_jwt = false
+
+[functions.ai-find-leads]
+verify_jwt = true
+
+[functions.ai-generate-global-page-description]
+verify_jwt = false
+
+[functions.ai-generate-global-page-description-google]
+verify_jwt = false

@@ -1,0 +1,848 @@
+
+> vite_react_shadcn_ts@0.0.0 lint
+> eslint .
+
+
+/workspaces/lejio-b75cff1f/src/components/admin/AILeadFinderCard.tsx
+  55:6  warning  React Hook useEffect has missing dependencies: 'discoverNewLeads' and 'suggestions.length'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminAuditLog.tsx
+  155:6  warning  React Hook useEffect has a missing dependency: 'loadLogs'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  169:6  warning  React Hook useEffect has a missing dependency: 'loadLogs'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminCreateBooking.tsx
+  103:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminDealerLocations.tsx
+  62:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  63:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  73:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminFacebookPosts.tsx
+  147:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  190:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  224:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  557:63  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminFeatureFlags.tsx
+  207:41  error  Unexpected any. Specify a different type                                                                                        @typescript-eslint/no-explicit-any
+  300:29  error  React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render      react-hooks/rules-of-hooks
+  313:27  error  React Hook "useCallback" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+  313:50  error  Unexpected any. Specify a different type                                                                                        @typescript-eslint/no-explicit-any
+  355:66  error  Unexpected any. Specify a different type                                                                                        @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminFleetCheckInOut.tsx
+  128:11  error  'checkInRecords' is never reassigned. Use 'const' instead   prefer-const
+  128:42  error  Unexpected any. Specify a different type                    @typescript-eslint/no-explicit-any
+  129:11  error  'checkOutRecords' is never reassigned. Use 'const' instead  prefer-const
+  129:43  error  Unexpected any. Specify a different type                    @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminFleetFinance.tsx
+  149:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  478:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  510:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminFleetManagement.tsx
+  255:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  270:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  310:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  544:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminGlobalPages.tsx
+   31:38  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   32:42  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   41:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+   42:42  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   42:47  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   46:28  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   71:17  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   81:7   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+   82:39  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   82:44  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   85:7   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+   86:39  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   86:44  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  100:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  101:37  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  101:42  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  111:32  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminGpsDevices.tsx
+  82:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminMessages.tsx
+  76:6  warning  React Hook useEffect has a missing dependency: 'fetchMessages'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminServiceQueue.tsx
+  136:6  warning  React Hook useEffect has a missing dependency: 'fetchQueue'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminStaffManagement.tsx
+  52:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  81:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  94:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminUserManagement.tsx
+  133:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  191:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  203:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  234:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  305:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/AdminWarnings.tsx
+  116:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  143:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/admin/CRMDashboardWidget.tsx
+  142:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/workspaces/lejio-b75cff1f/src/components/booking/ReferralCreditOption.tsx
+  42:6  warning  React Hook useEffect has missing dependencies: 'getPendingDiscount' and 'onCreditApplied'. Either include them or remove the dependency array. If 'onCreditApplied' changes too often, find the parent component that defines it and wrap that definition in useCallback  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/chat/LiveChatWidget.tsx
+  51:6  warning  React Hook useEffect has a missing dependency: 'loadOrCreateSession'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/checkinout/CheckInOutWizard.tsx
+   84:54  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+  118:6   warning  React Hook useEffect has a missing dependency: 'stopCamera'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  170:52  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/contracts/ContractPreview.tsx
+  190:33   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  191:92   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  198:33   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  199:103  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  392:23   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  392:78   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  402:75   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/corporate/AddFleetVehicleDialog.tsx
+  15:16  error    Unexpected any. Specify a different type                                                                           @typescript-eslint/no-explicit-any
+  53:6   warning  React Hook useEffect has a missing dependency: 'searchVehicles'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/corporate/CorporateBookingDialog.tsx
+  20:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/damage/ARDamageScanner.tsx
+   95:6   warning  React Hook useEffect has a missing dependency: 'stopCamera'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  103:6   warning  React Hook useEffect has a missing dependency: 'stopCamera'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  167:45  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/damage/VehicleScanHistory.tsx
+   34:44  error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+   35:58  error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+   36:56  error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+   51:6   warning  React Hook useEffect has missing dependencies: 'getScanDamagesForVehicle' and 'getScanSessionsForBooking'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+   53:45  error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+  168:50  error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+  170:25  error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+  195:55  error    Unexpected any. Specify a different type                                                                                                                       @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/dashboard/AddVehicleDialog.tsx
+  167:9  error  'finalDetails' is never reassigned. Use 'const' instead  prefer-const
+
+/workspaces/lejio-b75cff1f/src/components/dashboard/MCMaintenanceCard.tsx
+  56:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/dashboard/MotorcycleFields.tsx
+  11:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/dashboard/PendingFeesCard.tsx
+  45:6  warning  React Hook useEffect has a missing dependency: 'fetchFees'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/dashboard/ServiceRemindersCard.tsx
+  113:70  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/dashboard/ServiceTab.tsx
+  152:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  195:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/fleet/FleetDocumentsCard.tsx
+  70:6  warning  React Hook useEffect has a missing dependency: 'fetchContracts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/gps/GpsTrackingMap.tsx
+  198:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/invoices/InvoiceViewer.tsx
+  40:6  warning  React Hook useEffect has a missing dependency: 'loadInvoice'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/invoices/PaymentReminder.tsx
+  17:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/invoices/SubscriptionManager.tsx
+  27:54  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  40:6   warning  React Hook useEffect has a missing dependency: 'loadSubscriptions'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  78:19  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/search/BookingModal.tsx
+  45:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/search/SearchMap.tsx
+  33:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/search/VehicleDetailModal.tsx
+   89:6  warning  React Hook useMemo has a missing dependency: 'vehicle'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  102:6  warning  React Hook useMemo has a missing dependency: 'vehicle'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/components/settings/ProSubscriptionCard.tsx
+  179:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  197:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/settings/UpgradeToProCard.tsx
+  165:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/components/ui/badge.tsx
+  29:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/workspaces/lejio-b75cff1f/src/components/ui/button.tsx
+  77:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/workspaces/lejio-b75cff1f/src/components/ui/command.tsx
+  24:11  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+/workspaces/lejio-b75cff1f/src/components/ui/form.tsx
+  129:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/workspaces/lejio-b75cff1f/src/components/ui/navigation-menu.tsx
+  111:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/workspaces/lejio-b75cff1f/src/components/ui/sidebar.tsx
+  636:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/workspaces/lejio-b75cff1f/src/components/ui/sonner.tsx
+  27:19  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/workspaces/lejio-b75cff1f/src/components/ui/textarea.tsx
+  5:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+/workspaces/lejio-b75cff1f/src/components/ui/toggle.tsx
+  37:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/workspaces/lejio-b75cff1f/src/hooks/useAdminAuth.tsx
+   15:65  error    Unexpected any. Specify a different type                                                                                                                                                                  @typescript-eslint/no-explicit-any
+   26:5   error    'globalListeners' is never reassigned. Use 'const' instead                                                                                                                                                prefer-const
+  164:59  error    Unexpected any. Specify a different type                                                                                                                                                                  @typescript-eslint/no-explicit-any
+  222:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                            react-refresh/only-export-components
+  227:12  error    React Hook "useAdminAuthStandalone" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  355:59  error    Unexpected any. Specify a different type                                                                                                                                                                  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useAuth.tsx
+  218:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/workspaces/lejio-b75cff1f/src/hooks/useAutoDispatch.tsx
+   55:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   80:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   85:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   89:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  109:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  155:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useBookings.tsx
+  150:6  warning  React Hook useEffect has a missing dependency: 'fetchBookings'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useCRM.tsx
+  174:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  361:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  435:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useCRMCommunication.tsx
+   55:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   73:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  149:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useContracts.tsx
+  205:6  warning  React Hook useEffect has a missing dependency: 'fetchContracts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useCorporateFleet.tsx
+   99:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  100:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  117:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useDamageReports.tsx
+  287:6  warning  React Hook useEffect has a missing dependency: 'fetchReports'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useDealerLocations.tsx
+   80:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   83:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:68  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  100:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  103:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  106:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  118:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  135:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  137:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:84  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:92  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  157:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  167:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  168:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  169:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  176:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  186:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  188:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  195:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  209:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  211:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  221:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  221:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  228:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  241:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  242:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  242:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  249:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  259:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  261:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  268:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  277:73  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  280:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  284:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useDeductibleProfiles.tsx
+   45:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   67:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   73:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  100:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  126:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  190:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useDriverLicense.tsx
+   16:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  131:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useDunningManagement.tsx
+   41:50  error    Unexpected any. Specify a different type                                                                                   @typescript-eslint/no-explicit-any
+  115:44  error    Unexpected any. Specify a different type                                                                                   @typescript-eslint/no-explicit-any
+  136:6   warning  React Hook useCallback has a missing dependency: 'defaultDunningConfig'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  144:44  error    Unexpected any. Specify a different type                                                                                   @typescript-eslint/no-explicit-any
+  184:50  error    Unexpected any. Specify a different type                                                                                   @typescript-eslint/no-explicit-any
+  208:44  error    Unexpected any. Specify a different type                                                                                   @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useEmailCampaigns.tsx
+   44:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   68:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  106:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  125:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  171:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useFavorites.tsx
+  54:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useFines.tsx
+   87:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  141:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  141:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useFleetApiKeys.tsx
+  49:6  warning  React Hook useEffect has a missing dependency: 'fetchApiKeys'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useFleetPlan.tsx
+   79:23  error    Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   80:33  error    Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  119:35  error    Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  160:6   warning  React Hook useEffect has a missing dependency: 'fetchSettlements'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useFleetPremiumVehicles.tsx
+  204:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useInvoiceGeneration.tsx
+   46:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   69:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  130:71  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  139:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  184:71  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  196:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useInvoices.tsx
+   24:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   75:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  141:75  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  156:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useLessorRatings.tsx
+  106:19  error    Unexpected any. Specify a different type                                                                                            @typescript-eslint/no-explicit-any
+  139:6   warning  React Hook useEffect has missing dependencies: 'fetchRatings' and 'fetchStats'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useMCMaintenance.tsx
+   53:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   56:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   96:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   97:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   99:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:16  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  133:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  137:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useMessages.tsx
+  100:21  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  127:21  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  140:26  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  187:21  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  220:21  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  272:21  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  312:6   warning  React Hook useEffect has a missing dependency: 'fetchConversations'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  318:6   warning  React Hook useEffect has a missing dependency: 'fetchMessages'. Either include it or remove the dependency array       react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useNativePushNotifications.tsx
+   97:6  warning  React Hook useEffect has missing dependencies: 'checkRegistrationStatus' and 'saveTokenToDatabase'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  212:6  warning  React Hook useCallback has a missing dependency: 'removeTokenFromDatabase'. Either include it or remove the dependency array                            react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/usePaymentSettings.tsx
+  28:6  warning  React Hook useEffect has a missing dependency: 'fetchPaymentSettings'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useRealtimeUpdates.tsx
+   10:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   65:85  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  129:90  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  162:70  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  166:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useReferral.tsx
+  45:36  error  'codeError' is never reassigned. Use 'const' instead  prefer-const
+
+/workspaces/lejio-b75cff1f/src/hooks/useRenterRatings.tsx
+  107:19  error    Unexpected any. Specify a different type                                                                                            @typescript-eslint/no-explicit-any
+  140:6   warning  React Hook useEffect has missing dependencies: 'fetchRatings' and 'fetchStats'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useRenterWarnings.tsx
+  185:35  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  295:6   warning  React Hook useEffect has a missing dependency: 'fetchWarnings'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useRevenueLoss.tsx
+   47:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  138:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  173:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  198:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useRevenueRecognition.tsx
+   65:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   95:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  141:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  216:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useSalesLeads.tsx
+  106:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  366:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useSavedSearches.tsx
+   36:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   62:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  160:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  160:70  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useServiceTasks.tsx
+   61:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   86:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  109:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  135:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useSubscriptionBilling.tsx
+   71:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  109:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:76  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  178:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  222:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  252:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  283:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useUnreadMessages.tsx
+  78:6  warning  React Hook useEffect has a missing dependency: 'fetchUnreadCount'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useVehicleImages.tsx
+   76:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  109:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  154:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  154:75  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/hooks/useVehicles.tsx
+  267:30  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  312:31  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  371:6   warning  React Hook useEffect has a missing dependency: 'fetchVehicles'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/hooks/useVisitorPresence.tsx
+  50:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/integrations/supabase/safe-client.ts
+  15:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  25:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/integrations/supabase/webhooks.ts
+    7:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   16:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   26:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   40:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   49:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   87:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  100:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:73  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  128:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  137:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/Booking.tsx
+  270:6   warning  React Hook useMemo has an unnecessary dependency: 'bookedDates'. Either exclude it or remove the dependency array                                                                                                                                    react-hooks/exhaustive-deps
+  496:17  error    React Hook "useCredit" is called in function "handleSubmit" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use"  react-hooks/rules-of-hooks
+
+/workspaces/lejio-b75cff1f/src/pages/DealerProfile.tsx
+   8:40  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   9:44  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  14:7   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  15:44  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  15:49  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  18:7   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  19:57  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  19:62  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/Features.tsx
+   66:23  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+   83:5   error    'subscription' is never reassigned. Use 'const' instead                                                               prefer-const
+   95:5   warning  Unused eslint-disable directive (no problems were reported from 'no-console')
+  108:5   warning  Unused eslint-disable directive (no problems were reported from 'no-console')
+  112:5   warning  Unused eslint-disable directive (no problems were reported from 'no-console')
+  114:6   warning  React Hook useEffect has a missing dependency: 'featureCategories'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  290:46  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  294:40  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  300:42  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  302:54  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  306:24  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  309:24  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  310:6   warning  React Hook useMemo has a missing dependency: 'featureCategories'. Either include it or remove the dependency array    react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/pages/FleetWidgetDemo.tsx
+  272:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  400:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  425:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/GlobalPage.tsx
+  10:36  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  15:7   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  16:44  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  16:49  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/MyRentals.tsx
+  174:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/Search.tsx
+  271:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/Settings.tsx
+  151:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  153:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  154:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  155:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  156:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  157:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  158:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  159:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  160:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  161:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  217:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  228:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/admin/Bookings.tsx
+  154:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  166:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  173:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  185:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  192:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  204:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  210:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  212:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  213:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  214:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  262:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  262:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  265:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  294:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  306:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  312:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  314:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/admin/BookingsAdd.tsx
+  86:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/admin/CorporateDetail.tsx
+  53:6  warning  React Hook useEffect has a missing dependency: 'fetchAccount'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/pages/admin/DriverLicenseReview.tsx
+  30:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/admin/FleetVehicleEdit.tsx
+  265:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  265:75  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  611:92  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  626:92  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/admin/SalesAIOutreach.tsx
+  81:6  warning  React Hook useEffect has missing dependencies: 'analysis', 'handleAnalyzeLead', and 'isAnalyzing'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/pages/admin/StaffAdd.tsx
+  76:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  93:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/admin/UserEdit.tsx
+  44:6   warning  React Hook useEffect has a missing dependency: 'fetchUser'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  73:23  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/checkin/[contractId].tsx
+  10:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  50:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/corporate/AddFleetVehicle.tsx
+  28:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/corporate/CreateBooking.tsx
+  26:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/dashboard/EditVehicle.tsx
+  254:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  254:75  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/dashboard/FinesAdd.tsx
+  82:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/dashboard/Settlement.tsx
+  105:6  warning  React Hook useEffect has a missing dependency: 'fetchSettlementData'. Either include it or remove the dependency array        react-hooks/exhaustive-deps
+  111:6  warning  React Hook useEffect has a missing dependency: 'calculateManualSettlement'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/pages/dashboard/VehicleSwap.tsx
+  160:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/dashboard/Vehicles.tsx
+  39:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/dealer/WebsiteSettings.tsx
+  11:116  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:44   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  55:43   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  77:56   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  87:42   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/gps/AddGeofence.tsx
+  134:6  warning  React Hook useEffect has missing dependencies: 'formData.center_latitude', 'formData.center_longitude', and 'geofenceType'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/pages/search/CreateBooking.tsx
+   30:42  error    Unexpected any. Specify a different type                                                                                                                                                     @typescript-eslint/no-explicit-any
+   36:64  error    Unexpected any. Specify a different type                                                                                                                                                     @typescript-eslint/no-explicit-any
+   61:9   warning  The 'startDate' conditional could make the dependencies of useMemo Hook (at line 180) change on every render. To fix this, wrap the initialization of 'startDate' in its own useMemo() Hook  react-hooks/exhaustive-deps
+   62:9   warning  The 'endDate' conditional could make the dependencies of useMemo Hook (at line 180) change on every render. To fix this, wrap the initialization of 'endDate' in its own useMemo() Hook      react-hooks/exhaustive-deps
+   82:43  error    Unexpected any. Specify a different type                                                                                                                                                     @typescript-eslint/no-explicit-any
+  124:6   warning  React Hook useEffect has a missing dependency: 'toast'. Either include it or remove the dependency array                                                                                     react-hooks/exhaustive-deps
+  275:14  error    Unexpected any. Specify a different type                                                                                                                                                     @typescript-eslint/no-explicit-any
+  634:51  error    Unexpected any. Specify a different type                                                                                                                                                     @typescript-eslint/no-explicit-any
+  646:49  error    Unexpected any. Specify a different type                                                                                                                                                     @typescript-eslint/no-explicit-any
+  650:32  error    Unexpected any. Specify a different type                                                                                                                                                     @typescript-eslint/no-explicit-any
+  652:64  error    Unexpected any. Specify a different type                                                                                                                                                     @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/pages/search/VehicleDetail.tsx
+   34:37  error    Unexpected any. Specify a different type                                                                  @typescript-eslint/no-explicit-any
+   57:42  error    Unexpected any. Specify a different type                                                                  @typescript-eslint/no-explicit-any
+   98:6   warning  React Hook useMemo has a missing dependency: 'vehicle'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  109:6   warning  React Hook useMemo has a missing dependency: 'vehicle'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspaces/lejio-b75cff1f/src/pages/subscription-rental.tsx
+   15:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   21:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   43:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/src/vite-env.d.ts
+  10:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/admin-delete-user/index.ts
+  9:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/ai-find-leads/index.ts
+   67:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  193:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  468:70  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/analyze-damage/index.ts
+  109:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/analyze-fleet-dispatch/index.ts
+   63:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  132:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/calculate-coverage-shortfalls/index.ts
+  9:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/calculate-fleet-premium-stats/index.ts
+   45:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   72:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  102:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  103:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  115:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  116:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  119:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  124:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  124:71  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  125:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  126:82  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  128:73  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  132:84  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  136:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  138:71  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  139:73  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  141:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  142:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  146:90  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  156:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  165:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  168:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  178:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  179:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  189:63  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  226:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  264:82  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  265:81  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  266:73  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  267:82  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  268:74  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  269:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  271:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  273:69  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  299:82  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  300:81  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  301:80  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  302:82  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  303:81  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  304:79  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  306:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  308:76  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/calculate-fleet-settlement/index.ts
+  10:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/check-booking-milestones/index.ts
+  12:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/check-pro-subscription/index.ts
+  23:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/check-trial-expiration/index.ts
+  10:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/create-pro-checkout/index.ts
+  50:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/crm-send-email/index.ts
+  157:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/cvr-search-industry/index.ts
+  153:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  161:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  171:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/generate-contract/index.ts
+  144:9  error  'displayPrice' is never reassigned. Use 'const' instead  prefer-const
+
+/workspaces/lejio-b75cff1f/supabase/functions/generate-corporate-invoice/index.ts
+  74:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  78:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/generate-invoice/index.ts
+  190:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/generate-monthly-invoices/index.ts
+  10:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/generate-settlement-invoice/index.ts
+  180:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/get-vapid-public-key/index.ts
+  28:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/gps-webhook/index.ts
+  37:42  error  Unexpected control character(s) in regular expression: \x00, \x1f  no-control-regex
+
+/workspaces/lejio-b75cff1f/supabase/functions/live-chat-ai/index.ts
+  83:7   error  'sanitized' is never reassigned. Use 'const' instead                                       prefer-const
+  95:14  error  Unexpected control character(s) in regular expression: \x00, \x08, \x0b, \x0c, \x0e, \x1f  no-control-regex
+
+/workspaces/lejio-b75cff1f/supabase/functions/payment-webhook/index.ts
+  48:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/pro-customer-portal/index.ts
+  10:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/send-appeal-decision/index.ts
+  9:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/send-booking-confirmation/index.ts
+  225:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/send-damage-report/index.ts
+  105:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/send-demo-contract/index.ts
+  932:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/send-push-notification/index.ts
+  107:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/send-sales-email/index.ts
+  146:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/send-settlement-email/index.ts
+  214:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/send-subscription-confirmation/index.ts
+  44:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/send-trial-reminder/index.ts
+  17:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/send-warning-notification/index.ts
+  182:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/twilio-call-webhook/index.ts
+  72:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/twilio-incoming-call/index.ts
+  79:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/twilio-make-call/index.ts
+   55:39  error  Unnecessary escape character: \(          no-useless-escape
+   55:41  error  Unnecessary escape character: \)          no-useless-escape
+  126:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/upload-vehicle-image/index.ts
+  143:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  194:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  223:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  224:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/supabase/functions/verify-driver-license/index.ts
+    6:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  122:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  143:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  199:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  291:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/workspaces/lejio-b75cff1f/tailwind.config.ts
+  250:13  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+✖ 518 problems (457 errors, 61 warnings)
+  6 errors and 3 warnings potentially fixable with the `--fix` option.
+

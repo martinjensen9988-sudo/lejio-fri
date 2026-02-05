@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "dev"
+    },
+    "location": {
+      "value": "westeurope"
+    },
+    "projectName": {
+      "value": "lejio-fri"
+    },
+    "sqlAdminUsername": {
+      "value": "sqladmin"
+    },
+    "sqlAdminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{keyVaultName}"
+        },
+        "secretName": "sql-admin-password"
+      }
+    },
+    "githubRepo": {
+      "value": "martinjensen9988-sudo/lejio-b75cff1f"
+    },
+    "githubBranch": {
+      "value": "main"
+    }
+  }
+}

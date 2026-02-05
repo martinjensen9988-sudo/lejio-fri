@@ -1,0 +1,22 @@
+{
+  "name": "lejio-fri-azure-functions",
+  "version": "1.0.0",
+  "description": "Azure Functions backend for Lejio Fri",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "func start",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.0.1",
+    "mssql": "^9.1.1",
+    "jsonwebtoken": "^9.1.2",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/jsonwebtoken": "^9.0.5",
+    "typescript": "^5.0.0"
+  }
+}
