@@ -91,7 +91,7 @@ export function TenantProvider({ children, apiBaseUrl }: TenantProviderProps) {
       }
 
       // Fetch tenant from Azure Function
-      const response = await fetch(`${apiBaseUrl}/Tenant?subdomain=${subdomain}`);
+      const response = await fetch(`${apiBaseUrl}/tenant?subdomain=${subdomain}`);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch tenant: ${response.statusText}`);
