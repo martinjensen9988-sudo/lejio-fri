@@ -45,7 +45,34 @@ if (!distPath) {
 }
 
 console.log('📁 Serving static files from:', distPath);
-app.use(express.static(distPath));
+
+// Verify dist directory exists and has files
+try {
+  const distContents = fs.readdirSync(distPath);
+  console.log(`✅ dist/ directory has ${distContents.length} items`);
+  
+  const assetDir = path.join(distPath, 'assets');
+  if (fs.existsSync(assetDir)) {
+    const assetFiles = fs.readdirSync(assetDir);
+    console.log(`✅ dist/assets/ directory has ${assetFiles.length} files`);
+  }
+} catch (err) {
+  console.warn(`⚠️  Could not read dist directory: ${err.message}`);
+}
+
+// Serve static files with proper MIME types
+app.use(express.static(distPath, {
+  maxAge: '1d',
+  etag: false,
+  setHeaders: (res, path) => {
+    // Ensure JS files are served with correct MIME type
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    } else if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css; charset=utf-8');
+    }
+  }
+}));
 
 // LogMiddleware to see what's being requested
 app.use((req, res, next) => {
@@ -206,7 +233,18 @@ Object.entries(apiRoutes).forEach(([routePath, handler]) => {
 });
 
 // Serve React app for all other routes (SPA)
+// But NOT for static assets - only HTML requests should get index.html
 app.get('*', (req, res) => {
+  // Skip serving index.html for static asset requests
+  const assetExtensions = ['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.woff', '.woff2', '.ttf', '.eot', '.ico', '.map'];
+  const isAssetRequest = assetExtensions.some(ext => req.path.endsWith(ext));
+  
+  if (isAssetRequest) {
+    // This is a static asset request - let it 404 naturally
+    return res.status(404).json({ error: 'Asset not found', path: req.path });
+  }
+  
+  // This is likely a route request - serve index.html for SPA routing
   const indexPath = path.join(distPath, 'index.html');
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
