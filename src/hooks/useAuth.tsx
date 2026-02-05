@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { azureApi } from '@/integrations/azure/client';
+import { azureApi, supabase } from '@/integrations/azure/client';
 import { safeStorage } from '@/lib/safeStorage';
 
 // Local user type (NOT from Supabase)
