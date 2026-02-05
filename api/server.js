@@ -15,10 +15,10 @@ app.use(express.json());
 // Determine correct dist path - try multiple locations
 let distPath;
 const possiblePaths = [
-  path.resolve(__dirname, '../dist'),           // From api/server.js: ../dist
-  path.resolve(__dirname, '../../dist'),        // From api/server.js via src: ../../dist  
+  '/opt/render/project/dist',                   // Render production (PRIORITY)
+  path.resolve(__dirname, '../../dist'),        // From api/server.js: up 2 dirs
+  path.resolve(__dirname, '../dist'),           // From api/server.js: up 1 dir
   path.resolve(process.cwd(), 'dist'),          // From current working directory
-  path.resolve('/opt/render/project/dist'),     // Render absolute path
 ];
 
 for (const p of possiblePaths) {
