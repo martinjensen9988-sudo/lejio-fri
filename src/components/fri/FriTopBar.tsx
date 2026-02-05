@@ -1,62 +1,53 @@
 import React, { useState } from 'react';
-import { Search, Bell, Settings, Menu, X, Sparkles } from 'lucide-react';
+import { Search, Bell, Settings } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
-interface FriTopBarProps {
-  onMenuToggle?: (open: boolean) => void;
-  sidebarOpen?: boolean;
-}
-
-const FriTopBar: React.FC<FriTopBarProps> = ({ onMenuToggle, sidebarOpen = true }) => {
+const FriTopBar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [hasNotifications, setHasNotifications] = useState(true);
+  const [hasNotifications] = useState(true);
 
   return (
-    <header className="bg-[#0a0d14]/80 backdrop-blur-xl border-b border-white/10 sticky top-0 right-0 left-0 z-30">
+    <header className="bg-white border-b border-gray-200 sticky top-0 right-0 left-0 z-30">
       <div className="flex items-center justify-between h-16 px-6">
         {/* Left: Search Bar */}
         <div className="flex-1 max-w-md">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <Input
               placeholder="Søg køretøjer, bookinger..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus:bg-white/10 focus:border-amber-500/50"
+              className="pl-10 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-pink-500"
             />
           </div>
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-4 ml-6">
-          {/* Upgrade Banner */}
-          <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-600/10 border border-amber-500/30">
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <span className="text-sm font-medium text-amber-100">Pro Plan Aktiv</span>
+        <div className="flex items-center gap-3 ml-6">
+          {/* Pro Badge */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-pink-50 border border-pink-200">
+            <span className="text-sm font-medium text-pink-600">Pro Plan</span>
           </div>
 
           {/* Notifications */}
-          <button className="relative p-2 text-white/60 hover:text-amber-400 hover:bg-white/5 rounded-xl transition-all duration-300 border border-transparent hover:border-amber-500/30">
+          <button className="relative p-2 text-gray-500 hover:text-pink-600 hover:bg-gray-50 rounded-lg transition-colors">
             <Bell className="w-5 h-5" />
             {hasNotifications && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-amber-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-pink-500 rounded-full"></span>
             )}
           </button>
 
           {/* Settings */}
-          <button className="p-2 text-white/60 hover:text-amber-400 hover:bg-white/5 rounded-xl transition-all duration-300 border border-transparent hover:border-amber-500/30">
+          <button className="p-2 text-gray-500 hover:text-pink-600 hover:bg-gray-50 rounded-lg transition-colors">
             <Settings className="w-5 h-5" />
           </button>
 
           {/* Divider */}
-          <div className="w-px h-6 bg-white/10"></div>
+          <div className="w-px h-6 bg-gray-200"></div>
 
-          {/* User Indicator */}
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500 flex items-center justify-center text-white text-sm font-bold shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-              L
-            </div>
+          {/* User Avatar */}
+          <div className="w-9 h-9 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 text-sm font-semibold">
+            L
           </div>
         </div>
       </div>
