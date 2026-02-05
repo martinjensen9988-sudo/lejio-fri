@@ -34,7 +34,9 @@ export function usePages(lessorId?: string) {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE}/get-pages?lessor_id=${lessorId}`);
+      const response = await fetch(`${API_BASE}/get-pages?lessor_id=${lessorId}`, {
+        credentials: "include",
+      });
       if (!response.ok) throw new Error("Failed to fetch pages");
       const data = await response.json();
       setPages(data || []);
@@ -54,7 +56,8 @@ export function usePages(lessorId?: string) {
       setLoading(true);
       try {
         const response = await fetch(
-          `${API_BASE}/get-pages?lessor_id=${lessorId}&page_id=${pageId}`
+          `${API_BASE}/get-pages?lessor_id=${lessorId}&page_id=${pageId}`,
+          { credentials: "include" }
         );
         if (!response.ok) return null;
         const data = await response.json();
@@ -81,6 +84,7 @@ export function usePages(lessorId?: string) {
         const response = await fetch(`${API_BASE}/create-page`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ lessor_id, title, slug, meta_description }),
         });
         if (!response.ok) throw new Error("Failed to create page");
@@ -104,6 +108,7 @@ export function usePages(lessorId?: string) {
         const response = await fetch(`${API_BASE}/update-page`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ page_id: pageId, ...updates }),
         });
         if (!response.ok) throw new Error("Failed to update page");
@@ -126,6 +131,7 @@ export function usePages(lessorId?: string) {
       try {
         const response = await fetch(`${API_BASE}/delete-page?page_id=${pageId}`, {
           method: "DELETE",
+          credentials: "include",
         });
         if (!response.ok) throw new Error("Failed to delete page");
         setPages(pages.filter((p) => p.id !== pageId));
@@ -158,6 +164,7 @@ export function usePages(lessorId?: string) {
         const response = await fetch(`${API_BASE}/add-page-block`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ page_id: pageId, block_type, position, config }),
         });
         if (!response.ok) throw new Error("Failed to add block");
@@ -185,6 +192,7 @@ export function usePages(lessorId?: string) {
         const response = await fetch(`${API_BASE}/update-page-block`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ page_id: pageId, block_id: blockId, ...updates }),
         });
         if (!response.ok) throw new Error("Failed to update block");
@@ -216,7 +224,7 @@ export function usePages(lessorId?: string) {
       try {
         const response = await fetch(
           `${API_BASE}/delete-page-block?page_id=${pageId}&block_id=${blockId}`,
-          { method: "DELETE" }
+          { method: "DELETE", credentials: "include" }
         );
         if (!response.ok) throw new Error("Failed to delete block");
         setPages(

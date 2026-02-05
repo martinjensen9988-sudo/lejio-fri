@@ -1,5 +1,32 @@
 const pool = require("../db");
 
+function parseCookies(cookieHeader) {
+  const cookies = {};
+  if (!cookieHeader) return cookies;
+  cookieHeader.split(';').forEach(cookie => {
+    const [name, value] = cookie.trim().split('=');
+    if (name && value) cookies[name] = value;
+  });
+  return cookies;
+}
+
+async function resolveLessorId(req) {
+  if (req.body?.lessor_id) return req.body.lessor_id;
+  if (req.query?.lessor_id) return req.query.lessor_id;
+
+  const cookies = parseCookies(req.headers.cookie);
+  const sessionId = cookies.lejio_sid;
+  if (!sessionId) return null;
+
+  const sessionResult = await pool.query(
+    'SELECT user_id FROM fri_sessions WHERE id = $1',
+    [sessionId]
+  );
+
+  if (sessionResult.rows.length === 0) return null;
+  return sessionResult.rows[0].user_id;
+}
+
 module.exports = async function (context, req) {
   context.res.headers = {
     "Content-Type": "application/json",
@@ -7,7 +34,8 @@ module.exports = async function (context, req) {
   };
 
   try {
-    const { lessor_id, title, slug, meta_description, blocks } = req.body;
+    const { title, slug, meta_description, blocks } = req.body || {};
+    const lessor_id = await resolveLessorId(req);
 
     if (!lessor_id || !title || !slug) {
       context.res.status = 400;
