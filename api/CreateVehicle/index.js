@@ -1,16 +1,17 @@
-const pool = require('../db.js');
+const { withLessorClient } = require('../rls');
 const { v4: uuidv4 } = require('uuid');
 
 module.exports = async function (context, req) {
   context.res.headers = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": req.headers.origin || "*",
+    "Access-Control-Allow-Credentials": "true",
   };
 
   try {
-    const { lessor_id, make, model, year, license_plate, daily_rate } = req.body;
+    const { make, model, year, license_plate, daily_rate } = req.body;
 
-    if (!lessor_id || !make || !model || !year || !license_plate || !daily_rate) {
+    if (!make || !model || !year || !license_plate || !daily_rate) {
       context.res.status = 400;
       context.res.body = { error: "Missing required fields" };
       return context.res;
@@ -18,12 +19,14 @@ module.exports = async function (context, req) {
 
     const vehicleId = uuidv4();
 
-    await pool.query(`
-      INSERT INTO fri_vehicles 
-      (id, lessor_id, make, model, year, license_plate, daily_rate, availability_status, is_active)
-      VALUES 
-      ($1, $2, $3, $4, $5, $6, $7, 'available', TRUE)
-    `, [vehicleId, lessor_id, make, model, year, license_plate, daily_rate]);
+    await withLessorClient(req, async (client, lessorId) =>
+      client.query(`
+        INSERT INTO fri_vehicles 
+        (id, lessor_id, make, model, year, license_plate, daily_rate, availability_status, is_active)
+        VALUES 
+        ($1, $2, $3, $4, $5, $6, $7, 'available', TRUE)
+      `, [vehicleId, lessorId, make, model, year, license_plate, daily_rate])
+    );
 
     context.res.status = 201;
     context.res.body = { id: vehicleId, message: "Vehicle created successfully" };

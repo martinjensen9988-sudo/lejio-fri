@@ -32,48 +32,25 @@ export function useFriAuth(): UseFriAuthReturn {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('fri-auth-token');
-        if (!token) {
-          // Set demo user for testing
-          setUser({
-            id: 'demo-user-1',
-            email: 'demo@yourdomain.com',
-            lessor_id: 'lessor-1',
-            company_name: 'Demo Biludlejning',
-          } as any);
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(`${apiBaseUrl}/auth-me`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+        // Check session via cookie (server resolves lejio_sid)
+        const response = await fetch(`${apiBaseUrl}/auth-session`, {
+          credentials: 'include',
         });
         
         if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
+          const data = await response.json();
+          if (data.user?.id) {
+            setUser(data.user);
+          } else {
+            setUser(null);
+          }
         } else {
-          // Fallback to demo user
-          setUser({
-            id: 'demo-user-1',
-            email: 'demo@yourdomain.com',
-            lessor_id: 'lessor-1',
-            company_name: 'Demo Biludlejning',
-          } as any);
-          localStorage.removeItem('fri-auth-token');
+          setUser(null);
         }
         setLoading(false);
       } catch (err) {
         console.error('Auth check error:', err);
-        // Fallback to demo user on error
-        setUser({
-          id: 'demo-user-1',
-          email: 'demo@yourdomain.com',
-          lessor_id: 'lessor-1',
-          company_name: 'Demo Biludlejning',
-        } as any);
+        setUser(null);
         setLoading(false);
       }
     };
@@ -89,6 +66,7 @@ export function useFriAuth(): UseFriAuthReturn {
         const response = await fetch(`${apiBaseUrl}/auth-signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ email, password }),
         });
 
@@ -98,12 +76,9 @@ export function useFriAuth(): UseFriAuthReturn {
         }
 
         const userData = await response.json();
-        // Set user after signup so we can create lessor account
+        // Set user after signup (cookie is set by server)
         if (userData.user) {
           setUser(userData.user);
-          if (userData.session?.access_token) {
-            localStorage.setItem('fri-auth-token', userData.session.access_token);
-          }
         } else if (userData.id) {
           setUser(userData);
         }
@@ -126,6 +101,7 @@ export function useFriAuth(): UseFriAuthReturn {
         const response = await fetch(`${apiBaseUrl}/auth-login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ email, password }),
         });
 
@@ -136,12 +112,8 @@ export function useFriAuth(): UseFriAuthReturn {
 
         const data = await response.json();
         
-        // Store session token
-        if (data.session?.access_token) {
-          localStorage.setItem('fri-auth-token', data.session.access_token);
-        }
-        
-        setUser(data.session?.user || {
+        // Cookie is set by server via Set-Cookie header
+        setUser(data.user || {
           id: '',
           email: email,
         });
@@ -160,16 +132,10 @@ export function useFriAuth(): UseFriAuthReturn {
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem('fri-auth-token');
-      if (token) {
-        await fetch(`${apiBaseUrl}/auth-logout`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-      }
-      localStorage.removeItem('fri-auth-token');
+      await fetch(`${apiBaseUrl}/auth-logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
       setUser(null);
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));

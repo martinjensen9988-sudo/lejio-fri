@@ -5,6 +5,7 @@ interface FriAuthUser {
   id: string;
   email: string;
   company_name?: string;
+  lessor_id?: string;
   isLessor?: boolean;
 }
 

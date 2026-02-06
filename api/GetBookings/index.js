@@ -1,20 +1,14 @@
-const pool = require('../db.js');
+const { withLessorClient } = require('../rls');
 
 module.exports = async function (context, req) {
   context.res.headers = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": req.headers.origin || "*",
+    "Access-Control-Allow-Credentials": "true",
   };
 
   try {
-    const lessorId = req.query.lessor_id;
     const status = req.query.status;
-
-    if (!lessorId) {
-      context.res.status = 400;
-      context.res.body = { error: "lessor_id required" };
-      return context.res;
-    }
 
     let query = `
       SELECT 
@@ -33,7 +27,7 @@ module.exports = async function (context, req) {
       WHERE b.lessor_id = $1
     `;
 
-    const params = [lessorId];
+    const params = [];
 
     if (status) {
       query += ' AND b.status = $2';
@@ -42,7 +36,10 @@ module.exports = async function (context, req) {
 
     query += ' ORDER BY b.start_date DESC';
 
-    const result = await pool.query(query, params);
+    const result = await withLessorClient(req, (client, lessorId) => {
+      const values = [lessorId, ...params];
+      return client.query(query, values);
+    });
 
     context.res.status = 200;
     context.res.body = result.rows || [];

@@ -1,29 +1,18 @@
-const pool = require('../db.js');
+const { withLessorClient } = require('../rls');
 
 module.exports = async function (context, req) {
   context.res.headers = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": req.headers.origin || "*",
+    "Access-Control-Allow-Credentials": "true",
   };
 
   try {
-    const { id, lessor_id, make, model, year, license_plate, daily_rate, availability_status } = req.body;
+    const { id, make, model, year, license_plate, daily_rate, availability_status } = req.body;
 
-    if (!id || !lessor_id) {
+    if (!id) {
       context.res.status = 400;
       context.res.body = { error: "Missing required fields" };
-      return context.res;
-    }
-
-    // Verify ownership
-    const ownerCheck = await pool.query(
-      'SELECT id FROM fri_vehicles WHERE id = $1 AND lessor_id = $2',
-      [id, lessor_id]
-    );
-
-    if (ownerCheck.rows.length === 0) {
-      context.res.status = 403;
-      context.res.body = { error: "Unauthorized" };
       return context.res;
     }
 
@@ -70,9 +59,11 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    await pool.query(
-      `UPDATE fri_vehicles SET ${updates.join(', ')} WHERE id = $1`,
-      params
+    await withLessorClient(req, async (client) =>
+      client.query(
+        `UPDATE fri_vehicles SET ${updates.join(', ')} WHERE id = $1`,
+        params
+      )
     );
 
     context.res.status = 200;

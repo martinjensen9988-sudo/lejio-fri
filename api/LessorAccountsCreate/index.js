@@ -2,13 +2,18 @@ const { v4: uuidv4 } = require('uuid');
 const db = require('../db');
 
 module.exports = async function (context, req) {
+  context.res = context.res || {};
+  context.res.headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": req.headers?.origin || "*",
+    "Access-Control-Allow-Credentials": "true",
+  };
+
   const { user_id, company_name, custom_domain, cvr_number, primary_color } = req.body || {};
 
   if (!user_id || !company_name || !custom_domain) {
-    context.res = {
-      status: 400,
-      body: { error: "user_id, company_name, and custom_domain are required" }
-    };
+    context.res.status = 400;
+    context.res.body = { error: "user_id, company_name, and custom_domain are required" };
     return context.res;
   }
 

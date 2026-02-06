@@ -14,9 +14,9 @@ export function useFriStats() {
     queryFn: async () => {
       if (!user?.lessor_id) throw new Error('No lessor_id');
       
-      const response = await fetch(
-        `${API_BASE}/get-lessor-stats?lessor_id=${user.lessor_id}`
-      );
+      const response = await fetch(`${API_BASE}/get-lessor-stats`, {
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Failed to fetch stats');
       return response.json();
     },
@@ -36,9 +36,9 @@ export function useFriVehicles() {
     queryFn: async () => {
       if (!user?.lessor_id) throw new Error('No lessor_id');
       
-      const response = await fetch(
-        `${API_BASE}/get-vehicles?lessor_id=${user.lessor_id}`
-      );
+      const response = await fetch(`${API_BASE}/get-vehicles`, {
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Failed to fetch vehicles');
       return response.json();
     },
@@ -59,8 +59,8 @@ export function useCreateVehicle() {
       const response = await fetch(`${API_BASE}/create-vehicle`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
-          lessor_id: user?.lessor_id,
           ...vehicleData,
         }),
       });
@@ -86,9 +86,9 @@ export function useUpdateVehicle() {
       const response = await fetch(`${API_BASE}/update-vehicle`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           id,
-          lessor_id: user?.lessor_id,
           ...vehicleData,
         }),
       });
@@ -111,8 +111,8 @@ export function useDeleteVehicle() {
   return useMutation({
     mutationFn: async (vehicleId: string) => {
       const response = await fetch(
-        `${API_BASE}/delete-vehicle?id=${vehicleId}&lessor_id=${user?.lessor_id}`,
-        { method: 'DELETE' }
+        `${API_BASE}/delete-vehicle?id=${vehicleId}`,
+        { method: 'DELETE', credentials: 'include' }
       );
       if (!response.ok) throw new Error('Failed to delete vehicle');
       return response.json();
@@ -131,7 +131,6 @@ export function useFriBookings(status?: string) {
   const { user } = useFriAuthContext();
 
   const queryParams = new URLSearchParams({
-    lessor_id: user?.lessor_id || '',
     ...(status && { status }),
   });
 
@@ -140,9 +139,9 @@ export function useFriBookings(status?: string) {
     queryFn: async () => {
       if (!user?.lessor_id) throw new Error('No lessor_id');
       
-      const response = await fetch(
-        `${API_BASE}/get-bookings?${queryParams}`
-      );
+      const response = await fetch(`${API_BASE}/get-bookings?${queryParams}`, {
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Failed to fetch bookings');
       return response.json();
     },
@@ -158,7 +157,6 @@ export function useFriInvoices(status?: string) {
   const { user } = useFriAuthContext();
 
   const queryParams = new URLSearchParams({
-    lessor_id: user?.lessor_id || '',
     ...(status && { status }),
   });
 
@@ -167,9 +165,9 @@ export function useFriInvoices(status?: string) {
     queryFn: async () => {
       if (!user?.lessor_id) throw new Error('No lessor_id');
       
-      const response = await fetch(
-        `${API_BASE}/get-invoices?${queryParams}`
-      );
+      const response = await fetch(`${API_BASE}/get-invoices?${queryParams}`, {
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Failed to fetch invoices');
       return response.json();
     },

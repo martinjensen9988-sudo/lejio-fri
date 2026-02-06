@@ -1,21 +1,15 @@
-const pool = require('../db.js');
+const { withLessorClient } = require('../rls');
 
 module.exports = async function (context, req) {
   context.res.headers = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": req.headers.origin || "*",
+    "Access-Control-Allow-Credentials": "true",
   };
 
   try {
-    const lessorId = req.query.lessor_id;
-
-    if (!lessorId) {
-      context.res.status = 400;
-      context.res.body = { error: "lessor_id required" };
-      return context.res;
-    }
-
-    const result = await pool.query(`
+    const result = await withLessorClient(req, async (client, lessorId) =>
+      client.query(`
       SELECT 
         id, 
         make, 
@@ -30,7 +24,8 @@ module.exports = async function (context, req) {
       FROM fri_vehicles 
       WHERE lessor_id = $1 AND is_active = TRUE
       ORDER BY created_at DESC
-    `, [lessorId]);
+    `, [lessorId])
+    );
 
     context.res.status = 200;
     context.res.body = result.rows || [];

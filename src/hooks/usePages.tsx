@@ -29,8 +29,7 @@ export function usePages(lessorId?: string) {
   const getPages = useCallback(async () => {
     setLoading(true);
     try {
-      const query = lessorId ? `?lessor_id=${lessorId}` : "";
-      const response = await fetch(`${API_BASE}/get-pages${query}`, {
+      const response = await fetch(`${API_BASE}/get-pages`, {
         credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to fetch pages");
@@ -49,9 +48,7 @@ export function usePages(lessorId?: string) {
     async (pageId: string) => {
       setLoading(true);
       try {
-        const base = `${API_BASE}/get-pages?page_id=${pageId}`;
-        const url = lessorId ? `${base}&lessor_id=${lessorId}` : base;
-        const response = await fetch(url, { credentials: "include" });
+        const response = await fetch(`${API_BASE}/get-pages?page_id=${pageId}`, { credentials: "include" });
         if (!response.ok) return null;
         const data = await response.json();
         return data[0] || null;

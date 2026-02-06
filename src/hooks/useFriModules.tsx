@@ -21,7 +21,9 @@ export function useFriModules() {
     queryKey: ['friModules', user?.lessor_id],
     queryFn: async () => {
       if (!user?.lessor_id) throw new Error('No lessor_id');
-      const response = await fetch(`${API_BASE}/get-modules?lessor_id=${user.lessor_id}`);
+      const response = await fetch(`${API_BASE}/get-modules`, {
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Failed to fetch modules');
       const data = await response.json();
       return (data.modules || []) as FriModuleRecord[];
@@ -36,8 +38,8 @@ export function useFriModules() {
       const response = await fetch(`${API_BASE}/set-module`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
-          lessor_id: user.lessor_id,
           module_id: moduleId,
           enabled,
         }),

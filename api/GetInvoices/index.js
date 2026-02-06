@@ -1,48 +1,43 @@
-const pool = require('../db.js');
+const { withLessorClient } = require('../rls');
 
 module.exports = async function (context, req) {
   context.res.headers = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": req.headers.origin || "*",
+    "Access-Control-Allow-Credentials": "true",
   };
 
   try {
-    const lessorId = req.query.lessor_id;
     const status = req.query.status;
-
-    if (!lessorId) {
-      context.res.status = 400;
-      context.res.body = { error: "lessor_id required" };
-      return context.res;
-    }
-
-    // Using connection pool from db.js
-let query = `
+    let query = `
       SELECT 
         i.id, 
         i.invoice_number, 
-        i.invoice_date, 
+        i.created_at as invoice_date, 
         i.due_date, 
         i.total_amount, 
-        i.net_amount, 
+        i.amount as net_amount, 
+        i.tax_amount,
         i.status,
-        c.full_name as customer_name,
-        c.email as customer_email
+        i.customer_name,
+        i.email as customer_email
       FROM fri_invoices i
-      JOIN fri_customers c ON i.customer_id = c.id
       WHERE i.lessor_id = $1
     `;
 
-    const request = pool.request().input('lessorId', sql.UniqueIdentifier, lessorId);
+    const params = [];
 
     if (status) {
       query += ' AND i.status = $2';
-      request.input('status', sql.NVarChar(50), status);
+      params.push(status);
     }
 
-    query += ' ORDER BY i.invoice_date DESC';
+    query += ' ORDER BY i.created_at DESC';
 
-    const result = await request.query(query);
+    const result = await withLessorClient(req, (client, lessorId) => {
+      const values = [lessorId, ...params];
+      return client.query(query, values);
+    });
 
     context.res.status = 200;
     context.res.body = result.rows || [];
