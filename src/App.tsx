@@ -156,9 +156,21 @@ export default function App() {
                 } />
 
                 {/* Page Builder - Lejio Fri Dashboard */}
-                <Route path="/dashboard/pages" element={<PagesDashboard />} />
-                <Route path="/dashboard/pages/:id/preview" element={<PagePreview />} />
-                <Route path="/dashboard/pages/:id/edit" element={<PageBuilder />} />
+                <Route path="/dashboard/pages" element={
+                  <FriAuthProvider>
+                    <PagesDashboard />
+                  </FriAuthProvider>
+                } />
+                <Route path="/dashboard/pages/:id/preview" element={
+                  <FriAuthProvider>
+                    <PagePreview />
+                  </FriAuthProvider>
+                } />
+                <Route path="/dashboard/pages/:id/edit" element={
+                  <FriAuthProvider>
+                    <PageBuilder />
+                  </FriAuthProvider>
+                } />
 
                 {/* Page Renderer for published sites */}
                 <Route path="/site/:lessorId/*" element={<PublicSiteRenderer />} />
