@@ -199,8 +199,8 @@ const FriLessorDashboard = () => {
       const startIso = firstDay.toISOString();
       const endIso = lastDay.toISOString();
 
-      const monthlyBookingsResponse = await azureApi.post<any>('/db/query', {
-        query: `SELECT *, pickup_date AS start_date, return_date AS end_date FROM fri_bookings WHERE lessor_id='${safeLessorId}' AND pickup_date >= '${startIso}' AND return_date <= '${endIso}'`,
+      const monthlyBookingsResponse = await azureApi.post<any>('/db-query', {
+        query: `SELECT *, start_date, end_date FROM fri_bookings WHERE lessor_id='${safeLessorId}' AND start_date >= '${startIso}' AND end_date <= '${endIso}'`,
       });
 
       const monthlyBookings = Array.isArray(monthlyBookingsResponse?.data)

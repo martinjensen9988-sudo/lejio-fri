@@ -48,10 +48,6 @@ export const azureApi: {
   async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${API_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
     
-    // Get stored session token
-    const sessionData = safeStorage.getItem(SESSION_KEY);
-    const token = sessionData ? JSON.parse(sessionData)?.access_token : null;
-    
     const response = await fetch(url, {
       ...options,
       credentials: 'include',
@@ -235,7 +231,7 @@ export const supabase = {
   auth: {
     getUser: async () => {
       try {
-        const response = await azureApi.get('/auth/user');
+        const response = await azureApi.get('/auth-me');
         return { data: { user: response.data }, error: null };
       } catch (error) {
         return { data: { user: null }, error };
@@ -244,7 +240,7 @@ export const supabase = {
     
     getSession: async () => {
       try {
-        const response = await azureApi.get('/auth/session');
+        const response = await azureApi.get('/auth-session');
         return { data: { session: response.data }, error: null };
       } catch (error) {
         return { data: { session: null }, error };
@@ -253,7 +249,7 @@ export const supabase = {
     
     signInWithPassword: async (credentials: { email: string; password: string }) => {
       try {
-        const response = await azureApi.post('/auth/signin', credentials);
+        const response = await azureApi.post('/auth-login', credentials);
         return { data: { user: response.data?.user, session: response.data?.session }, error: null };
       } catch (error: any) {
         return { data: null, error: error.response?.data || error };
@@ -262,7 +258,7 @@ export const supabase = {
     
     signInWithOAuth: async (options: { provider: string; options?: any }) => {
       try {
-        const response = await azureApi.post('/auth/oauth', { provider: options.provider, ...options.options });
+        const response = await azureApi.post('/auth-oauth', { provider: options.provider, ...options.options });
         return { data: { user: response.data?.user, session: response.data?.session }, error: null };
       } catch (error: any) {
         return { data: null, error };
@@ -271,7 +267,7 @@ export const supabase = {
     
     signUp: async (credentials: { email: string; password: string }) => {
       try {
-        const response = await azureApi.post('/auth/signup', credentials);
+        const response = await azureApi.post('/auth-signup', credentials);
         return { data: { user: response.data?.user, session: response.data?.session }, error: null };
       } catch (error: any) {
         return { data: null, error };
@@ -280,7 +276,7 @@ export const supabase = {
     
     signOut: async () => {
       try {
-        await azureApi.post('/auth/signout', {});
+        await azureApi.post('/auth-logout', {});
         return { error: null };
       } catch (error: any) {
         return { error };
@@ -289,7 +285,7 @@ export const supabase = {
     
     onAuthStateChange: (callback: (event: string, session: any) => void) => {
       // Try to get initial session
-      azureApi.get('/auth/session').then((response: any) => {
+      azureApi.get('/auth-session').then((response: any) => {
         callback('INITIAL_SESSION', response.data?.session || null);
       }).catch(() => {
         callback('INITIAL_SESSION', null);

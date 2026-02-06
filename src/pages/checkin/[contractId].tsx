@@ -30,7 +30,7 @@ export default function CheckinPage() {
     const fetchContract = async () => {
       try {
         const safeContractId = String(contractId).replace(/'/g, "''");
-        const response = await azureApi.post<any>('/db/query', {
+        const response = await azureApi.post<any>('/db-query', {
           query: `SELECT * FROM contracts WHERE id='${safeContractId}'`,
         });
 
@@ -72,7 +72,7 @@ export default function CheckinPage() {
     }
     try {
       const checkedInAt = new Date().toISOString();
-      await azureApi.post('/db/query', {
+      await azureApi.post('/db-query', {
         query: `UPDATE contracts SET checked_in_at='${checkedInAt}' WHERE id='${String(contractId).replace(/'/g, "''")}'`,
       });
       setCheckedIn(true);

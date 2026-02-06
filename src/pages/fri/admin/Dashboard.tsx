@@ -22,8 +22,9 @@ export const FriAdminDashboard = () => {
     const fetchAdminStats = async () => {
       try {
         // Fetch lessor counts
-        const lessorsResponse = await azureApi.post<any>('/db/query', {
+        const lessorsResponse = await azureApi.post<any>('/db-query', {
           query: 'SELECT id, subscription_status, created_at FROM fri_lessors',
+          admin: true,
         });
         const lessorsData = Array.isArray(lessorsResponse?.data)
           ? lessorsResponse.data
@@ -35,8 +36,9 @@ export const FriAdminDashboard = () => {
         const activeLessors = lessorsData?.filter(l => l.subscription_status === 'active' || l.subscription_status === 'trial').length || 0;
 
         // Fetch vehicles
-        const vehiclesResponse = await azureApi.post<any>('/db/query', {
+        const vehiclesResponse = await azureApi.post<any>('/db-query', {
           query: 'SELECT id FROM fri_vehicles',
+          admin: true,
         });
         const vehiclesData = Array.isArray(vehiclesResponse?.data)
           ? vehiclesResponse.data
@@ -45,8 +47,9 @@ export const FriAdminDashboard = () => {
             : vehiclesResponse?.data?.recordset || vehiclesResponse?.recordset || [];
 
         // Fetch bookings
-        const bookingsResponse = await azureApi.post<any>('/db/query', {
-          query: 'SELECT id, total_price, status, pickup_date AS start_date FROM fri_bookings',
+        const bookingsResponse = await azureApi.post<any>('/db-query', {
+          query: 'SELECT id, total_price, status, start_date FROM fri_bookings',
+          admin: true,
         });
         const bookingsData = Array.isArray(bookingsResponse?.data)
           ? bookingsResponse.data

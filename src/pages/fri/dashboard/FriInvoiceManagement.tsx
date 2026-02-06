@@ -85,15 +85,14 @@ const FriInvoiceManagement = () => {
     setIsLoadingInvoices(true);
     try {
       const safeLessorId = (friLessor?.id || '').replace(/'/g, "''");
-      const allInvoicesResponse = await azureApi.post<any>('/db/query', {
+      const allInvoicesResponse = await azureApi.post<any>('/db-query', {
         query: `SELECT 
           i.*, 
-          c.full_name AS renter_name,
-          c.phone AS renter_phone,
+          i.customer_name AS renter_name,
+          i.email AS renter_phone,
           CONCAT(v.make, ' ', v.model) AS vehicle_info
         FROM fri_invoices i
         LEFT JOIN fri_bookings b ON i.booking_id = b.id
-        LEFT JOIN fri_customers c ON i.customer_id = c.id
         LEFT JOIN fri_vehicles v ON b.vehicle_id = v.id
         WHERE i.lessor_id='${safeLessorId}'
         ORDER BY i.created_at DESC`,

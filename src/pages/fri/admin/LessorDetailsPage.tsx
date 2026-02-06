@@ -57,11 +57,11 @@ export const FriAdminLessorDetailsPage = () => {
 
         // Fetch lessor info
         const safeLessorId = String(lessorId).replace(/'/g, "''");
-        const lessorResponse = await azureApi.post<any>('/db/query', {
+        const lessorResponse = await azureApi.post<any>('/db-query', {
           query: `SELECT 
             id,
             company_name,
-            contact_email AS email,
+            email,
             custom_domain,
             primary_color,
             logo_url,
@@ -69,6 +69,7 @@ export const FriAdminLessorDetailsPage = () => {
             subscription_status,
             created_at
           FROM fri_lessors WHERE id='${safeLessorId}'`,
+          admin: true,
         });
 
         const lessorRows = normalizeRows(lessorResponse);
@@ -78,10 +79,10 @@ export const FriAdminLessorDetailsPage = () => {
 
         // Fetch lessor data
         const [vehiclesRes, bookingsRes, invoicesRes, activeBookingsRes] = await Promise.all([
-          azureApi.post<any>('/db/query', { query: `SELECT id FROM fri_vehicles WHERE lessor_id='${safeLessorId}'` }),
-          azureApi.post<any>('/db/query', { query: `SELECT id, total_price, status, pickup_date AS start_date FROM fri_bookings WHERE lessor_id='${safeLessorId}'` }),
-          azureApi.post<any>('/db/query', { query: `SELECT id FROM fri_invoices WHERE lessor_id='${safeLessorId}'` }),
-          azureApi.post<any>('/db/query', { query: `SELECT id FROM fri_bookings WHERE lessor_id='${safeLessorId}' AND status='confirmed'` }),
+          azureApi.post<any>('/db-query', { query: `SELECT id FROM fri_vehicles WHERE lessor_id='${safeLessorId}'`, admin: true }),
+          azureApi.post<any>('/db-query', { query: `SELECT id, total_price, status, start_date FROM fri_bookings WHERE lessor_id='${safeLessorId}'`, admin: true }),
+          azureApi.post<any>('/db-query', { query: `SELECT id FROM fri_invoices WHERE lessor_id='${safeLessorId}'`, admin: true }),
+          azureApi.post<any>('/db-query', { query: `SELECT id FROM fri_bookings WHERE lessor_id='${safeLessorId}' AND status='confirmed'`, admin: true }),
         ]);
 
         const bookingsData = normalizeRows(bookingsRes);
