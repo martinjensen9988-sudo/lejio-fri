@@ -66,6 +66,17 @@ export interface FriInvoice {
   paid_date?: string;
 }
 
+const esc = (v: string) => v.replace(/'/g, "''");
+
+const normalizeRows = (response: any) => {
+  if (!response) return [];
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response.data)) return response.data;
+  if (Array.isArray(response.recordset)) return response.recordset;
+  if (Array.isArray(response.data?.recordset)) return response.data.recordset;
+  return response.data ?? response;
+};
+
 export const useFriLessor = () => {
   const auth = useFriAuth();
   const lessorId = auth.user?.lessor_id;
@@ -76,44 +87,29 @@ export const useFriLessor = () => {
   const [invoices, setInvoices] = useState<FriInvoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const escapeSqlValue = (value: string) => value.replace(/'/g, "''");
-
-  const normalizeRows = (response: any) => {
-    if (!response) return [];
-    if (Array.isArray(response)) return response;
-    if (Array.isArray(response.data)) return response.data;
-    if (Array.isArray(response.recordset)) return response.recordset;
-    if (Array.isArray(response.data?.recordset)) return response.data.recordset;
-    return response.data ?? response;
-  };
-
   const fetchFriData = useCallback(async () => {
-    if (!lessorId) {
-      setIsLoading(false);
-      return;
-    }
-
+    if (!lessorId) { setIsLoading(false); return; }
     setIsLoading(true);
     try {
-      // Fetch all related data in parallel with individual error handling
-      const safeLessorId = escapeSqlValue(lessorId);
-
+      const safeLessorId = esc(lessorId);
       const [lessorRes, teamRes, vehiclesRes, bookingsRes, invoicesRes] = await Promise.allSettled([
-        azureApi.post<any>("/db/query", { query: `SELECT id, company_name, contact_email, contact_phone, subscription_status AS status, created_at FROM fri_lessors WHERE id='${safeLessorId}'` }),
-        azureApi.post<any>("/db/query", { query: `SELECT * FROM fri_lessor_team_members WHERE lessor_id='${safeLessorId}' AND is_active=1` }),
-        azureApi.post<any>("/db/query", { query: `SELECT *, status AS availability_status FROM fri_vehicles WHERE lessor_id='${safeLessorId}' ORDER BY created_at DESC` }),
-        azureApi.post<any>("/db/query", { query: `SELECT 
-          b.*, 
-          b.pickup_date AS start_date,
-          b.return_date AS end_date,
-          c.full_name AS renter_name,
-          c.email AS renter_email,
-          c.phone AS renter_phone
-        FROM fri_bookings b
-        LEFT JOIN fri_customers c ON b.customer_id = c.id
-        WHERE b.lessor_id='${safeLessorId}'
-        ORDER BY b.created_at DESC OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY` }),
-        azureApi.post<any>("/db/query", { query: `SELECT *, invoice_date AS issued_date, total_amount AS total_amount FROM fri_invoices WHERE lessor_id='${safeLessorId}' ORDER BY created_at DESC` }),
+        azureApi.post<any>('/db-query', {
+          query: `SELECT id, company_name, email AS contact_email, subscription_status AS status, created_at FROM fri_lessors WHERE id='${safeLessorId}'`
+        }),
+        azureApi.post<any>('/db-query', {
+          query: `SELECT *, name AS full_name FROM fri_lessor_team_members WHERE lessor_id='${safeLessorId}' AND status='active'`
+        }),
+        azureApi.post<any>('/db-query', {
+          query: `SELECT *, availability_status AS status FROM fri_vehicles WHERE lessor_id='${safeLessorId}' ORDER BY created_at DESC`
+        }),
+        azureApi.post<any>('/db-query', {
+          query: `SELECT b.*, b.customer_name AS renter_name, b.email AS renter_email, b.phone AS renter_phone
+                  FROM fri_bookings b WHERE b.lessor_id='${safeLessorId}'
+                  ORDER BY b.created_at DESC LIMIT 100`
+        }),
+        azureApi.post<any>('/db-query', {
+          query: `SELECT *, created_at AS issued_date FROM fri_invoices WHERE lessor_id='${safeLessorId}' ORDER BY created_at DESC`
+        }),
       ]);
 
       const lessorRows = lessorRes.status === 'fulfilled' ? normalizeRows(lessorRes.value) : [];
@@ -127,39 +123,21 @@ export const useFriLessor = () => {
       setVehicles((vehicleRows || []) as FriVehicle[]);
       setBookings((bookingRows || []) as FriBooking[]);
       setInvoices((invoiceRows || []) as FriInvoice[]);
-
     } catch (error) {
       console.error('Error fetching Fri data:', error);
-      // Silently fail - don't show toast to avoid unhandled rejections
     } finally {
       setIsLoading(false);
     }
   }, [lessorId]);
 
-  useEffect(() => {
-    fetchFriData();
-  }, [fetchFriData]);
+  useEffect(() => { fetchFriData(); }, [fetchFriData]);
 
   const createTeamMember = async (member: { full_name: string; email: string; phone?: string; role: 'manager' | 'driver' | 'mechanic' | 'accountant' }) => {
-    if (!lessorId) {
-      toast.error('Lessor ID ikke fundet');
-      return null;
-    }
-
+    if (!lessorId) { toast.error('Lessor ID ikke fundet'); return null; }
     try {
-      await azureApi.post(`/db/fri_lessor_team_members`, {
-        records: [
-          {
-            lessor_id: lessorId,
-            full_name: member.full_name,
-            email: member.email,
-            phone: member.phone || null,
-            role: member.role,
-            is_active: true,
-          },
-        ],
+      await azureApi.post('/db-query', {
+        query: `INSERT INTO fri_lessor_team_members (lessor_id, name, email, role, status) VALUES ('${esc(lessorId)}', '${esc(member.full_name)}', '${esc(member.email)}', '${esc(member.role)}', 'active')`,
       });
-
       toast.success('Teammedlem oprettet');
       await fetchFriData();
       return true;
@@ -172,8 +150,14 @@ export const useFriLessor = () => {
 
   const updateTeamMember = async (memberId: string, updates: Partial<FriTeamMember>) => {
     try {
-      await azureApi.put(`/db/fri_lessor_team_members`, { id: memberId, ...updates });
-
+      const setClauses: string[] = [];
+      if (updates.full_name) setClauses.push(`name='${esc(updates.full_name)}'`);
+      if (updates.email) setClauses.push(`email='${esc(updates.email)}'`);
+      if (updates.role) setClauses.push(`role='${esc(updates.role)}'`);
+      if (setClauses.length === 0) return true;
+      await azureApi.post('/db-query', {
+        query: `UPDATE fri_lessor_team_members SET ${setClauses.join(', ')} WHERE id='${esc(memberId)}'`,
+      });
       toast.success('Teammedlem opdateret');
       await fetchFriData();
       return true;
@@ -186,8 +170,9 @@ export const useFriLessor = () => {
 
   const deleteTeamMember = async (memberId: string) => {
     try {
-      await azureApi.put(`/db/fri_lessor_team_members`, { id: memberId, is_active: false });
-
+      await azureApi.post('/db-query', {
+        query: `DELETE FROM fri_lessor_team_members WHERE id='${esc(memberId)}'`,
+      });
       toast.success('Teammedlem slettet');
       await fetchFriData();
       return true;
@@ -199,22 +184,12 @@ export const useFriLessor = () => {
   };
 
   const createVehicle = async (vehicle: { make: string; model: string; year: number; license_plate: string; daily_rate: number }) => {
-    if (!lessorId) {
-      toast.error('Lessor ID ikke fundet');
-      return null;
-    }
-
+    if (!lessorId) { toast.error('Lessor ID ikke fundet'); return null; }
     try {
-      await azureApi.post(`/db/fri_vehicles`, {
-        records: [
-          {
-            lessor_id: lessorId,
-            ...vehicle,
-            status: 'available',
-          },
-        ],
+      await azureApi.post('/db-query', {
+        query: `INSERT INTO fri_vehicles (lessor_id, make, model, year, license_plate, daily_rate, availability_status, is_active)
+                VALUES ('${esc(lessorId)}', '${esc(vehicle.make)}', '${esc(vehicle.model)}', ${vehicle.year}, '${esc(vehicle.license_plate)}', ${vehicle.daily_rate}, 'available', TRUE)`,
       });
-
       toast.success('Køretøj oprettet');
       await fetchFriData();
       return true;
@@ -227,8 +202,18 @@ export const useFriLessor = () => {
 
   const updateVehicle = async (vehicleId: string, updates: Partial<FriVehicle>) => {
     try {
-      await azureApi.put(`/db/fri_vehicles`, { id: vehicleId, ...updates });
-
+      const setClauses: string[] = [];
+      if (updates.make) setClauses.push(`make='${esc(updates.make)}'`);
+      if (updates.model) setClauses.push(`model='${esc(updates.model)}'`);
+      if (updates.year) setClauses.push(`year=${updates.year}`);
+      if (updates.license_plate) setClauses.push(`license_plate='${esc(updates.license_plate)}'`);
+      if (updates.daily_rate !== undefined) setClauses.push(`daily_rate=${updates.daily_rate}`);
+      if (updates.status) setClauses.push(`availability_status='${esc(updates.status)}'`);
+      if (setClauses.length === 0) return true;
+      setClauses.push(`updated_at=NOW()`);
+      await azureApi.post('/db-query', {
+        query: `UPDATE fri_vehicles SET ${setClauses.join(', ')} WHERE id='${esc(vehicleId)}'`,
+      });
       toast.success('Køretøj opdateret');
       await fetchFriData();
       return true;
@@ -240,71 +225,18 @@ export const useFriLessor = () => {
   };
 
   const createBooking = async (booking: { vehicle_id: string; renter_name: string; renter_email: string; renter_phone?: string; start_date: string; end_date: string; daily_rate: number; additional_fees?: number }) => {
-    if (!lessorId) {
-      toast.error('Lessor ID ikke fundet');
-      return null;
-    }
-
+    if (!lessorId) { toast.error('Lessor ID ikke fundet'); return null; }
     try {
-      const escapeSqlValue = (value: string) => value.replace(/'/g, "''");
-      const safeLessorId = escapeSqlValue(lessorId);
-      const safeVehicleId = escapeSqlValue(booking.vehicle_id);
-      const safeName = escapeSqlValue(booking.renter_name);
-      const safeEmail = escapeSqlValue(booking.renter_email);
-      const safePhone = escapeSqlValue(booking.renter_phone || '');
-      const safeStart = escapeSqlValue(booking.start_date);
-      const safeEnd = escapeSqlValue(booking.end_date);
+      const start = new Date(booking.start_date);
+      const end = new Date(booking.end_date);
+      const days = Math.max(1, Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+      const total = booking.daily_rate * days + (booking.additional_fees ?? 0);
+      const phoneVal = booking.renter_phone ? `'${esc(booking.renter_phone)}'` : 'NULL';
 
-      const query = `
-DECLARE @customer_id UNIQUEIDENTIFIER;
-SELECT @customer_id = id FROM fri_customers WHERE lessor_id='${safeLessorId}' AND email='${safeEmail}';
-IF @customer_id IS NULL
-BEGIN
-  INSERT INTO fri_customers (id, lessor_id, full_name, email, phone, is_verified, created_at, updated_at)
-  VALUES (NEWID(), '${safeLessorId}', '${safeName}', '${safeEmail}', ${booking.renter_phone ? `'${safePhone}'` : 'NULL'}, 0, GETUTCDATE(), GETUTCDATE());
-  SELECT @customer_id = id FROM fri_customers WHERE lessor_id='${safeLessorId}' AND email='${safeEmail}';
-END
-
-DECLARE @pickup_date DATETIME2 = '${safeStart}';
-DECLARE @return_date DATETIME2 = '${safeEnd}';
-DECLARE @days INT = CASE WHEN ABS(DATEDIFF(day, @pickup_date, @return_date)) < 1 THEN 1 ELSE ABS(DATEDIFF(day, @pickup_date, @return_date)) END;
-DECLARE @base_price DECIMAL(10,2) = ${booking.daily_rate} * @days;
-DECLARE @additional_fees DECIMAL(10,2) = ${booking.additional_fees ?? 0};
-DECLARE @total_price DECIMAL(10,2) = @base_price + @additional_fees;
-
-INSERT INTO fri_bookings (
-  lessor_id,
-  vehicle_id,
-  customer_id,
-  pickup_date,
-  return_date,
-  number_of_days,
-  daily_rate,
-  base_price,
-  additional_fees,
-  total_price,
-  status,
-  created_at,
-  updated_at
-) VALUES (
-  '${safeLessorId}',
-  '${safeVehicleId}',
-  @customer_id,
-  @pickup_date,
-  @return_date,
-  @days,
-  ${booking.daily_rate},
-  @base_price,
-  @additional_fees,
-  @total_price,
-  'pending',
-  GETUTCDATE(),
-  GETUTCDATE()
-);
-`;
-
-      await azureApi.post('/db/query', { query });
-
+      await azureApi.post('/db-query', {
+        query: `INSERT INTO fri_bookings (lessor_id, vehicle_id, customer_name, email, phone, start_date, end_date, rental_days, daily_rate, total_price, status)
+                VALUES ('${esc(lessorId)}', '${esc(booking.vehicle_id)}', '${esc(booking.renter_name)}', '${esc(booking.renter_email)}', ${phoneVal}, '${esc(booking.start_date)}', '${esc(booking.end_date)}', ${days}, ${booking.daily_rate}, ${total}, 'pending')`,
+      });
       toast.success('Booking oprettet');
       await fetchFriData();
       return true;
@@ -317,8 +249,9 @@ INSERT INTO fri_bookings (
 
   const updateBookingStatus = async (bookingId: string, newStatus: FriBooking['status']) => {
     try {
-      await azureApi.put(`/db/fri_bookings`, { id: bookingId, status: newStatus });
-
+      await azureApi.post('/db-query', {
+        query: `UPDATE fri_bookings SET status='${esc(newStatus)}', updated_at=NOW() WHERE id='${esc(bookingId)}'`,
+      });
       toast.success('Booking status opdateret');
       await fetchFriData();
       return true;
@@ -331,13 +264,10 @@ INSERT INTO fri_bookings (
 
   const getVehicleUtilization = () => {
     if (vehicles.length === 0) return 0;
-
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-    const recentBookings = bookings.filter((b) => new Date(b.created_at) >= thirtyDaysAgo);
-    const vehiclesUsed = new Set(recentBookings.map((b) => b.vehicle_id)).size;
-
+    const recentBookings = bookings.filter(b => new Date(b.created_at) >= thirtyDaysAgo);
+    const vehiclesUsed = new Set(recentBookings.map(b => b.vehicle_id)).size;
     return Math.round((vehiclesUsed / vehicles.length) * 100);
   };
 
@@ -345,38 +275,24 @@ INSERT INTO fri_bookings (
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
     return bookings
-      .filter((b) => {
-        const bookDate = new Date(b.created_at);
-        return bookDate >= monthStart && bookDate <= monthEnd && b.status === 'completed';
+      .filter(b => {
+        const d = new Date(b.created_at);
+        return d >= monthStart && d <= monthEnd && b.status === 'completed';
       })
       .reduce((sum, b) => sum + b.total_price, 0);
   };
 
   const getVehicleRevenue = (vehicleId: string) => {
-    return bookings
-      .filter((b) => b.vehicle_id === vehicleId && b.status === 'completed')
-      .reduce((sum, b) => sum + b.total_price, 0);
+    return bookings.filter(b => b.vehicle_id === vehicleId && b.status === 'completed').reduce((sum, b) => sum + b.total_price, 0);
   };
 
   return {
-    friLessor,
-    teamMembers,
-    vehicles,
-    bookings,
-    invoices,
-    isLoading,
-    createTeamMember,
-    updateTeamMember,
-    deleteTeamMember,
-    createVehicle,
-    updateVehicle,
-    createBooking,
-    updateBookingStatus,
-    getVehicleUtilization,
-    getTotalMonthlyRevenue,
-    getVehicleRevenue,
+    friLessor, teamMembers, vehicles, bookings, invoices, isLoading,
+    createTeamMember, updateTeamMember, deleteTeamMember,
+    createVehicle, updateVehicle,
+    createBooking, updateBookingStatus,
+    getVehicleUtilization, getTotalMonthlyRevenue, getVehicleRevenue,
     refetch: fetchFriData,
   };
 };

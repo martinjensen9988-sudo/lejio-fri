@@ -19,63 +19,46 @@ interface FriAdminContextType {
   isAuthenticated: boolean;
 }
 
+const normalizeRows = (response: any) => {
+  if (!response) return [];
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response.data)) return response.data;
+  if (Array.isArray(response.recordset)) return response.recordset;
+  if (Array.isArray(response.data?.recordset)) return response.data.recordset;
+  return response.data ?? response;
+};
+
 const FriAdminContext = createContext<FriAdminContextType | undefined>(undefined);
 
 export const FriAdminAuthProvider = ({ children }: { children: ReactNode }) => {
   const [admin, setAdmin] = useState<FriAdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const apiBaseUrl = '/api';
 
-  const escapeSqlValue = (value: string) => value.replace(/'/g, "''");
-
-  const normalizeRows = (response: any) => {
-    if (!response) return [];
-    if (Array.isArray(response)) return response;
-    if (Array.isArray(response.data)) return response.data;
-    if (Array.isArray(response.recordset)) return response.recordset;
-    if (Array.isArray(response.data?.recordset)) return response.data.recordset;
-    return response.data ?? response;
-  };
+  const esc = (v: string) => v.replace(/'/g, "''");
 
   const fetchAdminByEmail = async (email: string) => {
-    const response = await azureApi.post<any>('/db/query', {
-      query: `SELECT * FROM fri_admins WHERE admin_email='${escapeSqlValue(email)}' OR email='${escapeSqlValue(email)}'`,
-    });
-
-    const rows = normalizeRows(response) as FriAdminProfile[];
-    return rows?.[0] || null;
+    try {
+      const response = await azureApi.post<any>('/db-query', {
+        query: `SELECT * FROM fri_admins WHERE admin_email='${esc(email)}' OR email='${esc(email)}'`,
+        admin: true,
+      });
+      const rows = normalizeRows(response) as FriAdminProfile[];
+      return rows?.[0] || null;
+    } catch {
+      return null;
+    }
   };
 
-  // Check if user is already logged in on mount
   useEffect(() => {
-    const checkAdminSession = async () => {
+    const checkSession = async () => {
       try {
-        const token = localStorage.getItem('fri-admin-auth-token');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(`${apiBaseUrl}/auth-me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          localStorage.removeItem('fri-admin-auth-token');
-          setAdmin(null);
-          setLoading(false);
-          return;
-        }
-
-        const userData = await response.json();
-        const email = userData?.email;
-        if (!email) {
-          setAdmin(null);
-          setLoading(false);
-          return;
-        }
-
+        // Use cookie-based session check
+        const response = await fetch('/api/auth-session', { credentials: 'include' });
+        if (!response.ok) { setLoading(false); return; }
+        const data = await response.json();
+        const email = data?.user?.email;
+        if (!email) { setLoading(false); return; }
         const adminData = await fetchAdminByEmail(email);
         setAdmin(adminData || null);
       } catch (err) {
@@ -84,39 +67,25 @@ export const FriAdminAuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     };
-
-    checkAdminSession();
+    checkSession();
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
       setError(null);
       setLoading(true);
-
-      const response = await fetch(`${apiBaseUrl}/auth-login`, {
+      const response = await fetch('/api/auth-login', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || 'Login failed');
       }
-
-      const data = await response.json();
-      const token = data?.session?.access_token;
-
-      if (token) {
-        localStorage.setItem('fri-admin-auth-token', token);
-      }
-
       const adminData = await fetchAdminByEmail(email);
-      if (!adminData) {
-        localStorage.removeItem('fri-admin-auth-token');
-        throw new Error('User is not an admin');
-      }
-
+      if (!adminData) throw new Error('User is not an admin');
       setAdmin(adminData);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed';
@@ -130,29 +99,18 @@ export const FriAdminAuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     try {
       setLoading(true);
-      localStorage.removeItem('fri-admin-auth-token');
+      await fetch('/api/auth-logout', { method: 'POST', credentials: 'include' });
       setAdmin(null);
       setError(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Logout failed';
-      setError(message);
-      throw err;
+      setError(err instanceof Error ? err.message : 'Logout failed');
     } finally {
       setLoading(false);
     }
   };
 
-  const value: FriAdminContextType = {
-    admin,
-    loading,
-    error,
-    login,
-    logout,
-    isAuthenticated: !!admin,
-  };
-
   return (
-    <FriAdminContext.Provider value={value}>
+    <FriAdminContext.Provider value={{ admin, loading, error, login, logout, isAuthenticated: !!admin }}>
       {children}
     </FriAdminContext.Provider>
   );
@@ -160,8 +118,6 @@ export const FriAdminAuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useFriAdminAuth = () => {
   const context = useContext(FriAdminContext);
-  if (context === undefined) {
-    throw new Error('useFriAdminAuth must be used within FriAdminAuthProvider');
-  }
+  if (context === undefined) throw new Error('useFriAdminAuth must be used within FriAdminAuthProvider');
   return context;
 };

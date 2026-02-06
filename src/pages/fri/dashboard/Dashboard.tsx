@@ -262,5 +262,9 @@ export function FriDashboard() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </div>
+    </FriDashboardLayout>
   );
 }

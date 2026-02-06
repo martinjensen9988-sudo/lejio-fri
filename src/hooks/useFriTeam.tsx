@@ -6,12 +6,13 @@ export interface TeamMember {
   lessor_id: string;
   email: string;
   full_name: string;
+  name?: string;
   role: 'owner' | 'admin' | 'manager' | 'viewer';
   status: 'invited' | 'active' | 'inactive';
   joined_date?: string;
   last_active?: string;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface InviteTeamMemberInput {
@@ -20,214 +21,113 @@ export interface InviteTeamMemberInput {
   role: 'admin' | 'manager' | 'viewer';
 }
 
+const esc = (v: string) => v.replace(/'/g, "''");
+
+const normalizeRows = (response: any) => {
+  if (!response) return [];
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response.data)) return response.data;
+  if (Array.isArray(response.recordset)) return response.recordset;
+  if (Array.isArray(response.data?.recordset)) return response.data.recordset;
+  return response.data ?? response;
+};
+
 export function useFriTeam(lessorId: string | null) {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const escapeSqlValue = (value: string) => value.replace(/'/g, "''");
-
-  const normalizeRows = (response: any) => {
-    if (!response) return [];
-    if (Array.isArray(response)) return response;
-    if (Array.isArray(response.data)) return response.data;
-    if (Array.isArray(response.recordset)) return response.recordset;
-    if (Array.isArray(response.data?.recordset)) return response.data.recordset;
-    return response.data ?? response;
-  };
-
-  // Fetch all team members
-  const fetch = useCallback(async () => {
+  const fetchMembers = useCallback(async () => {
     if (!lessorId) return;
-
     setLoading(true);
     setError(null);
-
     try {
-      const safeLessorId = escapeSqlValue(lessorId);
-      const response = await azureApi.post<any>('/db/query', {
-        query: `SELECT * FROM fri_lessor_team_members WHERE lessor_id='${safeLessorId}' ORDER BY created_at ASC`,
+      const response = await azureApi.post<any>('/db-query', {
+        query: `SELECT *, name AS full_name FROM fri_lessor_team_members WHERE lessor_id='${esc(lessorId)}' ORDER BY created_at ASC`,
       });
-
-      const rows = normalizeRows(response) as TeamMember[];
-      setMembers(rows || []);
+      setMembers((normalizeRows(response) as TeamMember[]) || []);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch team members';
-      setError(message);
-      console.error('Error fetching team members:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch team members');
+      console.error('Error fetching team:', err);
     } finally {
       setLoading(false);
     }
   }, [lessorId]);
 
-  // Auto-fetch when component mounts or lessorId changes
-  useEffect(() => {
-    if (lessorId) {
-      fetch();
-    }
-  }, [lessorId, fetch]);
+  useEffect(() => { if (lessorId) fetchMembers(); }, [lessorId, fetchMembers]);
 
-  // Invite a new team member
-  const inviteMember = useCallback(
-    async (input: InviteTeamMemberInput) => {
-      if (!lessorId) throw new Error('Lessor ID is required');
+  const inviteMember = useCallback(async (input: InviteTeamMemberInput) => {
+    if (!lessorId) throw new Error('Lessor ID is required');
+    setError(null);
 
-      try {
-        setError(null);
+    // Check if already exists
+    const existsRes = await azureApi.post<any>('/db-query', {
+      query: `SELECT id FROM fri_lessor_team_members WHERE lessor_id='${esc(lessorId)}' AND email='${esc(input.email)}'`,
+    });
+    const existing = normalizeRows(existsRes);
+    if (existing?.[0]) throw new Error('This email is already part of the team');
 
-        // Check if member already exists
-        const safeLessorId = escapeSqlValue(lessorId);
-        const safeEmail = escapeSqlValue(input.email);
+    await azureApi.post('/db-query', {
+      query: `INSERT INTO fri_lessor_team_members (lessor_id, email, name, role, status)
+              VALUES ('${esc(lessorId)}', '${esc(input.email)}', '${esc(input.full_name)}', '${esc(input.role)}', 'invited')`,
+    });
+    await fetchMembers();
+    return null;
+  }, [lessorId, fetchMembers]);
 
-        const existsResponse = await azureApi.post<any>('/db/query', {
-          query: `SELECT id FROM fri_lessor_team_members WHERE lessor_id='${safeLessorId}' AND email='${safeEmail}'`,
-        });
+  const updateRole = useCallback(async (id: string, role: TeamMember['role']) => {
+    if (!lessorId) throw new Error('Lessor ID is required');
+    setError(null);
+    await azureApi.post('/db-query', {
+      query: `UPDATE fri_lessor_team_members SET role='${esc(role)}' WHERE id='${esc(id)}' AND lessor_id='${esc(lessorId)}'`,
+    });
+    await fetchMembers();
+    return null;
+  }, [lessorId, fetchMembers]);
 
-        const existingRows = normalizeRows(existsResponse);
-        if (existingRows?.[0]) {
-          throw new Error('This email is already part of the team');
-        }
+  const updateStatus = useCallback(async (id: string, status: TeamMember['status']) => {
+    if (!lessorId) throw new Error('Lessor ID is required');
+    setError(null);
+    await azureApi.post('/db-query', {
+      query: `UPDATE fri_lessor_team_members SET status='${esc(status)}' WHERE id='${esc(id)}' AND lessor_id='${esc(lessorId)}'`,
+    });
+    await fetchMembers();
+    return null;
+  }, [lessorId, fetchMembers]);
 
-        await azureApi.post('/db/query', {
-          query: `INSERT INTO fri_lessor_team_members (lessor_id, email, full_name, role, status) VALUES ('${safeLessorId}', '${safeEmail}', '${escapeSqlValue(input.full_name)}', '${escapeSqlValue(input.role)}', 'invited')`,
-        });
+  const removeMember = useCallback(async (id: string) => {
+    if (!lessorId) throw new Error('Lessor ID is required');
+    setError(null);
+    await azureApi.post('/db-query', {
+      query: `DELETE FROM fri_lessor_team_members WHERE id='${esc(id)}' AND lessor_id='${esc(lessorId)}'`,
+    });
+    setMembers(prev => prev.filter(m => m.id !== id));
+  }, [lessorId]);
 
-        await fetch();
-        return null;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to invite member';
-        setError(message);
-        throw err;
-      }
-    },
-    [lessorId]
-  );
+  const resendInvitation = useCallback(async (id: string) => {
+    if (!lessorId) throw new Error('Lessor ID is required');
+    setError(null);
+    await azureApi.post('/db-query', {
+      query: `UPDATE fri_lessor_team_members SET status='invited' WHERE id='${esc(id)}' AND lessor_id='${esc(lessorId)}'`,
+    });
+    await fetchMembers();
+    return null;
+  }, [lessorId, fetchMembers]);
 
-  // Update member role
-  const updateRole = useCallback(
-    async (id: string, role: TeamMember['role']) => {
-      if (!lessorId) throw new Error('Lessor ID is required');
-
-      try {
-        setError(null);
-
-        await azureApi.post('/db/query', {
-          query: `UPDATE fri_lessor_team_members SET role='${escapeSqlValue(role)}' WHERE id='${escapeSqlValue(id)}' AND lessor_id='${escapeSqlValue(lessorId)}'`,
-        });
-
-        await fetch();
-        return null;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to update role';
-        setError(message);
-        throw err;
-      }
-    },
-    [lessorId]
-  );
-
-  // Update member status
-  const updateStatus = useCallback(
-    async (id: string, status: TeamMember['status']) => {
-      if (!lessorId) throw new Error('Lessor ID is required');
-
-      try {
-        setError(null);
-
-        await azureApi.post('/db/query', {
-          query: `UPDATE fri_lessor_team_members SET status='${escapeSqlValue(status)}' WHERE id='${escapeSqlValue(id)}' AND lessor_id='${escapeSqlValue(lessorId)}'`,
-        });
-
-        await fetch();
-        return null;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to update status';
-        setError(message);
-        throw err;
-      }
-    },
-    [lessorId]
-  );
-
-  // Remove team member
-  const removeMember = useCallback(
-    async (id: string) => {
-      if (!lessorId) throw new Error('Lessor ID is required');
-
-      try {
-        setError(null);
-
-        await azureApi.post('/db/query', {
-          query: `DELETE FROM fri_lessor_team_members WHERE id='${escapeSqlValue(id)}' AND lessor_id='${escapeSqlValue(lessorId)}'`,
-        });
-
-        setMembers((prev) => prev.filter((m) => m.id !== id));
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to remove member';
-        setError(message);
-        throw err;
-      }
-    },
-    [lessorId]
-  );
-
-  // Resend invitation
-  const resendInvitation = useCallback(
-    async (id: string) => {
-      if (!lessorId) throw new Error('Lessor ID is required');
-
-      try {
-        setError(null);
-
-        // Update status to invited
-        await azureApi.post('/db/query', {
-          query: `UPDATE fri_lessor_team_members SET status='invited' WHERE id='${escapeSqlValue(id)}' AND lessor_id='${escapeSqlValue(lessorId)}'`,
-        });
-
-        await fetch();
-        return null;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to resend invitation';
-        setError(message);
-        throw err;
-      }
-    },
-    [lessorId]
-  );
-
-  // Get role label
   const getRoleLabel = (role: TeamMember['role']): string => {
-    const labels: Record<TeamMember['role'], string> = {
-      owner: 'Ejer',
-      admin: 'Administrator',
-      manager: 'Manager',
-      viewer: 'Læser',
-    };
+    const labels: Record<TeamMember['role'], string> = { owner: 'Ejer', admin: 'Administrator', manager: 'Manager', viewer: 'Læser' };
     return labels[role];
   };
 
-  // Get role description
   const getRoleDescription = (role: TeamMember['role']): string => {
-    const descriptions: Record<TeamMember['role'], string> = {
+    const desc: Record<TeamMember['role'], string> = {
       owner: 'Fuld adgang og kan administrere andre medlemmer',
       admin: 'Fuld adgang til alle funktioner',
       manager: 'Kan administrere køretøjer, bookinger og fakturaer',
       viewer: 'Læseadgang til alle data',
     };
-    return descriptions[role];
+    return desc[role];
   };
 
-  return {
-    members,
-    loading,
-    error,
-    refetch: fetch,
-    inviteMember,
-    updateRole,
-    updateStatus,
-    removeMember,
-    resendInvitation,
-    getRoleLabel,
-    getRoleDescription,
-  };
+  return { members, loading, error, refetch: fetchMembers, inviteMember, updateRole, updateStatus, removeMember, resendInvitation, getRoleLabel, getRoleDescription };
 }

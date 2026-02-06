@@ -31,55 +31,47 @@ export interface UpdateBrandingInput {
   logo_url?: string;
 }
 
+const esc = (v: string) => v.replace(/'/g, "''");
+
+const normalizeRows = (response: any) => {
+  if (!response) return [];
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response.data)) return response.data;
+  if (Array.isArray(response.recordset)) return response.recordset;
+  if (Array.isArray(response.data?.recordset)) return response.data.recordset;
+  return response.data ?? response;
+};
+
+const mapTier = (status?: string): LessorAccount['subscription_tier'] => {
+  if (status === 'trial') return 'trial';
+  if (status === 'active') return 'business';
+  if (status === 'suspended') return 'business';
+  return 'trial';
+};
+
 export function useFriSettings(userId: string | null) {
   const [account, setAccount] = useState<LessorAccount | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const escapeSqlValue = (value: string) => value.replace(/'/g, "''");
-
-  const normalizeRows = (response: any) => {
-    if (!response) return [];
-    if (Array.isArray(response)) return response;
-    if (Array.isArray(response.data)) return response.data;
-    if (Array.isArray(response.recordset)) return response.recordset;
-    if (Array.isArray(response.data?.recordset)) return response.data.recordset;
-    return response.data ?? response;
-  };
-
-  const mapSubscriptionTier = (status?: string): LessorAccount['subscription_tier'] => {
-    if (status === 'trial') return 'trial';
-    if (status === 'active') return 'business';
-    if (status === 'suspended') return 'business';
-    if (status === 'cancelled') return 'trial';
-    return 'trial';
-  };
-
-  // Fetch account settings
-  const fetch = useCallback(async () => {
+  const fetchSettings = useCallback(async () => {
     if (!userId) return;
-
     setLoading(true);
     setError(null);
-
     try {
-      const safeUserId = escapeSqlValue(userId);
-      const response = await azureApi.post<any>('/db/query', {
-        query: `SELECT * FROM fri_lessors WHERE id='${safeUserId}'`,
+      const response = await azureApi.post<any>('/db-query', {
+        query: `SELECT * FROM fri_lessors WHERE id='${esc(userId)}'`,
       });
-
       const rows = normalizeRows(response);
       const data = rows?.[0];
-
       if (data) {
         setAccount({
-          id: data.id,
-          user_id: data.id,
+          id: data.id, user_id: data.id,
           company_name: data.company_name || '',
           custom_domain: data.custom_domain || undefined,
           cvr_number: data.cvr_number || undefined,
-          subscription_tier: mapSubscriptionTier(data.subscription_status),
+          subscription_tier: mapTier(data.subscription_status),
           trial_expires_at: data.trial_end_date || undefined,
           subscription_started_at: data.created_at || undefined,
           stripe_customer_id: data.stripe_customer_id || undefined,
@@ -93,134 +85,61 @@ export function useFriSettings(userId: string | null) {
         });
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch settings';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Failed to fetch settings');
       console.error('Error fetching settings:', err);
     } finally {
       setLoading(false);
     }
   }, [userId]);
 
-  // Auto-fetch when component mounts or userId changes
-  useEffect(() => {
-    if (userId) {
-      fetch();
-    }
-  }, [userId, fetch]);
+  useEffect(() => { if (userId) fetchSettings(); }, [userId, fetchSettings]);
 
-  // Update account settings
-  const updateAccount = useCallback(
-    async (input: UpdateAccountInput) => {
-      if (!userId) throw new Error('User ID is required');
+  const updateAccount = useCallback(async (input: UpdateAccountInput) => {
+    if (!userId) throw new Error('User ID is required');
+    setError(null);
+    setSuccess(null);
+    const setClauses: string[] = [];
+    if (input.company_name) setClauses.push(`company_name='${esc(input.company_name)}'`);
+    if (input.custom_domain !== undefined) setClauses.push(input.custom_domain ? `custom_domain='${esc(input.custom_domain)}'` : `custom_domain=NULL`);
+    if (input.cvr_number !== undefined) setClauses.push(input.cvr_number ? `cvr_number='${esc(input.cvr_number)}'` : `cvr_number=NULL`);
+    setClauses.push(`updated_at=NOW()`);
+    await azureApi.post('/db-query', {
+      query: `UPDATE fri_lessors SET ${setClauses.join(', ')} WHERE id='${esc(userId)}'`,
+    });
+    await fetchSettings();
+    setSuccess('Indstillinger gemt');
+    return null;
+  }, [userId, fetchSettings]);
 
-      try {
-        setError(null);
-        setSuccess(null);
+  const updateBranding = useCallback(async (input: UpdateBrandingInput) => {
+    if (!userId) throw new Error('User ID is required');
+    setError(null);
+    setSuccess(null);
+    const setClauses: string[] = [];
+    if (input.primary_color !== undefined) setClauses.push(input.primary_color ? `primary_color='${esc(input.primary_color)}'` : `primary_color=NULL`);
+    if (input.logo_url !== undefined) setClauses.push(input.logo_url ? `logo_url='${esc(input.logo_url)}'` : `logo_url=NULL`);
+    setClauses.push(`updated_at=NOW()`);
+    await azureApi.post('/db-query', {
+      query: `UPDATE fri_lessors SET ${setClauses.join(', ')} WHERE id='${esc(userId)}'`,
+    });
+    await fetchSettings();
+    setSuccess('Branding gemt');
+    return null;
+  }, [userId, fetchSettings]);
 
-        const updates = {
-          company_name: input.company_name || account?.company_name || '',
-          custom_domain: input.custom_domain || account?.custom_domain || null,
-          cvr_number: input.cvr_number || account?.cvr_number || null,
-          updated_at: new Date().toISOString(),
-        };
-
-        const setClauses = Object.entries(updates)
-          .map(([key, value]) => {
-            if (value === undefined) return null;
-            if (value === null) return `${key}=NULL`;
-            if (typeof value === 'number') return `${key}=${value}`;
-            return `${key}='${escapeSqlValue(String(value))}'`;
-          })
-          .filter(Boolean)
-          .join(', ');
-
-        await azureApi.post('/db/query', {
-          query: `UPDATE fri_lessors SET ${setClauses} WHERE id='${escapeSqlValue(userId)}'`,
-        });
-
-        await fetch();
-        setSuccess('Indstillinger gemt');
-        return null;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to update settings';
-        setError(message);
-        throw err;
-      }
-    },
-    [userId, account]
-  );
-
-  // Update branding
-  const updateBranding = useCallback(
-    async (input: UpdateBrandingInput) => {
-      if (!userId || !account) throw new Error('User ID and account are required');
-
-      try {
-        setError(null);
-        setSuccess(null);
-
-        const newBranding = {
-          ...account.branding,
-          ...input,
-        };
-
-        const setClauses = [
-          `primary_color=${newBranding.primary_color ? `'${escapeSqlValue(newBranding.primary_color)}'` : 'NULL'}`,
-          `logo_url=${newBranding.logo_url ? `'${escapeSqlValue(newBranding.logo_url)}'` : 'NULL'}`,
-          `updated_at='${escapeSqlValue(new Date().toISOString())}'`,
-        ].join(', ');
-
-        await azureApi.post('/db/query', {
-          query: `UPDATE fri_lessors SET ${setClauses} WHERE id='${escapeSqlValue(userId)}'`,
-        });
-
-        await fetch();
-        setSuccess('Branding gemt');
-        return null;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to update branding';
-        setError(message);
-        throw err;
-      }
-    },
-    [userId, account]
-  );
-
-  // Check if trial is expired
   const isTrialExpired = (): boolean => {
-    if (account?.subscription_tier !== 'trial' || !account?.trial_expires_at) {
-      return false;
-    }
+    if (account?.subscription_tier !== 'trial' || !account?.trial_expires_at) return false;
     return new Date(account.trial_expires_at) < new Date();
   };
 
-  // Get days remaining in trial
   const getTrialDaysRemaining = (): number => {
-    if (account?.subscription_tier !== 'trial' || !account?.trial_expires_at) {
-      return 0;
-    }
-    const now = new Date();
-    const expiresAt = new Date(account.trial_expires_at);
-    const diffTime = expiresAt.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return Math.max(0, diffDays);
+    if (account?.subscription_tier !== 'trial' || !account?.trial_expires_at) return 0;
+    const diffTime = new Date(account.trial_expires_at).getTime() - new Date().getTime();
+    return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   };
 
-  // Dismiss error
   const dismissError = () => setError(null);
   const dismissSuccess = () => setSuccess(null);
 
-  return {
-    account,
-    loading,
-    error,
-    success,
-    refetch: fetch,
-    updateAccount,
-    updateBranding,
-    isTrialExpired,
-    getTrialDaysRemaining,
-    dismissError,
-    dismissSuccess,
-  };
+  return { account, loading, error, success, refetch: fetchSettings, updateAccount, updateBranding, isTrialExpired, getTrialDaysRemaining, dismissError, dismissSuccess };
 }

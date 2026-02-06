@@ -1,13 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { azureApi } from '@/integrations/azure/client';
 
 const generateApiKey = () => {
-  // Generate a random alphanumeric string
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let result = '';
-  for (let i = 0; i < 32; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
+  for (let i = 0; i < 32; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
   return result;
 };
 
@@ -15,8 +12,8 @@ export interface ApiKey {
   id: string;
   lessor_id: string;
   name: string;
-  key: string; // Masked key like "sk_live_...****"
-  full_key?: string; // Only returned on creation
+  key: string;
+  full_key?: string;
   status: 'active' | 'inactive';
   last_used_at?: string;
   created_at: string;
@@ -34,44 +31,33 @@ interface UseFriApiKeysReturn {
   activateApiKey: (keyId: string) => Promise<void>;
 }
 
+const esc = (v: string) => v.replace(/'/g, "''");
+
+const normalizeRows = (response: any) => {
+  if (!response) return [];
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response.data)) return response.data;
+  if (Array.isArray(response.recordset)) return response.recordset;
+  if (Array.isArray(response.data?.recordset)) return response.data.recordset;
+  return response.data ?? response;
+};
+
 export const useFriApiKeys = (): UseFriApiKeysReturn => {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const escapeSqlValue = (value: string) => value.replace(/'/g, "''");
-
-  const normalizeRows = (response: any) => {
-    if (!response) return [];
-    if (Array.isArray(response)) return response;
-    if (Array.isArray(response.data)) return response.data;
-    if (Array.isArray(response.recordset)) return response.recordset;
-    if (Array.isArray(response.data?.recordset)) return response.data.recordset;
-    return response.data ?? response;
-  };
-
   const fetchApiKeys = async (lessorId: string) => {
     try {
       setError(null);
       setLoading(true);
-
-      const safeLessorId = escapeSqlValue(lessorId);
-      const response = await azureApi.post<any>('/db/query', {
-        query: `SELECT * FROM fri_api_keys WHERE lessor_id='${safeLessorId}' ORDER BY created_at DESC`,
+      const response = await azureApi.post<any>('/db-query', {
+        query: `SELECT * FROM fri_api_keys WHERE lessor_id='${esc(lessorId)}' ORDER BY created_at DESC`,
       });
-
       const rows = normalizeRows(response) as ApiKey[];
-
-      // Mask the full keys
-      const maskedKeys = (rows || []).map(k => ({
-        ...k,
-        key: `sk_live_${k.key.substring(0, 8)}****`,
-      }));
-
-      setApiKeys(maskedKeys);
+      setApiKeys((rows || []).map(k => ({ ...k, key: `sk_live_${k.key.substring(0, 8)}****` })));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Fejl ved indlæsning af API keys';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Fejl ved indlæsning af API keys');
     } finally {
       setLoading(false);
     }
@@ -80,86 +66,47 @@ export const useFriApiKeys = (): UseFriApiKeysReturn => {
   const createApiKey = async (lessorId: string, name: string): Promise<ApiKey | null> => {
     try {
       setError(null);
-
-      // Generate a unique API key
       const fullKey = `sk_live_${generateApiKey()}`;
       const shortKey = generateApiKey();
-
-      await azureApi.post('/db/query', {
-        query: `INSERT INTO fri_api_keys (lessor_id, name, key, status) VALUES ('${escapeSqlValue(lessorId)}', '${escapeSqlValue(name)}', '${escapeSqlValue(shortKey)}', 'active')`,
+      await azureApi.post('/db-query', {
+        query: `INSERT INTO fri_api_keys (lessor_id, name, key, status) VALUES ('${esc(lessorId)}', '${esc(name)}', '${esc(shortKey)}', 'active')`,
       });
-
-      // Return the full key only on creation
-      return {
-        id: '',
-        lessor_id: lessorId,
-        name,
-        key: `sk_live_${shortKey.substring(0, 8)}****`,
-        full_key: fullKey,
-        status: 'active',
-        created_at: new Date().toISOString(),
-      } as ApiKey;
+      return { id: '', lessor_id: lessorId, name, key: `sk_live_${shortKey.substring(0, 8)}****`, full_key: fullKey, status: 'active', created_at: new Date().toISOString() };
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Fejl ved oprettelse af API key';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Fejl ved oprettelse af API key');
       throw err;
     }
   };
 
   const deleteApiKey = async (keyId: string) => {
     try {
-      await azureApi.post('/db/query', {
-        query: `DELETE FROM fri_api_keys WHERE id='${escapeSqlValue(keyId)}'`,
-      });
-
-      setApiKeys(apiKeys.filter(k => k.id !== keyId));
+      await azureApi.post('/db-query', { query: `DELETE FROM fri_api_keys WHERE id='${esc(keyId)}'` });
+      setApiKeys(prev => prev.filter(k => k.id !== keyId));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Fejl ved sletning';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Fejl ved sletning');
       throw err;
     }
   };
 
   const revokeApiKey = async (keyId: string) => {
     try {
-      await azureApi.post('/db/query', {
-        query: `UPDATE fri_api_keys SET status='inactive' WHERE id='${escapeSqlValue(keyId)}'`,
-      });
-
-      setApiKeys(apiKeys.map(k =>
-        k.id === keyId ? { ...k, status: 'inactive' } : k
-      ));
+      await azureApi.post('/db-query', { query: `UPDATE fri_api_keys SET status='inactive' WHERE id='${esc(keyId)}'` });
+      setApiKeys(prev => prev.map(k => k.id === keyId ? { ...k, status: 'inactive' as const } : k));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Fejl ved tilbagekald';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Fejl ved tilbagekald');
       throw err;
     }
   };
 
   const activateApiKey = async (keyId: string) => {
     try {
-      await azureApi.post('/db/query', {
-        query: `UPDATE fri_api_keys SET status='active' WHERE id='${escapeSqlValue(keyId)}'`,
-      });
-
-      setApiKeys(apiKeys.map(k =>
-        k.id === keyId ? { ...k, status: 'active' } : k
-      ));
+      await azureApi.post('/db-query', { query: `UPDATE fri_api_keys SET status='active' WHERE id='${esc(keyId)}'` });
+      setApiKeys(prev => prev.map(k => k.id === keyId ? { ...k, status: 'active' as const } : k));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Fejl ved aktivering';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Fejl ved aktivering');
       throw err;
     }
   };
 
-  return {
-    apiKeys,
-    loading,
-    error,
-    fetchApiKeys,
-    createApiKey,
-    deleteApiKey,
-    revokeApiKey,
-    activateApiKey,
-  };
+  return { apiKeys, loading, error, fetchApiKeys, createApiKey, deleteApiKey, revokeApiKey, activateApiKey };
 };

@@ -12,7 +12,7 @@ const SESSION_KEY = 'lejio-fri-session';
 const SQL_SERVER = import.meta.env.VITE_SQL_SERVER || "lejio-fri.database.windows.net";
 const SQL_DATABASE = import.meta.env.VITE_SQL_DATABASE || "lejio-fri";
 const STORAGE_ACCOUNT = import.meta.env.VITE_STORAGE_ACCOUNT;
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:7071/api";
+const API_URL = import.meta.env.VITE_API_URL || "/api";
 const ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT || "development";
 
 // Initialize Azure Blob Storage client
@@ -54,9 +54,9 @@ export const azureApi: {
     
     const response = await fetch(url, {
       ...options,
+      credentials: 'include',
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
         ...options?.headers,
       },
     });

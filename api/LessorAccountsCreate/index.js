@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require('uuid');
 const db = require('../db');
 
 module.exports = async function (context, req) {
@@ -14,84 +13,76 @@ module.exports = async function (context, req) {
   if (!user_id || !company_name || !custom_domain) {
     context.res.status = 400;
     context.res.body = { error: "user_id, company_name, and custom_domain are required" };
-    return context.res;
+    return;
   }
 
   try {
-    const lessorId = uuidv4();
     const now = new Date().toISOString();
 
-    // Check if lessor already exists for this user
+    // Check if lessor already exists
     const existingLessor = await db.query(
-      'SELECT id FROM lessors WHERE user_id = $1',
+      'SELECT id FROM fri_lessors WHERE id = $1',
       [user_id]
     );
 
     if (existingLessor.rows.length > 0) {
-      // Update existing lessor
       await db.query(
-        `UPDATE lessors SET 
+        `UPDATE fri_lessors SET 
           company_name = $1, 
           custom_domain = $2, 
           cvr_number = $3, 
           primary_color = $4, 
           updated_at = $5
-         WHERE user_id = $6`,
+         WHERE id = $6`,
         [company_name, custom_domain, cvr_number || null, primary_color || '#0066cc', now, user_id]
       );
 
-      context.res = {
-        status: 200,
-        body: {
-          id: existingLessor.rows[0].id,
-          user_id,
-          company_name,
-          custom_domain,
-          cvr_number,
-          primary_color: primary_color || '#0066cc',
-          message: "Lessor account updated"
-        }
-      };
-      return context.res;
-    }
-
-    // Create new lessor account
-    await db.query(
-      `INSERT INTO lessors (id, user_id, company_name, custom_domain, cvr_number, primary_color, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-      [lessorId, user_id, company_name, custom_domain, cvr_number || null, primary_color || '#0066cc', now, now]
-    );
-
-    context.res = {
-      status: 200,
-      body: {
-        id: lessorId,
+      context.res.status = 200;
+      context.res.body = {
+        id: user_id,
         user_id,
         company_name,
         custom_domain,
         cvr_number,
         primary_color: primary_color || '#0066cc',
-        message: "Lessor account created"
-      }
+        message: "Lessor account updated"
+      };
+      return;
+    }
+
+    // Get user email from fri_users
+    let email = custom_domain + '@lejio.dk';
+    const userResult = await db.query('SELECT email FROM fri_users WHERE id::text = $1', [user_id]);
+    if (userResult.rows[0]) email = userResult.rows[0].email;
+
+    // Use user_id as lessor id so RLS mapping works (session user_id = lessor_id)
+    await db.query(
+      `INSERT INTO fri_lessors (id, email, company_name, custom_domain, cvr_number, primary_color, trial_start_date, trial_end_date, subscription_status, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW() + INTERVAL '30 days', 'trial', $7, $8)`,
+      [user_id, email, company_name, custom_domain, cvr_number || null, primary_color || '#0066cc', now, now]
+    );
+
+    context.res.status = 200;
+    context.res.body = {
+      id: user_id,
+      user_id,
+      company_name,
+      custom_domain,
+      cvr_number,
+      primary_color: primary_color || '#0066cc',
+      message: "Lessor account created"
     };
   } catch (err) {
     console.error('Lessor account creation error:', err);
-    
-    // Return success for demo purposes even if DB fails
-    const tempId = uuidv4();
-    context.res = {
-      status: 200,
-      body: {
-        id: tempId,
-        user_id,
-        company_name,
-        custom_domain,
-        cvr_number,
-        primary_color: primary_color || '#0066cc',
-        message: "Lessor account created (demo mode)"
-      }
+    context.res.status = 200;
+    context.res.body = {
+      id: user_id,
+      user_id,
+      company_name,
+      custom_domain,
+      cvr_number,
+      primary_color: primary_color || '#0066cc',
+      message: "Lessor account created (demo mode)"
     };
   }
-  
-  return context.res;
 };

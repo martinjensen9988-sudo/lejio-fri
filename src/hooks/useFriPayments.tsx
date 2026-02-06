@@ -4,8 +4,8 @@ import { azureApi } from '@/integrations/azure/client';
 export interface Payment {
   id: string;
   lessor_id: string;
-  lessor_name: string;
-  lessor_email: string;
+  lessor_name?: string;
+  lessor_email?: string;
   amount: number;
   currency: string;
   status: 'pending' | 'completed' | 'failed' | 'refunded';
@@ -38,41 +38,39 @@ interface UseFriPaymentsReturn {
   recordManualPayment: (lessorId: string, amount: number, method: string, notes: string) => Promise<void>;
 }
 
+const esc = (v: string) => v.replace(/'/g, "''");
+
+const normalizeRows = (response: any) => {
+  if (!response) return [];
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response.data)) return response.data;
+  if (Array.isArray(response.recordset)) return response.recordset;
+  if (Array.isArray(response.data?.recordset)) return response.data.recordset;
+  return response.data ?? response;
+};
+
 export const useFriPayments = (): UseFriPaymentsReturn => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [stats, setStats] = useState<PaymentStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const escapeSqlValue = (value: string) => value.replace(/'/g, "''");
-
-  const normalizeRows = (response: any) => {
-    if (!response) return [];
-    if (Array.isArray(response)) return response;
-    if (Array.isArray(response.data)) return response.data;
-    if (Array.isArray(response.recordset)) return response.recordset;
-    if (Array.isArray(response.data?.recordset)) return response.data.recordset;
-    return response.data ?? response;
-  };
-
   const fetchPayments = async (filter?: string) => {
     try {
       setError(null);
       setLoading(true);
-
-      const statusFilter = filter && filter !== 'all'
-        ? ` AND status='${escapeSqlValue(filter)}'`
-        : '';
-
-      const response = await azureApi.post<any>('/db/query', {
-        query: `SELECT * FROM fri_payments WHERE 1=1${statusFilter} ORDER BY created_at DESC`,
+      const statusFilter = filter && filter !== 'all' ? ` AND p.status='${esc(filter)}'` : '';
+      const response = await azureApi.post<any>('/db-query', {
+        query: `SELECT p.*, l.company_name AS lessor_name, l.email AS lessor_email
+                FROM fri_payments p
+                LEFT JOIN fri_lessors l ON p.lessor_id = l.id
+                WHERE 1=1${statusFilter}
+                ORDER BY p.created_at DESC`,
+        admin: true,
       });
-
-      const rows = normalizeRows(response) as Payment[];
-      setPayments(rows || []);
+      setPayments((normalizeRows(response) as Payment[]) || []);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Fejl ved indlæsning af betalinger';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Fejl ved indlæsning af betalinger');
     } finally {
       setLoading(false);
     }
@@ -80,46 +78,25 @@ export const useFriPayments = (): UseFriPaymentsReturn => {
 
   const getPaymentStats = async (): Promise<PaymentStats | null> => {
     try {
-      const response = await azureApi.post<any>('/db/query', {
+      const response = await azureApi.post<any>('/db-query', {
         query: 'SELECT * FROM fri_payments',
+        admin: true,
       });
-
-      const paymentsData = normalizeRows(response) as Payment[];
-
-      const totalRevenue = paymentsData
-        .filter(p => p.status === 'completed')
-        .reduce((sum, p) => sum + p.amount, 0);
-
-      const completedPayments = paymentsData.filter(p => p.status === 'completed').length;
-      const pendingPayments = paymentsData.filter(p => p.status === 'pending').length;
-      const failedPayments = paymentsData.filter(p => p.status === 'failed').length;
+      const data = normalizeRows(response) as Payment[];
+      const totalRevenue = data.filter(p => p.status === 'completed').reduce((s, p) => s + p.amount, 0);
+      const completedPayments = data.filter(p => p.status === 'completed').length;
+      const pendingPayments = data.filter(p => p.status === 'pending').length;
+      const failedPayments = data.filter(p => p.status === 'failed').length;
       const avgPayment = completedPayments > 0 ? totalRevenue / completedPayments : 0;
 
-      // Calculate monthly data
       const monthlyMap = new Map<string, number>();
-      paymentsData
-        .filter(p => p.status === 'completed')
-        .forEach(payment => {
-          const month = new Date(payment.created_at).toLocaleDateString('da-DK', {
-            year: 'numeric',
-            month: 'short',
-          });
-          monthlyMap.set(month, (monthlyMap.get(month) || 0) + payment.amount);
-        });
+      data.filter(p => p.status === 'completed').forEach(p => {
+        const month = new Date(p.created_at).toLocaleDateString('da-DK', { year: 'numeric', month: 'short' });
+        monthlyMap.set(month, (monthlyMap.get(month) || 0) + p.amount);
+      });
+      const monthlyData = Array.from(monthlyMap.entries()).map(([month, revenue]) => ({ month, revenue })).slice(-12);
 
-      const monthlyData = Array.from(monthlyMap.entries())
-        .map(([month, revenue]) => ({ month, revenue }))
-        .slice(-12);
-
-      const statsData: PaymentStats = {
-        total_revenue: totalRevenue,
-        completed_payments: completedPayments,
-        pending_payments: pendingPayments,
-        failed_payments: failedPayments,
-        avg_payment: avgPayment,
-        monthly_data: monthlyData,
-      };
-
+      const statsData: PaymentStats = { total_revenue: totalRevenue, completed_payments: completedPayments, pending_payments: pendingPayments, failed_payments: failedPayments, avg_payment: avgPayment, monthly_data: monthlyData };
       setStats(statsData);
       return statsData;
     } catch (err) {
@@ -132,27 +109,14 @@ export const useFriPayments = (): UseFriPaymentsReturn => {
     try {
       const updatedAt = new Date().toISOString();
       const paidAt = status === 'completed' ? updatedAt : null;
-
-      await azureApi.post('/db/query', {
-        query: `UPDATE fri_payments SET status='${escapeSqlValue(status)}', updated_at='${escapeSqlValue(updatedAt)}', paid_at=${paidAt ? `'${escapeSqlValue(paidAt)}'` : 'NULL'} WHERE id='${escapeSqlValue(paymentId)}'`,
+      await azureApi.post('/db-query', {
+        query: `UPDATE fri_payments SET status='${esc(status)}', updated_at='${esc(updatedAt)}', paid_at=${paidAt ? `'${esc(paidAt)}'` : 'NULL'} WHERE id='${esc(paymentId)}'`,
+        admin: true,
       });
-
-      setPayments(payments.map(p =>
-        p.id === paymentId
-          ? {
-              ...p,
-              status,
-              updated_at: new Date().toISOString(),
-              paid_at: status === 'completed' ? new Date().toISOString() : undefined,
-            }
-          : p
-      ));
-
-      // Update stats
+      setPayments(prev => prev.map(p => p.id === paymentId ? { ...p, status, updated_at: updatedAt, paid_at: status === 'completed' ? updatedAt : undefined } : p));
       await getPaymentStats();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Fejl ved opdatering af betaling';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Fejl ved opdatering af betaling');
       throw err;
     }
   };
@@ -161,16 +125,14 @@ export const useFriPayments = (): UseFriPaymentsReturn => {
     try {
       const paidAt = new Date().toISOString();
       const reference = `MANUAL-${Date.now()}`;
-
-      await azureApi.post('/db/query', {
-        query: `INSERT INTO fri_payments (lessor_id, amount, currency, status, payment_method, subscription_type, reference, notes, paid_at) VALUES ('${escapeSqlValue(lessorId)}', ${amount}, 'DKK', 'completed', '${escapeSqlValue(method)}', 'monthly', '${escapeSqlValue(reference)}', '${escapeSqlValue(notes)}', '${escapeSqlValue(paidAt)}')`,
+      await azureApi.post('/db-query', {
+        query: `INSERT INTO fri_payments (lessor_id, amount, currency, status, payment_method, subscription_type, reference, notes, paid_at)
+                VALUES ('${esc(lessorId)}', ${amount}, 'DKK', 'completed', '${esc(method)}', 'monthly', '${esc(reference)}', '${esc(notes)}', '${esc(paidAt)}')`,
+        admin: true,
       });
-
-      // Reload payments
       await fetchPayments();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Fejl ved registrering af betaling';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Fejl ved registrering af betaling');
       throw err;
     }
   };
@@ -180,14 +142,5 @@ export const useFriPayments = (): UseFriPaymentsReturn => {
     getPaymentStats();
   }, []);
 
-  return {
-    payments,
-    stats,
-    loading,
-    error,
-    fetchPayments,
-    getPaymentStats,
-    updatePaymentStatus,
-    recordManualPayment,
-  };
+  return { payments, stats, loading, error, fetchPayments, getPaymentStats, updatePaymentStatus, recordManualPayment };
 };

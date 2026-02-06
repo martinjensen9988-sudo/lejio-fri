@@ -5,7 +5,7 @@ module.exports = async function (context, req) {
     context.res = {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: "Subdomain required" })
+      body: { error: "Subdomain required" }
     };
     return;
   }
@@ -28,6 +28,6 @@ module.exports = async function (context, req) {
   context.res = {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(tenantData)
+    body: tenantData
   };
 };

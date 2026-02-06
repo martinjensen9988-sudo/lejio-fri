@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 // Determine correct dist path - try multiple locations
@@ -240,67 +240,53 @@ try {
   console.error('Error scanning API directory:', err.message);
 }
 
-// Register API routes - convert Azure Functions format to Express
+// Shared handler adapter - converts Azure Functions format to Express
+function createHandler(routePath, handler) {
+  return async (req, res) => {
+    const context = {
+      res: { status: 200, headers: {}, body: {} },
+      log: (...args) => console.log(`[${routePath}]`, ...args),
+    };
+    const azureReq = {
+      query: req.query,
+      body: req.body,
+      params: req.params,
+      headers: req.headers,
+      method: req.method,
+    };
+    try {
+      const result = await handler(context, azureReq);
+      // Support both patterns: return { status, headers, body } AND context.res mutation
+      const output = (result && result.body !== undefined) ? result : context.res;
+      const status = output.status || 200;
+      const headers = output.headers || {};
+      let body = output.body;
+      // Unwrap double-stringified JSON
+      if (typeof body === 'string') {
+        try { body = JSON.parse(body); } catch (e) { /* keep as string */ }
+      }
+      Object.entries(headers).forEach(([key, value]) => {
+        // Skip CORS headers since cors middleware handles them
+        if (!key.toLowerCase().startsWith('access-control-')) {
+          res.set(key, value);
+        }
+      });
+      res.status(status).json(body);
+    } catch (error) {
+      console.error(`Error in ${routePath}:`, error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+}
+
+// Register API routes
 Object.entries(apiRoutes).forEach(([routePath, handler]) => {
-  app.get(routePath, async (req, res) => {
-    const context = { res: { status: 200, headers: {}, body: {} } };
-    try {
-      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
-      res.status(context.res.status || 200);
-      Object.entries(context.res.headers || {}).forEach(([key, value]) => {
-        res.set(key, value);
-      });
-      res.json(context.res.body);
-    } catch (error) {
-      console.error(`Error in ${routePath}:`, error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  app.post(routePath, async (req, res) => {
-    const context = { res: { status: 200, headers: {}, body: {} } };
-    try {
-      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
-      res.status(context.res.status || 200);
-      Object.entries(context.res.headers || {}).forEach(([key, value]) => {
-        res.set(key, value);
-      });
-      res.json(context.res.body);
-    } catch (error) {
-      console.error(`Error in ${routePath}:`, error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  app.put(routePath, async (req, res) => {
-    const context = { res: { status: 200, headers: {}, body: {} } };
-    try {
-      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
-      res.status(context.res.status || 200);
-      Object.entries(context.res.headers || {}).forEach(([key, value]) => {
-        res.set(key, value);
-      });
-      res.json(context.res.body);
-    } catch (error) {
-      console.error(`Error in ${routePath}:`, error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  app.delete(routePath, async (req, res) => {
-    const context = { res: { status: 200, headers: {}, body: {} } };
-    try {
-      await handler(context, { query: req.query, body: req.body, params: req.params, headers: req.headers });
-      res.status(context.res.status || 200);
-      Object.entries(context.res.headers || {}).forEach(([key, value]) => {
-        res.set(key, value);
-      });
-      res.json(context.res.body);
-    } catch (error) {
-      console.error(`Error in ${routePath}:`, error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+  const h = createHandler(routePath, handler);
+  app.get(routePath, h);
+  app.post(routePath, h);
+  app.put(routePath, h);
+  app.delete(routePath, h);
+  app.options(routePath, (req, res) => res.sendStatus(204));
 });
 
 // Serve React app for all other routes (SPA)
