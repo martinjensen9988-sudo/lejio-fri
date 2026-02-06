@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { useFriAdminTickets } from '@/hooks/useFriAdminTickets';
 import {
   Table,
@@ -11,22 +10,22 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ChevronRight, MessageSquare, Clock } from 'lucide-react';
+import { ChevronRight, MessageSquare, Clock, Inbox, ArrowUpRight } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { da } from 'date-fns/locale';
 
 const statusBadges = {
-  open: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Åben' },
-  in_progress: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'I gang' },
-  resolved: { bg: 'bg-green-100', text: 'text-green-800', label: 'Løst' },
-  closed: { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Lukket' },
+  open: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', label: 'Åben' },
+  in_progress: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500', label: 'I gang' },
+  resolved: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', label: 'Løst' },
+  closed: { bg: 'bg-gray-50', text: 'text-gray-600', dot: 'bg-gray-400', label: 'Lukket' },
 };
 
 const priorityBadges = {
-  low: { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Lav' },
-  medium: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Mellem' },
-  high: { bg: 'bg-orange-100', text: 'text-orange-800', label: 'Høj' },
-  urgent: { bg: 'bg-red-100', text: 'text-red-800', label: 'Akut' },
+  low: { bg: 'bg-gray-50', text: 'text-gray-600', label: 'Lav' },
+  medium: { bg: 'bg-blue-50', text: 'text-blue-600', label: 'Mellem' },
+  high: { bg: 'bg-orange-50', text: 'text-orange-600', label: 'Høj' },
+  urgent: { bg: 'bg-red-50', text: 'text-red-600', label: 'Akut' },
 };
 
 export const FriAdminTicketsPage = () => {
@@ -41,7 +40,12 @@ export const FriAdminTicketsPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-gray-500">Indlæser tickets...</div>
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center animate-pulse">
+            <MessageSquare className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-gray-400 font-medium">Indlæser tickets...</p>
+        </div>
       </div>
     );
   }
@@ -49,51 +53,87 @@ export const FriAdminTicketsPage = () => {
   const filteredTickets = filter === 'all' ? tickets : tickets.filter(t => t.status === filter);
   const unreadCount = tickets.filter(t => t.status === 'open').length;
 
+  const filterTabs = [
+    { key: 'all', label: 'Alle' },
+    { key: 'open', label: 'Åbne' },
+    { key: 'in_progress', label: 'I gang' },
+    { key: 'resolved', label: 'Løst' },
+    { key: 'closed', label: 'Lukket' },
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-[1400px]">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <MessageSquare className="w-8 h-8 text-blue-600" />
-          <h1 className="text-3xl font-bold text-gray-900">Support Tickets</h1>
-          {unreadCount > 0 && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-              {unreadCount} nye
-            </span>
-          )}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-200">
+            <MessageSquare className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-gray-900">Support Tickets</h1>
+              {unreadCount > 0 && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-600">
+                  {unreadCount} nye
+                </span>
+              )}
+            </div>
+            <p className="text-gray-400 text-sm">Administrer support tickets fra lessors</p>
+          </div>
         </div>
-        <p className="text-gray-600 mt-1">Administrer support tickets fra lessors</p>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2">
-        {['all', 'open', 'in_progress', 'resolved', 'closed'].map((status) => (
-          <Button
-            key={status}
-            variant={filter === status ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter(status)}
-            className="capitalize"
+      <div className="flex gap-1.5 bg-gray-100/50 p-1 rounded-xl w-fit">
+        {filterTabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setFilter(tab.key)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              filter === tab.key
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
           >
-            {status === 'all' ? 'Alle' : statusBadges[status as keyof typeof statusBadges]?.label}
-          </Button>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Stats Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: 'I alt', value: tickets.length, gradient: 'from-violet-500 to-indigo-500' },
+          { label: 'Åbne', value: tickets.filter(t => t.status === 'open').length, gradient: 'from-blue-500 to-cyan-400' },
+          { label: 'I gang', value: tickets.filter(t => t.status === 'in_progress').length, gradient: 'from-amber-500 to-orange-400' },
+          { label: 'Løst', value: tickets.filter(t => t.status === 'resolved').length, gradient: 'from-emerald-500 to-teal-400' },
+        ].map((stat) => (
+          <div key={stat.label} className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}>
+                <Inbox className="w-4 h-4 text-white" />
+              </div>
+              <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">{stat.label}</p>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+          </div>
         ))}
       </div>
 
       {/* Tickets Table */}
-      <Card>
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
         {filteredTickets.length > 0 ? (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead>Emne</TableHead>
-                  <TableHead>Lessor</TableHead>
-                  <TableHead>Kategori</TableHead>
-                  <TableHead>Prioritet</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Sidst opdateret</TableHead>
-                  <TableHead className="text-right">Handlinger</TableHead>
+                <TableRow className="bg-gray-50/50 border-b border-gray-100">
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Emne</TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Lessor</TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Kategori</TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Prioritet</TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Opdateret</TableHead>
+                  <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Handling</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -102,26 +142,27 @@ export const FriAdminTicketsPage = () => {
                   const priorityBadge = priorityBadges[ticket.priority];
 
                   return (
-                    <TableRow key={ticket.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium max-w-xs truncate">{ticket.subject}</TableCell>
-                      <TableCell className="text-sm">
-                        <div>{ticket.lessor_name}</div>
-                        <div className="text-gray-600">{ticket.lessor_email}</div>
-                      </TableCell>
-                      <TableCell className="text-sm capitalize">{ticket.category}</TableCell>
+                    <TableRow key={ticket.id} className="hover:bg-violet-50/30 transition-colors border-b border-gray-50">
+                      <TableCell className="font-semibold text-gray-900 max-w-xs truncate">{ticket.subject}</TableCell>
                       <TableCell>
-                        <span className={`inline-block px-3 py-1 rounded text-xs font-medium ${priorityBadge.bg} ${priorityBadge.text}`}>
+                        <div className="text-sm font-medium text-gray-900">{ticket.lessor_name}</div>
+                        <div className="text-xs text-gray-400">{ticket.lessor_email}</div>
+                      </TableCell>
+                      <TableCell className="text-sm text-gray-500 capitalize">{ticket.category}</TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${priorityBadge.bg} ${priorityBadge.text}`}>
                           {priorityBadge.label}
                         </span>
                       </TableCell>
                       <TableCell>
-                        <span className={`inline-block px-3 py-1 rounded text-xs font-medium ${statusBadge.bg} ${statusBadge.text}`}>
-                          {statusBadge.label}
-                        </span>
+                        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${statusBadge.bg}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${statusBadge.dot}`} />
+                          <span className={`text-xs font-semibold ${statusBadge.text}`}>{statusBadge.label}</span>
+                        </div>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
+                      <TableCell className="text-sm text-gray-400">
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-3.5 h-3.5" />
                           {formatDistanceToNow(new Date(ticket.updated_at), { locale: da })}
                         </div>
                       </TableCell>
@@ -130,10 +171,10 @@ export const FriAdminTicketsPage = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => navigate(`/fri/admin/support/${ticket.id}`)}
-                          className="inline-flex items-center gap-1"
+                          className="text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg gap-1"
                         >
-                          Se detaljer
-                          <ChevronRight className="w-4 h-4" />
+                          Detaljer
+                          <ChevronRight className="w-3.5 h-3.5" />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -143,31 +184,13 @@ export const FriAdminTicketsPage = () => {
             </Table>
           </div>
         ) : (
-          <div className="p-8 text-center">
-            <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-600">Ingen tickets fundet</p>
+          <div className="p-12 text-center">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-gray-50 flex items-center justify-center mb-4">
+              <MessageSquare className="w-8 h-8 text-gray-300" />
+            </div>
+            <p className="text-gray-400 font-medium">Ingen tickets fundet</p>
           </div>
         )}
-      </Card>
-
-      {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <p className="text-sm text-gray-600">I alt</p>
-          <p className="text-2xl font-bold text-gray-900">{tickets.length}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-sm text-gray-600">Åbne</p>
-          <p className="text-2xl font-bold text-blue-600">{tickets.filter(t => t.status === 'open').length}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-sm text-gray-600">I gang</p>
-          <p className="text-2xl font-bold text-yellow-600">{tickets.filter(t => t.status === 'in_progress').length}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-sm text-gray-600">Løst</p>
-          <p className="text-2xl font-bold text-green-600">{tickets.filter(t => t.status === 'resolved').length}</p>
-        </Card>
       </div>
     </div>
   );

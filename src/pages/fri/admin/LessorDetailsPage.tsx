@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { azureApi } from '@/integrations/azure/client';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ChevronLeft, AlertTriangle, DollarSign, Zap, TrendingUp, Users, Calendar } from 'lucide-react';
+import { ChevronLeft, AlertTriangle, DollarSign, Car, TrendingUp, Users, Calendar, BarChart3, Mail, Globe, Hash } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { da } from 'date-fns/locale';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface LessorDetails {
   id: string;
@@ -55,7 +54,6 @@ export const FriAdminLessorDetailsPage = () => {
       try {
         setLoading(true);
 
-        // Fetch lessor info
         const safeLessorId = String(lessorId).replace(/'/g, "''");
         const lessorResponse = await azureApi.post<any>('/db-query', {
           query: `SELECT 
@@ -77,7 +75,6 @@ export const FriAdminLessorDetailsPage = () => {
         if (!lessorData) throw new Error('Lessor ikke fundet');
         setLessor(lessorData);
 
-        // Fetch lessor data
         const [vehiclesRes, bookingsRes, invoicesRes, activeBookingsRes] = await Promise.all([
           azureApi.post<any>('/db-query', { query: `SELECT id FROM fri_vehicles WHERE lessor_id='${safeLessorId}'`, admin: true }),
           azureApi.post<any>('/db-query', { query: `SELECT id, total_price, status, start_date FROM fri_bookings WHERE lessor_id='${safeLessorId}'`, admin: true }),
@@ -120,7 +117,12 @@ export const FriAdminLessorDetailsPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-gray-500">Indlæser...</div>
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center animate-pulse">
+            <Users className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-gray-400 font-medium">Indlæser lessor...</p>
+        </div>
       </div>
     );
   }
@@ -131,12 +133,12 @@ export const FriAdminLessorDetailsPage = () => {
         <Button
           variant="ghost"
           onClick={() => navigate('/fri/admin/lessors')}
-          className="gap-2"
+          className="gap-2 text-gray-500 hover:text-gray-700 rounded-xl"
         >
           <ChevronLeft className="w-4 h-4" />
           Tilbage til lessors
         </Button>
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="rounded-xl">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>{error || 'Lessor ikke fundet'}</AlertDescription>
         </Alert>
@@ -144,168 +146,150 @@ export const FriAdminLessorDetailsPage = () => {
     );
   }
 
-  const statusColor = {
-    trial: 'text-blue-600',
-    active: 'text-green-600',
-    suspended: 'text-yellow-600',
-    cancelled: 'text-red-600',
-  }[lessor.subscription_status] || 'text-gray-600';
+  const statusConfig = {
+    trial: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', label: 'Prøveperiode' },
+    active: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', label: 'Aktiv' },
+    suspended: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500', label: 'Suspenderet' },
+    cancelled: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500', label: 'Annulleret' },
+  }[lessor.subscription_status] || { bg: 'bg-gray-50', text: 'text-gray-700', dot: 'bg-gray-500', label: lessor.subscription_status };
+
+  const statCards = [
+    { label: 'Biler', value: data.vehicles, icon: Car, gradient: 'from-blue-500 to-cyan-400' },
+    { label: 'Bookings', value: data.bookings, icon: TrendingUp, gradient: 'from-violet-500 to-indigo-500' },
+    { label: 'Revenue', value: `kr. ${(data.revenue / 1000).toFixed(1)}k`, icon: DollarSign, gradient: 'from-emerald-500 to-teal-400' },
+    { label: 'Aktive', value: data.activeBookings, icon: Users, gradient: 'from-pink-500 to-rose-400' },
+    { label: 'Gennemført', value: data.completedBookings, icon: Calendar, gradient: 'from-amber-500 to-orange-400' },
+  ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-[1400px]">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/fri/admin/lessors')}
-            className="gap-2 mb-4"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Tilbage til lessors
-          </Button>
-          <h1 className="text-3xl font-bold text-gray-900">{lessor.company_name}</h1>
-          <p className={`text-lg font-medium mt-2 ${statusColor}`}>
-            {lessor.subscription_status === 'trial'
-              ? 'Prøveperiode'
-              : lessor.subscription_status === 'active'
-                ? 'Aktiv'
-                : lessor.subscription_status === 'suspended'
-                  ? 'Suspenderet'
-                  : 'Annulleret'}
-          </p>
+      <div>
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/fri/admin/lessors')}
+          className="gap-2 mb-4 text-gray-400 hover:text-gray-700 rounded-xl"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Tilbage til lessors
+        </Button>
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200">
+            <Users className="w-7 h-7 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{lessor.company_name}</h1>
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full mt-1 ${statusConfig.bg}`}>
+              <div className={`w-2 h-2 rounded-full ${statusConfig.dot}`} />
+              <span className={`text-xs font-semibold ${statusConfig.text}`}>{statusConfig.label}</span>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm">Biler</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{data.vehicles}</p>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {statCards.map((card) => (
+          <div key={card.label} className="group bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg hover:shadow-gray-100/50 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden relative">
+            <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${card.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
+            <div className="flex items-start justify-between mb-3">
+              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-sm`}>
+                <card.icon className="w-5 h-5 text-white" />
+              </div>
             </div>
-            <Zap className="w-8 h-8 text-yellow-500 opacity-20" />
+            <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+            <p className="text-xs text-gray-400 mt-1 font-medium uppercase tracking-wider">{card.label}</p>
           </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm">Bookings</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{data.bookings}</p>
-            </div>
-            <TrendingUp className="w-8 h-8 text-blue-500 opacity-20" />
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm">Revenue</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">
-                kr. {(data.revenue / 1000).toFixed(1)}k
-              </p>
-            </div>
-            <DollarSign className="w-8 h-8 text-green-500 opacity-20" />
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm">Aktive</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{data.activeBookings}</p>
-            </div>
-            <Users className="w-8 h-8 text-purple-500 opacity-20" />
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm">Gennemf.</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{data.completedBookings}</p>
-            </div>
-            <Calendar className="w-8 h-8 text-indigo-500 opacity-20" />
-          </div>
-        </Card>
+        ))}
       </div>
 
       {/* Account Info */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Kontooplysninger</h3>
-          <div className="space-y-4 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Email</span>
-              <span className="font-medium text-gray-900">{lessor.email}</span>
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center">
+              <Users className="w-4 h-4 text-white" />
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">CVR</span>
-              <span className="font-medium text-gray-900">{lessor.cvr_number || 'N/A'}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Oprettet</span>
-              <span className="font-medium text-gray-900">
-                {formatDistanceToNow(new Date(lessor.created_at), { locale: da, addSuffix: true })}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Domæne</span>
-              <span className="font-medium text-gray-900 text-right max-w-xs break-words">
-                {lessor.custom_domain || 'Standard'}
-              </span>
-            </div>
+            <h3 className="text-base font-bold text-gray-900">Kontooplysninger</h3>
           </div>
-        </Card>
+          <div className="space-y-4">
+            {[
+              { icon: Mail, label: 'Email', value: lessor.email },
+              { icon: Hash, label: 'CVR', value: lessor.cvr_number || 'N/A' },
+              { icon: Calendar, label: 'Oprettet', value: formatDistanceToNow(new Date(lessor.created_at), { locale: da, addSuffix: true }) },
+              { icon: Globe, label: 'Domæne', value: lessor.custom_domain || 'Standard' },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                <div className="flex items-center gap-2">
+                  <item.icon className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-gray-500">{item.label}</span>
+                </div>
+                <span className="text-sm font-semibold text-gray-900 text-right max-w-[200px] break-words">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            {lessor.subscription_status === 'trial' ? 'Prøveperiode' : 'Abonnement'}
-          </h3>
-          <div className="space-y-4 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Status</span>
-              <span className="font-medium text-gray-900 capitalize">
-                {lessor.subscription_status}
-              </span>
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center">
+              <DollarSign className="w-4 h-4 text-white" />
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Start dato</span>
-              <span className="font-medium text-gray-900">
+            <h3 className="text-base font-bold text-gray-900">
+              {lessor.subscription_status === 'trial' ? 'Prøveperiode' : 'Abonnement'}
+            </h3>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between py-2 border-b border-gray-50">
+              <span className="text-sm text-gray-500">Status</span>
+              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${statusConfig.bg}`}>
+                <div className={`w-2 h-2 rounded-full ${statusConfig.dot}`} />
+                <span className={`text-xs font-semibold ${statusConfig.text}`}>{statusConfig.label}</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between py-2 border-b border-gray-50">
+              <span className="text-sm text-gray-500">Start dato</span>
+              <span className="text-sm font-semibold text-gray-900">
                 {new Date(lessor.created_at).toLocaleDateString('da-DK')}
               </span>
             </div>
             {lessor.subscription_plan && (
-              <div className="flex justify-between">
-                <span className="text-gray-600">Plan</span>
-                <span className="font-medium text-gray-900">{lessor.subscription_plan}</span>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm text-gray-500">Plan</span>
+                <span className="text-sm font-semibold text-gray-900">{lessor.subscription_plan}</span>
               </div>
             )}
           </div>
-        </Card>
+        </div>
       </div>
 
       {/* Monthly Revenue Chart */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Månedlig revenue</h3>
+      <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center">
+            <BarChart3 className="w-4 h-4 text-white" />
+          </div>
+          <h3 className="text-base font-bold text-gray-900">Månedlig revenue</h3>
+        </div>
         {data.monthlyData.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data.monthlyData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip formatter={(value) => `kr. ${value.toLocaleString('da-DK')}`} />
-              <Line type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={2} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+              <Tooltip
+                formatter={(value) => [`kr. ${value.toLocaleString('da-DK')}`, 'Revenue']}
+                contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+              />
+              <Line type="monotone" dataKey="revenue" stroke="#8b5cf6" strokeWidth={3} dot={{ fill: '#8b5cf6', strokeWidth: 0, r: 4 }} activeDot={{ r: 6, fill: '#7c3aed' }} />
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-300 flex items-center justify-center text-gray-500">
-            Ingen data tilgængelig
+          <div className="h-[300px] flex items-center justify-center">
+            <p className="text-gray-400">Ingen data tilgængelig</p>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 };
