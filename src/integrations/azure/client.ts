@@ -36,62 +36,58 @@ export async function initializeAzureClients() {
   }
 }
 
+// Standalone API request function
+async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  const url = `${API_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+
+  const response = await fetch(url, {
+    ...options,
+    credentials: 'include',
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(`API Error: ${response.status} - ${error.message || response.statusText}`);
+  }
+
+  return response.json();
+}
+
 // API Client for communication with Azure Functions backend
-export const azureApi: {
-  request<T>(endpoint: string, options?: RequestInit): Promise<T>;
-  get<T>(endpoint: string): Promise<T>;
-  post<T>(endpoint: string, data?: any): Promise<T>;
-  put<T>(endpoint: string, data?: any): Promise<T>;
-  patch<T>(endpoint: string, data?: any): Promise<T>;
-  delete<T>(endpoint: string): Promise<T>;
-} = {
-  async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    const url = `${API_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
-    
-    const response = await fetch(url, {
-      ...options,
-      credentials: 'include',
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(`API Error: ${response.status} - ${error.message || response.statusText}`);
-    }
-
-    return response.json();
-  },
+export const azureApi = {
+  request: apiRequest,
 
   async get<T>(endpoint: string) {
-    return this.request<T>(endpoint, { method: "GET" });
+    return apiRequest<T>(endpoint, { method: "GET" });
   },
 
   async post<T>(endpoint: string, data?: any) {
-    return this.request<T>(endpoint, {
+    return apiRequest<T>(endpoint, {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   async put<T>(endpoint: string, data?: any) {
-    return this.request<T>(endpoint, {
+    return apiRequest<T>(endpoint, {
       method: "PUT",
       body: JSON.stringify(data),
     });
   },
 
   async patch<T>(endpoint: string, data?: any) {
-    return this.request<T>(endpoint, {
+    return apiRequest<T>(endpoint, {
       method: "PATCH",
       body: JSON.stringify(data),
     });
   },
 
   async delete<T>(endpoint: string) {
-    return this.request<T>(endpoint, { method: "DELETE" });
+    return apiRequest<T>(endpoint, { method: "DELETE" });
   },
 };
 
@@ -154,7 +150,7 @@ export const supabase = {
       or: (filter: string) => ({ data: [], error: null }),
       async then(onFulfilled: any) {
         try {
-          const response = await azureApi.get(`/tables/${table}?${cols}`);
+          const response: any = await azureApi.get(`/tables/${table}?${cols}`);
           return onFulfilled({ data: response.data || [], error: null });
         } catch (error) {
           console.warn(`⚠️  Error querying table '${table}':`, error);
@@ -165,7 +161,7 @@ export const supabase = {
     insert: (data: any) => ({
       async then(onFulfilled?: any) {
         try {
-          const response = await azureApi.post(`/tables/${table}`, data);
+          const response: any = await azureApi.post(`/tables/${table}`, data);
           return onFulfilled ? onFulfilled({ data: response.data || data, error: null }) : { data: response.data || data, error: null };
         } catch (error) {
           console.warn(`⚠️  Error inserting into table '${table}':`, error);
@@ -177,7 +173,7 @@ export const supabase = {
       eq: (f: string, v: any) => ({
         async then(onFulfilled?: any) {
           try {
-            const response = await azureApi.put(`/tables/${table}/${v}`, data);
+            const response: any = await azureApi.put(`/tables/${table}/${v}`, data);
             return onFulfilled ? onFulfilled({ data: response.data || data, error: null }) : { data: response.data || data, error: null };
           } catch (error) {
             return { data: null, error };
@@ -203,7 +199,7 @@ export const supabase = {
   rpc: (functionName: string, params?: any) => ({
     async then(onFulfilled?: any) {
       try {
-        const response = await azureApi.post(`/rpc/${functionName}`, params || {});
+        const response: any = await azureApi.post(`/rpc/${functionName}`, params || {});
         return onFulfilled ? onFulfilled({ data: response.data, error: null }) : { data: response.data, error: null };
       } catch (error) {
         console.warn(`⚠️  RPC call to '${functionName}' failed:`, error);
@@ -231,7 +227,7 @@ export const supabase = {
   auth: {
     getUser: async () => {
       try {
-        const response = await azureApi.get('/auth-me');
+        const response: any = await azureApi.get('/auth-me');
         return { data: { user: response.data }, error: null };
       } catch (error) {
         return { data: { user: null }, error };
@@ -240,7 +236,7 @@ export const supabase = {
     
     getSession: async () => {
       try {
-        const response = await azureApi.get('/auth-session');
+        const response: any = await azureApi.get('/auth-session');
         return { data: { session: response.data }, error: null };
       } catch (error) {
         return { data: { session: null }, error };
@@ -249,7 +245,7 @@ export const supabase = {
     
     signInWithPassword: async (credentials: { email: string; password: string }) => {
       try {
-        const response = await azureApi.post('/auth-login', credentials);
+        const response: any = await azureApi.post('/auth-login', credentials);
         return { data: { user: response.data?.user, session: response.data?.session }, error: null };
       } catch (error: any) {
         return { data: null, error: error.response?.data || error };
@@ -258,7 +254,7 @@ export const supabase = {
     
     signInWithOAuth: async (options: { provider: string; options?: any }) => {
       try {
-        const response = await azureApi.post('/auth-oauth', { provider: options.provider, ...options.options });
+        const response: any = await azureApi.post('/auth-oauth', { provider: options.provider, ...options.options });
         return { data: { user: response.data?.user, session: response.data?.session }, error: null };
       } catch (error: any) {
         return { data: null, error };
@@ -267,7 +263,7 @@ export const supabase = {
     
     signUp: async (credentials: { email: string; password: string }) => {
       try {
-        const response = await azureApi.post('/auth-signup', credentials);
+        const response: any = await azureApi.post('/auth-signup', credentials);
         return { data: { user: response.data?.user, session: response.data?.session }, error: null };
       } catch (error: any) {
         return { data: null, error };
