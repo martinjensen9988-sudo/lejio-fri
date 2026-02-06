@@ -40,6 +40,10 @@ const FriTeamManagement = lazy(() => import("./pages/fri/dashboard/FriTeamManage
 const FriLessorDashboard = lazy(() => import("./pages/fri/dashboard/FriLessorDashboard").then(m => ({ default: m.default })));
 const FriInvoiceManagement = lazy(() => import("./pages/fri/dashboard/FriInvoiceManagement").then(m => ({ default: m.default })));
 const FriModulesPage = lazy(() => import("./pages/fri/dashboard/ModulesPage").then(m => ({ default: m.FriModulesPage })));
+const FriVehiclesPage = lazy(() => import("./pages/fri/dashboard/VehiclesPage").then(m => ({ default: m.FriVehiclesPage })));
+const FriBookingsPage = lazy(() => import("./pages/fri/dashboard/BookingsPage").then(m => ({ default: m.FriBookingsPage })));
+const FriPaymentsPage = lazy(() => import("./pages/fri/dashboard/PaymentsPage").then(m => ({ default: m.FriPaymentsPage })));
+const FriSettingsPage = lazy(() => import("./pages/fri/dashboard/SettingsPage").then(m => ({ default: m.FriSettingsPage })));
 
 // Workshop Pages - lazy loaded
 const GaragePlanPage = lazy(() => import("./pages/fri/workshop/GaragePlan").then(m => ({ default: m.GaragePlanPage })));
@@ -134,10 +138,52 @@ export default function App() {
                   </BrandProvider>
                 } />
                 
+                <Route path="/fri/dashboard/vehicles" element={
+                  <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
+                    <FriAuthProvider>
+                      <FriVehiclesPage />
+                    </FriAuthProvider>
+                  </BrandProvider>
+                } />
+                <Route path="/fri/dashboard/bookings" element={
+                  <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
+                    <FriAuthProvider>
+                      <FriBookingsPage />
+                    </FriAuthProvider>
+                  </BrandProvider>
+                } />
+                <Route path="/fri/dashboard/payments" element={
+                  <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
+                    <FriAuthProvider>
+                      <FriPaymentsPage />
+                    </FriAuthProvider>
+                  </BrandProvider>
+                } />
+                <Route path="/fri/dashboard/modules" element={
+                  <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
+                    <FriAuthProvider>
+                      <FriModulesPage />
+                    </FriAuthProvider>
+                  </BrandProvider>
+                } />
+                <Route path="/fri/dashboard/api-keys" element={
+                  <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
+                    <FriAuthProvider>
+                      <FriApiKeysPage lessorId="" />
+                    </FriAuthProvider>
+                  </BrandProvider>
+                } />
+                <Route path="/fri/dashboard/settings" element={
+                  <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
+                    <FriAuthProvider>
+                      <FriSettingsPage />
+                    </FriAuthProvider>
+                  </BrandProvider>
+                } />
+                
                 {/* Workshop Pages */}
                 <Route path="/fri/workshop/garageplan" element={<GaragePlanPage />} />
                 <Route path="/fri/workshop/modules" element={<WorkshopModulesPublic />} />
-                <Route path="/fri/dashboard/modules" element={<WorkshopModulesPublic />} />
                 
                 {/* Lejio Fri Admin */}
                 <Route path="/fri/admin/login" element={<FriAdminLoginPage />} />

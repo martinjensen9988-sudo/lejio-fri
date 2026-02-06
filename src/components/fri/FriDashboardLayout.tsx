@@ -1,4 +1,4 @@
-import React, { ReactNode, Suspense } from 'react';
+import React, { ReactNode, Suspense, useEffect } from 'react';
 import FriSidebar from './FriSidebar';
 import FriTopBar from './FriTopBar';
 import { Loader2 } from 'lucide-react';
@@ -35,6 +35,17 @@ const SafeSidebar = () => {
 };
 
 const FriDashboardLayout: React.FC<FriDashboardLayoutProps> = ({ children }) => {
+  // Force light mode for the dashboard - remove any dark class
+  useEffect(() => {
+    const html = document.documentElement;
+    const wasDark = html.classList.contains('dark');
+    html.classList.remove('dark');
+    html.style.colorScheme = 'light';
+    return () => {
+      if (wasDark) html.classList.add('dark');
+    };
+  }, []);
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar - Fixed position */}

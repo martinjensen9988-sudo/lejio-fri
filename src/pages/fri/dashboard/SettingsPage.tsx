@@ -1,0 +1,361 @@
+import React, { useState } from 'react';
+import FriDashboardLayout from '@/components/fri/FriDashboardLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { useFriAuthContext } from '@/providers/FriAuthProvider';
+import { 
+  Building2, 
+  Mail, 
+  Phone, 
+  Globe, 
+  Bell, 
+  Shield, 
+  Palette, 
+  FileText, 
+  Save, 
+  Upload,
+  MapPin,
+  Clock,
+  CreditCard
+} from 'lucide-react';
+import { toast } from 'sonner';
+
+export function FriSettingsPage() {
+  const { user } = useFriAuthContext();
+  const [saving, setSaving] = useState(false);
+
+  // Company settings
+  const [companyName, setCompanyName] = useState(user?.company_name || '');
+  const [contactEmail, setContactEmail] = useState(user?.email || '');
+  const [contactPhone, setContactPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [website, setWebsite] = useState('');
+  const [cvr, setCvr] = useState('');
+
+  // Notification settings
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [bookingAlerts, setBookingAlerts] = useState(true);
+  const [paymentAlerts, setPaymentAlerts] = useState(true);
+  const [weeklyReport, setWeeklyReport] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      // TODO: Connect to API
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success('Indstillinger gemt');
+    } catch {
+      toast.error('Kunne ikke gemme indstillinger');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <FriDashboardLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Indstillinger</h1>
+          <p className="text-gray-500 mt-1">Konfigurer din virksomhedsprofil og præferencer</p>
+        </div>
+
+        <Tabs defaultValue="company" className="space-y-6">
+          <TabsList className="bg-gray-100 p-1">
+            <TabsTrigger value="company" className="data-[state=active]:bg-white">
+              <Building2 className="w-4 h-4 mr-2" />
+              Virksomhed
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="data-[state=active]:bg-white">
+              <Bell className="w-4 h-4 mr-2" />
+              Notifikationer
+            </TabsTrigger>
+            <TabsTrigger value="branding" className="data-[state=active]:bg-white">
+              <Palette className="w-4 h-4 mr-2" />
+              Branding
+            </TabsTrigger>
+            <TabsTrigger value="billing" className="data-[state=active]:bg-white">
+              <CreditCard className="w-4 h-4 mr-2" />
+              Abonnement
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Company Settings */}
+          <TabsContent value="company">
+            <div className="grid gap-6">
+              <Card className="border-gray-100">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 flex items-center gap-2">
+                    <Building2 className="w-5 h-5 text-pink-500" />
+                    Virksomhedsoplysninger
+                  </CardTitle>
+                  <CardDescription>Grundlæggende information om din virksomhed</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="companyName" className="text-gray-700">Virksomhedsnavn</Label>
+                      <Input
+                        id="companyName"
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        placeholder="Din Virksomhed ApS"
+                        className="border-gray-200"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cvr" className="text-gray-700">CVR-nummer</Label>
+                      <Input
+                        id="cvr"
+                        value={cvr}
+                        onChange={(e) => setCvr(e.target.value)}
+                        placeholder="12345678"
+                        className="border-gray-200"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-gray-700">
+                        <Mail className="w-4 h-4 inline mr-1" />
+                        Kontakt Email
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
+                        placeholder="kontakt@firma.dk"
+                        className="border-gray-200"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-gray-700">
+                        <Phone className="w-4 h-4 inline mr-1" />
+                        Telefon
+                      </Label>
+                      <Input
+                        id="phone"
+                        value={contactPhone}
+                        onChange={(e) => setContactPhone(e.target.value)}
+                        placeholder="+45 12 34 56 78"
+                        className="border-gray-200"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="address" className="text-gray-700">
+                      <MapPin className="w-4 h-4 inline mr-1" />
+                      Adresse
+                    </Label>
+                    <Input
+                      id="address"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Vestergade 1, 1000 København"
+                      className="border-gray-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="website" className="text-gray-700">
+                      <Globe className="w-4 h-4 inline mr-1" />
+                      Hjemmeside
+                    </Label>
+                    <Input
+                      id="website"
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                      placeholder="https://www.ditfirma.dk"
+                      className="border-gray-200"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-gray-100">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-pink-500" />
+                    Åbningstider
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag'].map((day) => (
+                      <div key={day} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-100">
+                        <span className="font-medium text-gray-700">{day}</span>
+                        <div className="flex items-center gap-2">
+                          <Input className="w-20 text-center border-gray-200" placeholder="08:00" />
+                          <span className="text-gray-400">-</span>
+                          <Input className="w-20 text-center border-gray-200" placeholder="17:00" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-end">
+                <Button onClick={handleSave} disabled={saving} className="bg-pink-600 hover:bg-pink-700 text-white">
+                  <Save className="w-4 h-4 mr-2" />
+                  {saving ? 'Gemmer...' : 'Gem Ændringer'}
+                </Button>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Notification Settings */}
+          <TabsContent value="notifications">
+            <Card className="border-gray-100">
+              <CardHeader>
+                <CardTitle className="text-gray-900 flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-pink-500" />
+                  Notifikationspræferencer
+                </CardTitle>
+                <CardDescription>Vælg hvilke notifikationer du vil modtage</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100">
+                  <div>
+                    <p className="font-medium text-gray-900">Email Notifikationer</p>
+                    <p className="text-sm text-gray-500">Modtag vigtige opdateringer på email</p>
+                  </div>
+                  <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100">
+                  <div>
+                    <p className="font-medium text-gray-900">Booking Alerts</p>
+                    <p className="text-sm text-gray-500">Få besked når du modtager nye bookinger</p>
+                  </div>
+                  <Switch checked={bookingAlerts} onCheckedChange={setBookingAlerts} />
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100">
+                  <div>
+                    <p className="font-medium text-gray-900">Betalingsnotifikationer</p>
+                    <p className="text-sm text-gray-500">Få besked ved indgående betalinger</p>
+                  </div>
+                  <Switch checked={paymentAlerts} onCheckedChange={setPaymentAlerts} />
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100">
+                  <div>
+                    <p className="font-medium text-gray-900">Ugentlig Rapport</p>
+                    <p className="text-sm text-gray-500">Modtag en ugentlig oversigt over din virksomhed</p>
+                  </div>
+                  <Switch checked={weeklyReport} onCheckedChange={setWeeklyReport} />
+                </div>
+                <div className="flex justify-end">
+                  <Button onClick={handleSave} disabled={saving} className="bg-pink-600 hover:bg-pink-700 text-white">
+                    <Save className="w-4 h-4 mr-2" />
+                    {saving ? 'Gemmer...' : 'Gem Præferencer'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Branding Settings */}
+          <TabsContent value="branding">
+            <Card className="border-gray-100">
+              <CardHeader>
+                <CardTitle className="text-gray-900 flex items-center gap-2">
+                  <Palette className="w-5 h-5 text-pink-500" />
+                  Branding & Udseende
+                </CardTitle>
+                <CardDescription>Tilpas dit brand og din kundevendte side</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Logo</Label>
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-pink-300 transition-colors cursor-pointer">
+                    <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-500">Klik for at uploade dit logo</p>
+                    <p className="text-xs text-gray-400 mt-1">PNG, JPG eller SVG (max 2MB)</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-gray-700">Primær Farve</Label>
+                    <div className="flex items-center gap-3">
+                      <input type="color" defaultValue="#ec4899" className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer" />
+                      <Input defaultValue="#ec4899" className="border-gray-200 font-mono" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-gray-700">Sekundær Farve</Label>
+                    <div className="flex items-center gap-3">
+                      <input type="color" defaultValue="#3b82f6" className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer" />
+                      <Input defaultValue="#3b82f6" className="border-gray-200 font-mono" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button onClick={handleSave} disabled={saving} className="bg-pink-600 hover:bg-pink-700 text-white">
+                    <Save className="w-4 h-4 mr-2" />
+                    {saving ? 'Gemmer...' : 'Gem Branding'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Billing Settings */}
+          <TabsContent value="billing">
+            <Card className="border-gray-100">
+              <CardHeader>
+                <CardTitle className="text-gray-900 flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-pink-500" />
+                  Abonnement
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl p-6 text-white">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Badge className="bg-white/20 text-white border-0 mb-2">Pro Plan</Badge>
+                      <h3 className="text-2xl font-bold">kr 499/måned</h3>
+                      <p className="text-pink-100 mt-1">Alle funktioner inkluderet</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-pink-100 text-sm">Næste betaling</p>
+                      <p className="text-white font-semibold">1. marts 2026</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                    <p className="text-sm text-gray-500">Køretøjer inkluderet</p>
+                    <p className="text-xl font-bold text-gray-900 mt-1">Ubegrænset</p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                    <p className="text-sm text-gray-500">Team medlemmer</p>
+                    <p className="text-xl font-bold text-gray-900 mt-1">Op til 10</p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                    <p className="text-sm text-gray-500">API adgang</p>
+                    <p className="text-xl font-bold text-gray-900 mt-1">Fuld adgang</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button variant="outline" className="border-gray-200 text-gray-700">
+                    Skift plan
+                  </Button>
+                  <Button variant="outline" className="border-gray-200 text-gray-700">
+                    Fakturahistorik
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </FriDashboardLayout>
+  );
+}
+
+export default FriSettingsPage;

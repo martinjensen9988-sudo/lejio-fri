@@ -25,8 +25,8 @@ const FriTopBar: React.FC = () => {
         {/* Right: Actions */}
         <div className="flex items-center gap-3 ml-6">
           {/* Pro Badge */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-pink-50 border border-pink-200">
-            <span className="text-sm font-medium text-pink-600">Pro Plan</span>
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-pink-600 shadow-sm">
+            <span className="text-sm font-medium text-white">✨ Pro Plan Aktiv</span>
           </div>
 
           {/* Notifications */}
