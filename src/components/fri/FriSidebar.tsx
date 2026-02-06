@@ -14,23 +14,28 @@ import {
   Key
 } from 'lucide-react';
 import { useFriAuthContext } from '@/providers/FriAuthProvider';
+import { useRole, roleLabels } from '@/hooks/useRole';
 
 const FriSidebar = () => {
   const location = useLocation();
   const { user, signOut } = useFriAuthContext();
+  const { hasAccess, role, roleLabel } = useRole();
 
-  const menuItems = [
-    { label: 'Dashboard', icon: Home, path: '/fri/dashboard' },
-    { label: 'Køretøjer', icon: Car, path: '/fri/dashboard/vehicles' },
-    { label: 'Bookinger', icon: Calendar, path: '/fri/dashboard/bookings' },
-    { label: 'Fakturaer', icon: FileText, path: '/fri/dashboard/invoices' },
-    { label: 'Team', icon: Users, path: '/fri/dashboard/team' },
-    { label: 'Analytik', icon: BarChart3, path: '/fri/dashboard/analytics' },
-    { label: 'Betalinger', icon: CreditCard, path: '/fri/dashboard/payments' },
-    { label: 'Moduler', icon: Package, path: '/fri/dashboard/modules' },
-    { label: 'API-nøgler', icon: Key, path: '/fri/dashboard/api-keys' },
-    { label: 'Indstillinger', icon: Settings, path: '/fri/dashboard/settings' },
+  const allMenuItems = [
+    { label: 'Dashboard', icon: Home, path: '/fri/dashboard', permission: 'dashboard' },
+    { label: 'Køretøjer', icon: Car, path: '/fri/dashboard/vehicles', permission: 'vehicles' },
+    { label: 'Bookinger', icon: Calendar, path: '/fri/dashboard/bookings', permission: 'bookings' },
+    { label: 'Fakturaer', icon: FileText, path: '/fri/dashboard/invoices', permission: 'invoices' },
+    { label: 'Team', icon: Users, path: '/fri/dashboard/team', permission: 'team' },
+    { label: 'Analytik', icon: BarChart3, path: '/fri/dashboard/analytics', permission: 'analytics' },
+    { label: 'Betalinger', icon: CreditCard, path: '/fri/dashboard/payments', permission: 'payments' },
+    { label: 'Moduler', icon: Package, path: '/fri/dashboard/modules', permission: 'modules' },
+    { label: 'API-nøgler', icon: Key, path: '/fri/dashboard/api-keys', permission: 'api-keys' },
+    { label: 'Indstillinger', icon: Settings, path: '/fri/dashboard/settings', permission: 'settings' },
   ];
+
+  // Filter menu items based on user's role permissions
+  const menuItems = allMenuItems.filter(item => hasAccess(item.permission));
 
   const isActive = (path: string) => {
     if (path === '/fri/dashboard') {
@@ -86,7 +91,7 @@ const FriSidebar = () => {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-gray-900 truncate">{user?.email || 'Bruger'}</p>
-            <p className="text-xs text-gray-500">Pro Lessor</p>
+            <p className="text-xs text-gray-500">{roleLabel}</p>
           </div>
         </div>
         <button

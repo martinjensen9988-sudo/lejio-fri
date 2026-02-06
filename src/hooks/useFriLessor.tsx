@@ -20,7 +20,7 @@ export interface FriTeamMember {
   full_name: string;
   email: string;
   phone: string | null;
-  role: 'manager' | 'driver' | 'mechanic' | 'accountant';
+  role: 'manager' | 'salesperson' | 'driver' | 'mechanic' | 'accountant';
   is_active: boolean;
   created_at: string;
 }

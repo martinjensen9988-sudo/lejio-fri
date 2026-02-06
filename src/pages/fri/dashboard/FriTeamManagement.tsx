@@ -41,7 +41,7 @@ interface TeamMemberForm {
   full_name: string;
   email: string;
   phone: string;
-  role: 'manager' | 'driver' | 'mechanic' | 'accountant';
+  role: 'manager' | 'salesperson' | 'driver' | 'mechanic' | 'accountant';
   is_active: boolean;
 }
 
@@ -189,9 +189,10 @@ const FriTeamManagement = () => {
   const getRoleLabel = (role: string) => {
     const labels: Record<string, string> = {
       manager: 'Manager',
+      salesperson: 'Sælger',
       driver: 'Chauffør',
       mechanic: 'Mekaniker',
-      accountant: 'Regnskabsmedarbeyder',
+      accountant: 'Regnskab',
     };
     return labels[role] || role;
   };
@@ -199,6 +200,7 @@ const FriTeamManagement = () => {
   const getRoleColor = (role: string) => {
     const colors: Record<string, string> = {
       manager: 'bg-purple-50',
+      salesperson: 'bg-pink-50',
       driver: 'bg-blue-50',
       mechanic: 'bg-orange-50',
       accountant: 'bg-green-50',
@@ -271,9 +273,10 @@ const FriTeamManagement = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="manager">Manager</SelectItem>
+                    <SelectItem value="salesperson">Sælger</SelectItem>
                     <SelectItem value="driver">Chauffør</SelectItem>
                     <SelectItem value="mechanic">Mekaniker</SelectItem>
-                    <SelectItem value="accountant">Regnskabsmedarbeyder</SelectItem>
+                    <SelectItem value="accountant">Regnskab</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -372,9 +375,10 @@ const FriTeamManagement = () => {
               <SelectContent>
                 <SelectItem value="">Alle roller</SelectItem>
                 <SelectItem value="manager">Manager</SelectItem>
+                <SelectItem value="salesperson">Sælger</SelectItem>
                 <SelectItem value="driver">Chauffør</SelectItem>
                 <SelectItem value="mechanic">Mekaniker</SelectItem>
-                <SelectItem value="accountant">Regnskabsmedarbeyder</SelectItem>
+                <SelectItem value="accountant">Regnskab</SelectItem>
               </SelectContent>
             </Select>
             <Select value={filterStatus} onValueChange={(val) => 

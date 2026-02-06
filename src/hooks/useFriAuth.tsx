@@ -1,11 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
 
+export type FriUserRole = 'owner' | 'manager' | 'salesperson' | 'mechanic' | 'driver' | 'accountant';
+
 export interface FriAuthUser {
   id: string;
   email: string;
   company_name?: string;
   lessor_id?: string;
   isLessor?: boolean;
+  role?: FriUserRole;
 }
 
 interface UseFriAuthReturn {

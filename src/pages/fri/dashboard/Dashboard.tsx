@@ -4,6 +4,7 @@ import { useBrand } from '@/providers/BrandContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useFriStats } from '@/hooks/useFriData';
+import { useRole } from '@/hooks/useRole';
 import {
   Loader2, TrendingUp, DollarSign, AlertCircle, Car, Calendar,
   Users, FileText, ArrowUpRight, Clock, CheckCircle2, Sparkles,
@@ -17,6 +18,7 @@ export function FriDashboard() {
   const { companyName } = useBrand();
   const navigate = useNavigate();
   const { data: stats, isLoading: statsLoading } = useFriStats();
+  const { hasAccess } = useRole();
 
   const greeting = () => {
     const h = new Date().getHours();
@@ -119,30 +121,30 @@ export function FriDashboard() {
   ];
 
   const quickActions = [
-    { label: 'Tilføj køretøj', icon: Car, path: '/fri/dashboard/vehicles', color: 'text-blue-600 bg-blue-50 hover:bg-blue-100' },
-    { label: 'Ny booking', icon: Plus, path: '/fri/dashboard/bookings', color: 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100' },
-    { label: 'Opret faktura', icon: FileText, path: '/fri/dashboard/invoices', color: 'text-violet-600 bg-violet-50 hover:bg-violet-100' },
-    { label: 'Lav hjemmeside', icon: Globe, path: '/dashboard/pages', color: 'text-pink-600 bg-pink-50 hover:bg-pink-100' },
-  ];
+    { label: 'Tilføj køretøj', icon: Car, path: '/fri/dashboard/vehicles', color: 'text-blue-600 bg-blue-50 hover:bg-blue-100', permission: 'create-vehicle' },
+    { label: 'Ny booking', icon: Plus, path: '/fri/dashboard/bookings', color: 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100', permission: 'create-booking' },
+    { label: 'Opret faktura', icon: FileText, path: '/fri/dashboard/invoices', color: 'text-violet-600 bg-violet-50 hover:bg-violet-100', permission: 'create-invoice' },
+    { label: 'Lav hjemmeside', icon: Globe, path: '/dashboard/pages', color: 'text-pink-600 bg-pink-50 hover:bg-pink-100', permission: 'page-builder' },
+  ].filter(a => hasAccess(a.permission));
 
   const navSections = [
     {
       title: 'Drift',
       items: [
-        { label: 'Køretøjer', desc: 'Administrer din flåde', icon: Car, path: '/fri/dashboard/vehicles', iconColor: 'text-blue-500' },
-        { label: 'Bookinger', desc: 'Reservationer & udlejning', icon: Calendar, path: '/fri/dashboard/bookings', iconColor: 'text-emerald-500' },
-        { label: 'Fakturaer', desc: 'Fakturering & betaling', icon: FileText, path: '/fri/dashboard/invoices', iconColor: 'text-violet-500' },
-      ]
+        { label: 'Køretøjer', desc: 'Administrer din flåde', icon: Car, path: '/fri/dashboard/vehicles', iconColor: 'text-blue-500', permission: 'vehicles' },
+        { label: 'Bookinger', desc: 'Reservationer & udlejning', icon: Calendar, path: '/fri/dashboard/bookings', iconColor: 'text-emerald-500', permission: 'bookings' },
+        { label: 'Fakturaer', desc: 'Fakturering & betaling', icon: FileText, path: '/fri/dashboard/invoices', iconColor: 'text-violet-500', permission: 'invoices' },
+      ].filter(i => hasAccess(i.permission))
     },
     {
       title: 'Vækst',
       items: [
-        { label: 'Analytik', desc: 'Indsigt & rapporter', icon: BarChart3, path: '/fri/dashboard/analytics', iconColor: 'text-pink-500' },
-        { label: 'Team', desc: 'Medarbejdere & roller', icon: Users, path: '/fri/dashboard/team', iconColor: 'text-orange-500' },
-        { label: 'Betalinger', desc: 'Transaktioner & flow', icon: CreditCard, path: '/fri/dashboard/payments', iconColor: 'text-teal-500' },
-      ]
+        { label: 'Analytik', desc: 'Indsigt & rapporter', icon: BarChart3, path: '/fri/dashboard/analytics', iconColor: 'text-pink-500', permission: 'analytics' },
+        { label: 'Team', desc: 'Medarbejdere & roller', icon: Users, path: '/fri/dashboard/team', iconColor: 'text-orange-500', permission: 'team' },
+        { label: 'Betalinger', desc: 'Transaktioner & flow', icon: CreditCard, path: '/fri/dashboard/payments', iconColor: 'text-teal-500', permission: 'payments' },
+      ].filter(i => hasAccess(i.permission))
     },
-  ];
+  ].filter(s => s.items.length > 0);
 
   const checklist = [
     { text: 'Opret din konto', done: true },

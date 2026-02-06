@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { AdminAuthProvider } from "@/hooks/useAdminAuth";
 import { FriAuthProvider } from "@/providers/FriAuthProvider";
 import { BrandProvider } from "@/providers/BrandContext";
+import { ProtectedRoute } from "@/components/fri/ProtectedRoute";
 
 // FORCE NEW BUILD - DO NOT REMOVE - 2026-02-05-v3-tenant-fix
 const APP_VERSION = "2026.02.05.003";
@@ -119,21 +120,27 @@ export default function App() {
                 <Route path="/fri/dashboard/team" element={
                   <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
                     <FriAuthProvider>
-                      <FriTeamManagement />
+                      <ProtectedRoute permission="team">
+                        <FriTeamManagement />
+                      </ProtectedRoute>
                     </FriAuthProvider>
                   </BrandProvider>
                 } />
                 <Route path="/fri/dashboard/analytics" element={
                   <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
                     <FriAuthProvider>
-                      <FriLessorDashboard />
+                      <ProtectedRoute permission="analytics">
+                        <FriLessorDashboard />
+                      </ProtectedRoute>
                     </FriAuthProvider>
                   </BrandProvider>
                 } />
                 <Route path="/fri/dashboard/invoices" element={
                   <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
                     <FriAuthProvider>
-                      <FriInvoiceManagement />
+                      <ProtectedRoute permission="invoices">
+                        <FriInvoiceManagement />
+                      </ProtectedRoute>
                     </FriAuthProvider>
                   </BrandProvider>
                 } />
@@ -155,28 +162,36 @@ export default function App() {
                 <Route path="/fri/dashboard/payments" element={
                   <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
                     <FriAuthProvider>
-                      <FriPaymentsPage />
+                      <ProtectedRoute permission="payments">
+                        <FriPaymentsPage />
+                      </ProtectedRoute>
                     </FriAuthProvider>
                   </BrandProvider>
                 } />
                 <Route path="/fri/dashboard/modules" element={
                   <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
                     <FriAuthProvider>
-                      <FriModulesPage />
+                      <ProtectedRoute permission="modules">
+                        <FriModulesPage />
+                      </ProtectedRoute>
                     </FriAuthProvider>
                   </BrandProvider>
                 } />
                 <Route path="/fri/dashboard/api-keys" element={
                   <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
                     <FriAuthProvider>
-                      <FriApiKeysPage lessorId="" />
+                      <ProtectedRoute permission="api-keys">
+                        <FriApiKeysPage lessorId="" />
+                      </ProtectedRoute>
                     </FriAuthProvider>
                   </BrandProvider>
                 } />
                 <Route path="/fri/dashboard/settings" element={
                   <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
                     <FriAuthProvider>
-                      <FriSettingsPage />
+                      <ProtectedRoute permission="settings">
+                        <FriSettingsPage />
+                      </ProtectedRoute>
                     </FriAuthProvider>
                   </BrandProvider>
                 } />

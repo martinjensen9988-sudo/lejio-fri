@@ -2,8 +2,8 @@ const pool = require("../db");
 
 // Test users (always available)
 const testUsers = {
-  "test-martin": { id: "test-martin", email: "martin@lejio.dk", full_name: "Martin Jensen", lessor_id: "test-martin", user_type: "professionel" },
-  "test-user": { id: "test-user", email: "test@example.com", full_name: "Test User", lessor_id: "test-user", user_type: "professionel" },
+  "test-martin": { id: "test-martin", email: "martin@lejio.dk", full_name: "Martin Jensen", lessor_id: "test-martin", user_type: "professionel", role: "owner" },
+  "test-user": { id: "test-user", email: "test@example.com", full_name: "Test User", lessor_id: "test-user", user_type: "professionel", role: "owner" },
 };
 
 function parseCookies(cookieHeader) {
@@ -85,6 +85,22 @@ module.exports = async function (context, req) {
     }
 
     const user = userResult.rows[0];
+
+    // Determine role: check if user is a team member of another lessor, or the owner
+    let role = 'owner'; // Default: account owner
+    try {
+      // Check if this user's email matches a team member record (they might be a team member, not the owner)
+      const teamResult = await pool.query(
+        `SELECT role FROM fri_lessor_team_members WHERE email = $1 AND status = 'active' LIMIT 1`,
+        [user.email]
+      );
+      if (teamResult.rows.length > 0) {
+        role = teamResult.rows[0].role || 'owner';
+      }
+    } catch (e) {
+      // Team member table might not exist yet, default to owner
+    }
+
     context.res.status = 200;
     context.res.body = {
       user: {
@@ -93,6 +109,7 @@ module.exports = async function (context, req) {
         full_name: user.full_name,
         lessor_id: user.id,
         user_type: user.user_type || 'professionel',
+        role: role,
       }
     };
     return context.res;
