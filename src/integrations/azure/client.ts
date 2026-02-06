@@ -1,40 +1,7 @@
-// Azure SQL Database client for Lejio Fri
-// Uses ONLY Azure services - NO Supabase
+// Lejio Fri API Client
+// Clean API client for PostgreSQL backend on Render
 
-import { BlobServiceClient } from "@azure/storage-blob";
-import { DefaultAzureCredential } from "@azure/identity";
-import { safeStorage } from "@/lib/safeStorage";
-
-// Session storage key
-const SESSION_KEY = 'lejio-fri-session';
-
-// Environment configuration
-const SQL_SERVER = import.meta.env.VITE_SQL_SERVER || "lejio-fri.database.windows.net";
-const SQL_DATABASE = import.meta.env.VITE_SQL_DATABASE || "lejio-fri";
-const STORAGE_ACCOUNT = import.meta.env.VITE_STORAGE_ACCOUNT;
 const API_URL = import.meta.env.VITE_API_URL || "/api";
-const ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT || "development";
-
-// Initialize Azure Blob Storage client
-let blobClient: BlobServiceClient | null = null;
-
-export async function initializeAzureClients() {
-  try {
-    // Use DefaultAzureCredential for managed identity
-    const credential = new DefaultAzureCredential();
-    
-    // Initialize Blob Storage client
-    if (STORAGE_ACCOUNT) {
-      blobClient = new BlobServiceClient(
-        `https://${STORAGE_ACCOUNT}.blob.core.windows.net`,
-        credential
-      );
-      console.log("✅ Azure Blob Storage client initialized");
-    }
-  } catch (error) {
-    console.error("Failed to initialize Azure clients:", error);
-  }
-}
 
 // Standalone API request function
 async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -51,7 +18,7 @@ async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(`API Error: ${response.status} - ${error.message || response.statusText}`);
+    throw new Error(`API Error: ${response.status} - ${error.message || error.error || response.statusText}`);
   }
 
   return response.json();
@@ -91,235 +58,124 @@ export const azureApi = {
   },
 };
 
-// File upload to Azure Blob Storage
-export async function uploadFile(
-  containerName: string,
-  fileName: string,
-  file: File
-): Promise<string> {
-  if (!blobClient) {
-    throw new Error("Azure Blob Storage client not initialized");
-  }
-
-  try {
-    const containerClient = blobClient.getContainerClient(containerName);
-    const blockBlobClient = containerClient.getBlockBlobClient(fileName);
-
-    await blockBlobClient.upload(file, file.size);
-    
-    return blockBlobClient.url;
-  } catch (error) {
-    console.error("File upload failed:", error);
-    throw error;
-  }
-}
-
-// Download file from Azure Blob Storage
-export async function downloadFile(containerName: string, fileName: string): Promise<Blob> {
-  if (!blobClient) {
-    throw new Error("Azure Blob Storage client not initialized");
-  }
-
-  try {
-    const containerClient = blobClient.getContainerClient(containerName);
-    const blockBlobClient = containerClient.getBlockBlobClient(fileName);
-
-    const downloadBlockBlobResponse = await blockBlobClient.download();
-    return downloadBlockBlobResponse.readableStreamBody as unknown as Blob;
-  } catch (error) {
-    console.error("File download failed:", error);
-    throw error;
-  }
-}
-
 // Configuration export
 export const azureConfig = {
-  sqlServer: SQL_SERVER,
-  database: SQL_DATABASE,
-  storageAccount: STORAGE_ACCOUNT,
   apiUrl: API_URL,
-  environment: ENVIRONMENT,
 };
 
-// Proxy for backwards compatibility - routes Supabase-like calls to Azure API
-// This proxy provides implementations for auth, realtime, and database operations
+// Proxy for backwards compatibility — returns empty data for unmigrated features
+// These hooks will be rewritten to use azureApi.post('/db-query', ...) as features are built
+const notImplemented = (feature: string) => {
+  if (import.meta.env.DEV) console.warn(`[lejio] Feature not yet migrated: ${feature}`);
+  return { data: null, error: new Error(`Not implemented: ${feature}`) };
+};
+
+const emptyResult = { data: [], error: null };
+const nullResult = { data: null, error: null };
+
 export const supabase = {
-  from: (table: string) => ({
-    select: (cols = '*', options?: any) => ({
-      eq: (field: string, value: any) => azureApi.get(`/tables/${table}?${field}=${value}`),
-      or: (filter: string) => ({ data: [], error: null }),
-      async then(onFulfilled: any) {
-        try {
-          const response: any = await azureApi.get(`/tables/${table}?${cols}`);
-          return onFulfilled({ data: response.data || [], error: null });
-        } catch (error) {
-          console.warn(`⚠️  Error querying table '${table}':`, error);
-          return { data: [], error };
-        }
-      }
-    }),
-    insert: (data: any) => ({
-      async then(onFulfilled?: any) {
-        try {
-          const response: any = await azureApi.post(`/tables/${table}`, data);
-          return onFulfilled ? onFulfilled({ data: response.data || data, error: null }) : { data: response.data || data, error: null };
-        } catch (error) {
-          console.warn(`⚠️  Error inserting into table '${table}':`, error);
-          return { data: null, error };
-        }
-      }
-    }),
-    update: (data: any) => ({
-      eq: (f: string, v: any) => ({
-        async then(onFulfilled?: any) {
-          try {
-            const response: any = await azureApi.put(`/tables/${table}/${v}`, data);
-            return onFulfilled ? onFulfilled({ data: response.data || data, error: null }) : { data: response.data || data, error: null };
-          } catch (error) {
-            return { data: null, error };
-          }
-        }
-      })
-    }),
-    delete: () => ({
-      eq: (f: string, v: any) => ({
-        async then(onFulfilled?: any) {
-          try {
-            const response = await azureApi.delete(`/tables/${table}/${v}`);
-            return onFulfilled ? onFulfilled({ data: null, error: null }) : { data: null, error: null };
-          } catch (error) {
-            return { data: null, error };
-          }
-        }
-      })
-    }),
-  }),
-  
-  // RPC function calls
-  rpc: (functionName: string, params?: any) => ({
-    async then(onFulfilled?: any) {
-      try {
-        const response: any = await azureApi.post(`/rpc/${functionName}`, params || {});
-        return onFulfilled ? onFulfilled({ data: response.data, error: null }) : { data: response.data, error: null };
-      } catch (error) {
-        console.warn(`⚠️  RPC call to '${functionName}' failed:`, error);
-        return { data: null, error };
-      }
-    }
-  }),
-  
-  // Function invocation
-  functions: {
-    invoke: (name: string, options?: any) => azureApi.post(`/functions/${name}`, options?.body || options)
+  from: (table: string) => {
+    const chainable = {
+      select: (_cols = '*', _options?: any) => ({
+        eq: (_field: string, _value: any) => Promise.resolve(emptyResult),
+        neq: (_field: string, _value: any) => Promise.resolve(emptyResult),
+        gt: (_field: string, _value: any) => Promise.resolve(emptyResult),
+        gte: (_field: string, _value: any) => Promise.resolve(emptyResult),
+        lt: (_field: string, _value: any) => Promise.resolve(emptyResult),
+        lte: (_field: string, _value: any) => Promise.resolve(emptyResult),
+        in: (_field: string, _values: any[]) => Promise.resolve(emptyResult),
+        or: (_filter: string) => Promise.resolve(emptyResult),
+        order: (_col: string, _opts?: any) => Promise.resolve(emptyResult),
+        limit: (_n: number) => Promise.resolve(emptyResult),
+        single: () => Promise.resolve(nullResult),
+        maybeSingle: () => Promise.resolve(nullResult),
+        then: (onFulfilled: any) => Promise.resolve(emptyResult).then(onFulfilled),
+      }),
+      insert: (_data: any) => ({
+        select: () => Promise.resolve(nullResult),
+        then: (onFulfilled?: any) => onFulfilled ? Promise.resolve(nullResult).then(onFulfilled) : Promise.resolve(nullResult),
+      }),
+      update: (_data: any) => ({
+        eq: (_f: string, _v: any) => ({
+          select: () => Promise.resolve(nullResult),
+          then: (onFulfilled?: any) => onFulfilled ? Promise.resolve(nullResult).then(onFulfilled) : Promise.resolve(nullResult),
+        }),
+      }),
+      upsert: (_data: any) => ({
+        select: () => Promise.resolve(nullResult),
+        then: (onFulfilled?: any) => onFulfilled ? Promise.resolve(nullResult).then(onFulfilled) : Promise.resolve(nullResult),
+      }),
+      delete: () => ({
+        eq: (_f: string, _v: any) => ({
+          then: (onFulfilled?: any) => onFulfilled ? Promise.resolve(nullResult).then(onFulfilled) : Promise.resolve(nullResult),
+        }),
+      }),
+    };
+    return chainable;
   },
-  
-  // Storage operations
+
+  rpc: (_functionName: string, _params?: any) => Promise.resolve(nullResult),
+
+  functions: {
+    invoke: (_name: string, _options?: any) => Promise.resolve({ data: null, error: new Error('Not implemented') }),
+  },
+
   storage: {
-    from: (bucket: string) => ({
-      upload: (path: string, file: any) => 
-        azureApi.post(`/storage/${bucket}/${path}`, { file }).then((res: any) => ({ data: res.data, error: null })),
-      getPublicUrl: (path: string) => ({ data: { publicUrl: `/storage/${bucket}/${path}` } }),
-      download: (path: string) => azureApi.get(`/storage/${bucket}/${path}`)
+    from: (_bucket: string) => ({
+      upload: (_path: string, _file: any) => Promise.resolve(nullResult),
+      getPublicUrl: (path: string) => ({ data: { publicUrl: `/storage/${_bucket}/${path}` } }),
+      download: (_path: string) => Promise.resolve(nullResult),
     })
   },
-  
-  // Authentication
+
   auth: {
     getUser: async () => {
       try {
-        const response: any = await azureApi.get('/auth-me');
-        return { data: { user: response.data }, error: null };
-      } catch (error) {
-        return { data: { user: null }, error };
-      }
+        const response: any = await azureApi.get('/auth-session');
+        return { data: { user: response.user || null }, error: null };
+      } catch { return { data: { user: null }, error: null }; }
     },
-    
     getSession: async () => {
       try {
         const response: any = await azureApi.get('/auth-session');
-        return { data: { session: response.data }, error: null };
-      } catch (error) {
-        return { data: { session: null }, error };
-      }
+        return { data: { session: response.user ? { user: response.user } : null }, error: null };
+      } catch { return { data: { session: null }, error: null }; }
     },
-    
     signInWithPassword: async (credentials: { email: string; password: string }) => {
       try {
         const response: any = await azureApi.post('/auth-login', credentials);
-        return { data: { user: response.data?.user, session: response.data?.session }, error: null };
-      } catch (error: any) {
-        return { data: null, error: error.response?.data || error };
-      }
+        return { data: { user: response.user, session: { user: response.user } }, error: null };
+      } catch (error: any) { return { data: null, error }; }
     },
-    
-    signInWithOAuth: async (options: { provider: string; options?: any }) => {
-      try {
-        const response: any = await azureApi.post('/auth-oauth', { provider: options.provider, ...options.options });
-        return { data: { user: response.data?.user, session: response.data?.session }, error: null };
-      } catch (error: any) {
-        return { data: null, error };
-      }
-    },
-    
+    signInWithOAuth: async (_options: { provider: string; options?: any }) => notImplemented('OAuth'),
     signUp: async (credentials: { email: string; password: string }) => {
       try {
         const response: any = await azureApi.post('/auth-signup', credentials);
-        return { data: { user: response.data?.user, session: response.data?.session }, error: null };
-      } catch (error: any) {
-        return { data: null, error };
-      }
+        return { data: { user: response.user, session: { user: response.user } }, error: null };
+      } catch (error: any) { return { data: null, error }; }
     },
-    
     signOut: async () => {
-      try {
-        await azureApi.post('/auth-logout', {});
-        return { error: null };
-      } catch (error: any) {
-        return { error };
-      }
+      try { await azureApi.post('/auth-logout', {}); return { error: null }; }
+      catch (error: any) { return { error }; }
     },
-    
     onAuthStateChange: (callback: (event: string, session: any) => void) => {
-      // Try to get initial session
       azureApi.get('/auth-session').then((response: any) => {
-        callback('INITIAL_SESSION', response.data?.session || null);
-      }).catch(() => {
-        callback('INITIAL_SESSION', null);
-      });
-      
-      // Return unsubscribe function
-      return {
-        data: {
-          subscription: {
-            unsubscribe: () => {
-              // Cleanup
-            }
-          }
-        }
-      };
-    }
-  },
-  
-  // Real-time subscriptions
-  channel: (channelName: string) => ({
-    on: (event: string, callback: (payload: any) => void) => ({
-      subscribe: (callback?: (status: string) => void) => {
-        if (callback) callback('SUBSCRIBED');
-        return { data: { subscription: { unsubscribe: () => {} } } };
-      }
-    }),
-    subscribe: (callback?: (status: string) => void) => {
-      if (callback) callback('SUBSCRIBED');
+        callback('INITIAL_SESSION', response.user ? { user: response.user } : null);
+      }).catch(() => { callback('INITIAL_SESSION', null); });
       return { data: { subscription: { unsubscribe: () => {} } } };
     }
+  },
+
+  channel: (_channelName: string) => ({
+    on: (_event: string, _opts: any, _callback?: any) => ({
+      on: (_e2: string, _o2: any, _c2?: any) => ({
+        subscribe: (cb?: (status: string) => void) => { if (cb) cb('SUBSCRIBED'); return { unsubscribe: () => {} }; }
+      }),
+      subscribe: (cb?: (status: string) => void) => { if (cb) cb('SUBSCRIBED'); return { unsubscribe: () => {} }; }
+    }),
+    subscribe: (cb?: (status: string) => void) => { if (cb) cb('SUBSCRIBED'); return { unsubscribe: () => {} }; }
   }),
-  
-  removeChannel: (subscription: any) => {
-    if (subscription?.data?.subscription?.unsubscribe) {
-      subscription.data.subscription.unsubscribe();
-    }
-    return { data: null };
-  }
+  removeChannel: (_sub: any) => ({ data: null }),
 };
 
 export default azureApi;

@@ -86,16 +86,18 @@ module.exports = async function (context, req) {
 
     const user = userResult.rows[0];
 
-    // Determine role: check if user is a team member of another lessor, or the owner
-    let role = 'owner'; // Default: account owner
+    // Determine role and lessor_id:
+    // If user is a team member, their lessor_id should be the lessor they belong to
+    let role = 'owner';
+    let lessorId = user.id; // Default: user is the lessor/owner
     try {
-      // Check if this user's email matches a team member record (they might be a team member, not the owner)
       const teamResult = await pool.query(
-        `SELECT role FROM fri_lessor_team_members WHERE email = $1 AND status = 'active' LIMIT 1`,
+        `SELECT lessor_id, role FROM fri_lessor_team_members WHERE email = $1 AND status = 'active' LIMIT 1`,
         [user.email]
       );
       if (teamResult.rows.length > 0) {
-        role = teamResult.rows[0].role || 'owner';
+        lessorId = teamResult.rows[0].lessor_id; // Use the LESSOR's id, not the user's own id
+        role = teamResult.rows[0].role || 'salesperson';
       }
     } catch (e) {
       // Team member table might not exist yet, default to owner
@@ -107,7 +109,7 @@ module.exports = async function (context, req) {
         id: user.id,
         email: user.email,
         full_name: user.full_name,
-        lessor_id: user.id,
+        lessor_id: lessorId,
         user_type: user.user_type || 'professionel',
         role: role,
       }

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useFriApiKeys } from '@/hooks/useFriApiKeys';
+import { useFriAuthContext } from '@/providers/FriAuthProvider';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,11 +26,9 @@ import { Copy, Eye, EyeOff, Plus, Trash2, AlertTriangle, Key, CheckCircle2 } fro
 import { formatDistanceToNow } from 'date-fns';
 import { da } from 'date-fns/locale';
 
-interface FriApiKeysPageProps {
-  lessorId: string;
-}
-
-export const FriApiKeysPage = ({ lessorId }: FriApiKeysPageProps) => {
+export const FriApiKeysPage = () => {
+  const { user } = useFriAuthContext();
+  const lessorId = user?.lessor_id || user?.id || '';
   const { apiKeys, loading, error, fetchApiKeys, createApiKey, deleteApiKey, revokeApiKey, activateApiKey } = useFriApiKeys();
   const [newKeyName, setNewKeyName] = useState('');
   const [showNewKeyDialog, setShowNewKeyDialog] = useState(false);

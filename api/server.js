@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const app = express();
@@ -195,6 +196,69 @@ app.post('/api/admin/fix-sessions', async (req, res) => {
   }
 });
 
+// Rate limiting for auth endpoints (prevent brute force)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // max 20 attempts per IP per window
+  message: { error: 'For mange forsøg. Prøv igen om 15 minutter.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/auth-login', authLimiter);
+app.use('/api/auth-signup', authLimiter);
+
+// Parametric routes (must be registered before dynamic route loading)
+const pool = require('./db');
+const { getSessionUserId } = require('./session');
+
+// GET /api/lessors/:id — Public lessor info for public site
+app.get('/api/lessors/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, email, company_name, cvr_number, custom_domain, primary_color, logo_url, subscription_status
+       FROM fri_lessors WHERE id = $1`, [req.params.id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Lessor not found' });
+    const l = result.rows[0];
+    res.json({ id: l.id, name: l.company_name, email: l.email, primary_color: l.primary_color || '#3b82f6', logo_url: l.logo_url, description: '', phone: '' });
+  } catch (err) { console.error('GetLessor error:', err); res.status(500).json({ error: 'Server error' }); }
+});
+
+// GET /api/lessor-accounts/:userId — Fetch lessor account by user ID
+app.get('/api/lessor-accounts/:userId', async (req, res) => {
+  try {
+    const sessionUserId = await getSessionUserId(req);
+    if (!sessionUserId) return res.status(401).json({ error: 'Not authenticated' });
+    const result = await pool.query(
+      `SELECT id, email, company_name, cvr_number, custom_domain, primary_color, logo_url, subscription_status, created_at
+       FROM fri_lessors WHERE id = $1`, [req.params.userId]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Account not found' });
+    res.json(result.rows[0]);
+  } catch (err) { console.error('GetLessorAccount error:', err); res.status(500).json({ error: 'Server error' }); }
+});
+
+// PUT /api/lessor-accounts/:userId — Update lessor account
+app.put('/api/lessor-accounts/:userId', async (req, res) => {
+  try {
+    const sessionUserId = await getSessionUserId(req);
+    if (!sessionUserId) return res.status(401).json({ error: 'Not authenticated' });
+    const { company_name, custom_domain, primary_color, logo_url, cvr_number } = req.body;
+    const result = await pool.query(
+      `UPDATE fri_lessors SET 
+        company_name = COALESCE($1, company_name),
+        custom_domain = COALESCE($2, custom_domain),
+        primary_color = COALESCE($3, primary_color),
+        logo_url = COALESCE($4, logo_url),
+        cvr_number = COALESCE($5, cvr_number),
+        updated_at = NOW()
+       WHERE id = $6 RETURNING *`,
+      [company_name, custom_domain, primary_color, logo_url, cvr_number, req.params.userId]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Account not found' });
+    res.json(result.rows[0]);
+  } catch (err) { console.error('UpdateLessorAccount error:', err); res.status(500).json({ error: 'Server error' }); }
+});
 
 // API routes - dynamically load all API handlers that exist
 const apiRoutes = {};

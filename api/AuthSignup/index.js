@@ -1,13 +1,10 @@
 const pool = require('../db');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 
 // Generate secure random session ID
 function generateSessionId() {
   return crypto.randomBytes(32).toString('hex');
-}
-
-function hashPassword(password) {
-  return crypto.createHash("sha256").update(password).digest("hex");
 }
 
 function setCookie(sessionId, isSecure) {
@@ -25,7 +22,7 @@ module.exports = async function (context, req) {
     "Access-Control-Allow-Credentials": "true",
   };
 
-  const { email, password, fullName, userType, cvrNumber, companyName } = req.body || {};
+  const { email, password, fullName, userType, cvrNumber, companyName, inviteToken } = req.body || {};
 
   if (!email || !password) {
     context.res.status = 400;
@@ -47,11 +44,13 @@ module.exports = async function (context, req) {
     return context.res;
   }
 
+  const emailLower = email.toLowerCase();
+
   try {
     // Check if user already exists
     const existingUser = await pool.query(
       'SELECT id FROM fri_users WHERE email = $1',
-      [email.toLowerCase()]
+      [emailLower]
     );
 
     if (existingUser.rows.length > 0) {
@@ -60,16 +59,38 @@ module.exports = async function (context, req) {
       return context.res;
     }
 
-    // Create new user
-    const passwordHash = hashPassword(password);
+    // Hash password with bcrypt (secure)
+    const passwordHash = await bcrypt.hash(password, 12);
     const result = await pool.query(
       `INSERT INTO fri_users (email, password_hash, full_name, user_type, company_name, cvr_number, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
        RETURNING id, email, full_name, user_type, company_name, cvr_number`,
-      [email.toLowerCase(), passwordHash, fullName || '', userType || 'professionel', companyName || null, cvrNumber || null]
+      [emailLower, passwordHash, fullName || '', userType || 'professionel', companyName || null, cvrNumber || null]
     );
 
     const user = result.rows[0];
+
+    // Check if this email was invited as a team member — auto-activate the invite
+    let lessorId = user.id;
+    let role = 'owner';
+    try {
+      const teamResult = await pool.query(
+        `SELECT id, lessor_id, role FROM fri_lessor_team_members WHERE email = $1 AND status = 'invited' LIMIT 1`,
+        [emailLower]
+      );
+      if (teamResult.rows.length > 0) {
+        const team = teamResult.rows[0];
+        lessorId = team.lessor_id;
+        role = team.role || 'salesperson';
+        // Activate the team membership
+        await pool.query(
+          `UPDATE fri_lessor_team_members SET status = 'active', accepted_at = NOW() WHERE id = $1`,
+          [team.id]
+        );
+      }
+    } catch (e) {
+      // Team table might not exist yet
+    }
 
     // Create server-side session (GDPR compliant)
     const sessionId = generateSessionId();
@@ -89,8 +110,9 @@ module.exports = async function (context, req) {
         id: user.id,
         email: user.email,
         full_name: user.full_name,
-        lessor_id: user.id,
+        lessor_id: lessorId,
         user_type: user.user_type,
+        role: role,
       },
     };
     return context.res;

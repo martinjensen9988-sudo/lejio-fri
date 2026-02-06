@@ -181,7 +181,7 @@ export default function App() {
                   <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
                     <FriAuthProvider>
                       <ProtectedRoute permission="api-keys">
-                        <FriApiKeysPage lessorId="" />
+                        <FriApiKeysPage />
                       </ProtectedRoute>
                     </FriAuthProvider>
                   </BrandProvider>
