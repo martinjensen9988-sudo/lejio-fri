@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 
-interface FriAuthUser {
+export interface FriAuthUser {
   id: string;
   email: string;
   company_name?: string;

@@ -1,13 +1,5 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { useFriAuth } from '@/hooks/useFriAuth';
-
-interface FriAuthUser {
-  id: string;
-  email: string;
-  company_name?: string;
-  lessor_id?: string;
-  isLessor?: boolean;
-}
+import { useFriAuth, FriAuthUser } from '@/hooks/useFriAuth';
 
 interface FriAuthContextType {
   user: FriAuthUser | null;
