@@ -31,6 +31,10 @@ export interface UpdateBrandingInput {
   logo_url?: string;
 }
 
+export interface UpdateSubscriptionInput {
+  subscription_tier: string;
+}
+
 const esc = (v: string) => v.replace(/'/g, "''");
 
 const normalizeRows = (response: any) => {
@@ -128,6 +132,19 @@ export function useFriSettings(userId: string | null) {
     return null;
   }, [userId, fetchSettings]);
 
+  const updateSubscriptionTier = useCallback(async (input: UpdateSubscriptionInput) => {
+    if (!userId) throw new Error('User ID is required');
+    if (!input.subscription_tier) throw new Error('Subscription tier is required');
+    setError(null);
+    setSuccess(null);
+    await azureApi.post('/db-query', {
+      query: `UPDATE fri_lessors SET subscription_tier='${esc(input.subscription_tier)}', updated_at=NOW() WHERE id='${esc(userId)}'`,
+    });
+    await fetchSettings();
+    setSuccess('Plan opdateret');
+    return null;
+  }, [userId, fetchSettings]);
+
   const isTrialExpired = (): boolean => {
     if (account?.subscription_tier !== 'trial' || !account?.trial_expires_at) return false;
     return new Date(account.trial_expires_at) < new Date();
@@ -142,5 +159,5 @@ export function useFriSettings(userId: string | null) {
   const dismissError = () => setError(null);
   const dismissSuccess = () => setSuccess(null);
 
-  return { account, loading, error, success, refetch: fetchSettings, updateAccount, updateBranding, isTrialExpired, getTrialDaysRemaining, dismissError, dismissSuccess };
+  return { account, loading, error, success, refetch: fetchSettings, updateAccount, updateBranding, updateSubscriptionTier, isTrialExpired, getTrialDaysRemaining, dismissError, dismissSuccess };
 }

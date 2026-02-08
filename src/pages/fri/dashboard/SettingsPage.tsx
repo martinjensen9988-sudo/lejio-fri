@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import FriDashboardLayout from '@/components/fri/FriDashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useFriAuthContext } from '@/providers/FriAuthProvider';
+import { useFriSettings } from '@/hooks/useFriSettings';
 import { 
   Building2, 
   Mail, 
@@ -27,7 +29,13 @@ import { toast } from 'sonner';
 
 export function FriSettingsPage() {
   const { user } = useFriAuthContext();
+  const { account, updateSubscriptionTier } = useFriSettings(user?.id || null);
   const [saving, setSaving] = useState(false);
+  const [planDialogOpen, setPlanDialogOpen] = useState(false);
+  const [plans, setPlans] = useState<Array<{ id: string; name: string; description: string; price_monthly: number; category: string }>>([]);
+  const [plansError, setPlansError] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<string>('');
+  const [updatingPlan, setUpdatingPlan] = useState(false);
 
   // Company settings
   const [companyName, setCompanyName] = useState(user?.company_name || '');
@@ -42,6 +50,52 @@ export function FriSettingsPage() {
   const [bookingAlerts, setBookingAlerts] = useState(true);
   const [paymentAlerts, setPaymentAlerts] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(false);
+
+  useEffect(() => {
+    if (!account?.subscription_tier) return;
+    setSelectedPlan(account.subscription_tier);
+  }, [account?.subscription_tier]);
+
+  useEffect(() => {
+    const loadPlans = async () => {
+      try {
+        setPlansError(null);
+        const res = await fetch('/api/get-subscription-plans');
+        if (!res.ok) throw new Error('Kunne ikke hente abonnementsplaner');
+        const data = await res.json();
+        const list = Array.isArray(data?.plans) ? data.plans : [];
+        setPlans(list);
+      } catch (err) {
+        setPlansError(err instanceof Error ? err.message : 'Planer kunne ikke hentes');
+      }
+    };
+
+    loadPlans();
+  }, []);
+
+  const currentPlan = useMemo(() => {
+    if (!plans.length || !account?.subscription_tier) return null;
+    return plans.find((plan) => plan.id === account.subscription_tier) || null;
+  }, [plans, account?.subscription_tier]);
+
+  const planLabel = currentPlan?.name || 'Pro Plan';
+  const planPrice = currentPlan
+    ? `kr ${Number(currentPlan.price_monthly).toLocaleString('da-DK')}/måned`
+    : 'kr 499/måned';
+
+  const handleUpdatePlan = async () => {
+    if (!selectedPlan) return;
+    try {
+      setUpdatingPlan(true);
+      await updateSubscriptionTier({ subscription_tier: selectedPlan });
+      setPlanDialogOpen(false);
+      toast.success('Plan opdateret');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Kunne ikke opdatere plan');
+    } finally {
+      setUpdatingPlan(false);
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -315,8 +369,8 @@ export function FriSettingsPage() {
                 <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl p-6 text-white">
                   <div className="flex items-center justify-between">
                     <div>
-                      <Badge className="bg-white/20 text-white border-0 mb-2">Pro Plan</Badge>
-                      <h3 className="text-2xl font-bold">kr 499/måned</h3>
+                      <Badge className="bg-white/20 text-white border-0 mb-2">{planLabel}</Badge>
+                      <h3 className="text-2xl font-bold">{planPrice}</h3>
                       <p className="text-pink-100 mt-1">Alle funktioner inkluderet</p>
                     </div>
                     <div className="text-right">
@@ -342,9 +396,57 @@ export function FriSettingsPage() {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button variant="outline" className="border-gray-200 text-gray-700">
-                    Skift plan
-                  </Button>
+                  <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="border-gray-200 text-gray-700">
+                        Skift plan
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-lg">
+                      <DialogHeader>
+                        <DialogTitle>Skift plan</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        {plansError && (
+                          <div className="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-lg p-3">
+                            {plansError}
+                          </div>
+                        )}
+                        <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                          {plans.map((plan) => (
+                            <button
+                              key={plan.id}
+                              type="button"
+                              onClick={() => setSelectedPlan(plan.id)}
+                              className={`w-full text-left rounded-xl border px-4 py-3 transition-all ${
+                                selectedPlan === plan.id
+                                  ? 'border-pink-500/70 bg-pink-50'
+                                  : 'border-gray-200 bg-white hover:bg-gray-50'
+                              }`}
+                            >
+                              <div className="flex items-start justify-between gap-4">
+                                <div>
+                                  <p className="text-sm font-semibold text-gray-900">{plan.name}</p>
+                                  <p className="text-xs text-gray-500 mt-1">{plan.description}</p>
+                                </div>
+                                <div className="text-sm font-semibold text-gray-900">
+                                  kr {Number(plan.price_monthly).toLocaleString('da-DK')}/md
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                        <div className="flex justify-end gap-3 pt-2">
+                          <Button variant="outline" className="border-gray-200" onClick={() => setPlanDialogOpen(false)}>
+                            Annuller
+                          </Button>
+                          <Button className="bg-pink-600 hover:bg-pink-700 text-white" onClick={handleUpdatePlan} disabled={updatingPlan || !selectedPlan}>
+                            {updatingPlan ? 'Opdaterer...' : 'Opdater plan'}
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                   <Button variant="outline" className="border-gray-200 text-gray-700">
                     Fakturahistorik
                   </Button>
