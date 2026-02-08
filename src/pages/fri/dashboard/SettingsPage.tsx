@@ -64,14 +64,17 @@ export function FriSettingsPage() {
         if (!res.ok) throw new Error('Kunne ikke hente abonnementsplaner');
         const data = await res.json();
         const list = Array.isArray(data?.plans) ? data.plans : [];
+        console.log('[SettingsPage] Loaded plans:', list);
         setPlans(list);
       } catch (err) {
-        setPlansError(err instanceof Error ? err.message : 'Planer kunne ikke hentes');
+        const msg = err instanceof Error ? err.message : 'Planer kunne ikke hentes';
+        console.error('[SettingsPage] Error loading plans:', msg);
+        setPlansError(msg);
       }
     };
 
     loadPlans();
-  }, []);
+  }, []); 
 
   const currentPlan = useMemo(() => {
     if (!plans.length || !account?.subscription_tier) return null;
@@ -84,13 +87,20 @@ export function FriSettingsPage() {
     : 'kr 499/måned';
 
   const handleUpdatePlan = async () => {
-    if (!selectedPlan) return;
+    console.log('[Plan Update] Clicked with selectedPlan:', selectedPlan);
+    if (!selectedPlan) {
+      console.warn('[Plan Update] No plan selected');
+      return;
+    }
     try {
       setUpdatingPlan(true);
+      console.log('[Plan Update] Calling updateSubscriptionTier...');
       await updateSubscriptionTier({ subscription_tier: selectedPlan });
+      console.log('[Plan Update] Success, closing dialog');
       setPlanDialogOpen(false);
       toast.success('Plan opdateret');
     } catch (err) {
+      console.error('[Plan Update] Error:', err);
       toast.error(err instanceof Error ? err.message : 'Kunne ikke opdatere plan');
     } finally {
       setUpdatingPlan(false);
@@ -400,7 +410,10 @@ export function FriSettingsPage() {
                     type="button"
                     variant="outline"
                     className="border-gray-200 text-gray-700"
-                    onClick={() => setPlanDialogOpen(true)}
+                    onClick={() => {
+                      console.log('[SettingsPage] Skift plan clicked, plans count:', plans?.length);
+                      setPlanDialogOpen(true);
+                    }}
                   >
                     Skift plan
                   </Button>
