@@ -12,6 +12,9 @@ function parseCookies(cookieHeader) {
 }
 
 module.exports = async function (context, req) {
+  const isSecure = req.headers['x-forwarded-proto'] === 'https';
+  const secure = isSecure ? '; Secure' : '';
+  const sameSite = isSecure ? 'None' : 'Lax';
   try {
     // Get session ID from cookie
     const cookies = parseCookies(req.headers.cookie);
@@ -32,7 +35,7 @@ module.exports = async function (context, req) {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": req.headers.origin || "*",
       "Access-Control-Allow-Credentials": "true",
-      "Set-Cookie": "lejio_sid=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0"
+      "Set-Cookie": `lejio_sid=; Path=/; HttpOnly; SameSite=${sameSite}; Max-Age=0${secure}`
     },
     body: { success: true, message: "Logget ud" }
   };

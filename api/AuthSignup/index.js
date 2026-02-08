@@ -10,7 +10,8 @@ function generateSessionId() {
 function setCookie(sessionId, isSecure) {
   const maxAge = 30 * 24 * 60 * 60;
   const secure = isSecure ? '; Secure' : '';
-  return `lejio_sid=${sessionId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`;
+  const sameSite = isSecure ? 'None' : 'Lax';
+  return `lejio_sid=${sessionId}; Path=/; HttpOnly; SameSite=${sameSite}; Max-Age=${maxAge}${secure}`;
 }
 
 module.exports = async function (context, req) {
