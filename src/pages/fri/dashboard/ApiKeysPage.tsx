@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useFriApiKeys } from '@/hooks/useFriApiKeys';
 import { useFriAuthContext } from '@/providers/FriAuthProvider';
+import { useNavigate } from 'react-router-dom';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +28,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { da } from 'date-fns/locale';
 
 export const FriApiKeysPage = () => {
+  const navigate = useNavigate();
   const { user } = useFriAuthContext();
   const lessorId = user?.lessor_id || user?.id || '';
   const { apiKeys, loading, error, fetchApiKeys, createApiKey, deleteApiKey, revokeApiKey, activateApiKey } = useFriApiKeys();
@@ -38,8 +40,13 @@ export const FriApiKeysPage = () => {
   const [deleteConfirmKeyId, setDeleteConfirmKeyId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!lessorId) return;
     fetchApiKeys(lessorId);
   }, [lessorId]);
+
+  const isAuthError = useMemo(() => {
+    return !!error && (error.includes('401') || error.toLowerCase().includes('not authenticated'));
+  }, [error]);
 
   const handleCreateApiKey = async () => {
     if (!newKeyName.trim()) return;
@@ -137,7 +144,19 @@ export const FriApiKeysPage = () => {
       {error && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription className="flex items-center justify-between gap-3">
+            <span>{error}</span>
+            {isAuthError && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-red-200 text-red-700"
+                onClick={() => navigate('/login')}
+              >
+                Log ind igen
+              </Button>
+            )}
+          </AlertDescription>
         </Alert>
       )}
 
