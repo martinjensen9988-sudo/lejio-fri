@@ -137,8 +137,8 @@ export function useFriSettings(userId: string | null) {
     if (!input.subscription_tier) throw new Error('Subscription tier is required');
     setError(null);
     setSuccess(null);
-    await azureApi.post('/db-query', {
-      query: `UPDATE fri_lessors SET subscription_tier='${esc(input.subscription_tier)}', updated_at=NOW() WHERE id='${esc(userId)}'`,
+    await azureApi.post('/update-subscription-tier', {
+      subscription_tier: input.subscription_tier,
     });
     await fetchSettings();
     setSuccess('Plan opdateret');
