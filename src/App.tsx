@@ -10,8 +10,8 @@ import { FriAuthProvider } from "@/providers/FriAuthProvider";
 import { BrandProvider } from "@/providers/BrandContext";
 import { ProtectedRoute } from "@/components/fri/ProtectedRoute";
 
-// FORCE NEW BUILD - DO NOT REMOVE - 2026-02-08-bilsalg-status
-const APP_VERSION = "2026.02.08.002";
+// FORCE NEW BUILD - DO NOT REMOVE - 2026-02-08-bilsalg-status-2
+const APP_VERSION = "2026.02.08.003";
 import { TenantProvider } from "@/hooks/useTenant";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import NotFound from "./pages/NotFound";

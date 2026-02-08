@@ -55,7 +55,8 @@ export function FriModulesPage() {
           {workshopModules.map((module) => {
             const isEnabled = enabledModuleIds.has(module.id);
             const isExpanded = expandedModule === module.id;
-            const effectiveStatus = module.id === 'garadeal' ? 'Klar' : module.status;
+            const isGarageDeal = module.id === 'garadeal' || module.name === 'GarageDeal' || module.tag === 'Bilsalg';
+            const effectiveStatus = isGarageDeal ? 'Klar' : module.status;
             
             return (
               <Card key={module.id} className="bg-white border border-gray-100 shadow-sm text-gray-900 overflow-hidden">
