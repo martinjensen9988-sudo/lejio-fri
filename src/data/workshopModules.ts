@@ -115,7 +115,7 @@ export const workshopModules: WorkshopModule[] = [
     name: 'GarageDeal',
     description: 'Bilsalg med korrekt momsafregning. Hele handelsprocessen på ét sted.',
     tag: 'Bilsalg',
-    status: 'Roadmap',
+    status: 'Klar',
     highlights: ['Bilhandel flow', 'Momsberegning', 'Kontraktskabeloner'],
     integrations: ['e-conomic', 'Nummerplade opslag', 'PDF kontrakt'],
     outcomes: ['Sikker momsafregning', 'Hurtigere salg', 'Færre manuelle trin'],
