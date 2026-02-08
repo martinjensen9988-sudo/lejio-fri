@@ -66,7 +66,7 @@ export const apiConfig = {
 };
 
 // Proxy for backwards compatibility — returns empty data for unmigrated features
-// These hooks will be rewritten to use azureApi.post('/db-query', ...) as features are built
+// These hooks will be rewritten to use api.post('/db-query', ...) as features are built
 const notImplemented = (feature: string) => {
   if (import.meta.env.DEV) console.warn(`[lejio] Feature not yet migrated: ${feature}`);
   return { data: null, error: new Error(`Not implemented: ${feature}`) };
