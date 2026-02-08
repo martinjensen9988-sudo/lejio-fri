@@ -160,7 +160,7 @@ export function FriSignupPage() {
     const fetchPlans = async () => {
       try {
         setPackagesError(null);
-        const res = await fetch('/api/GetSubscriptionPlans');
+        const res = await fetch('/api/get-subscription-plans');
         if (!res.ok) throw new Error('Kunne ikke hente abonnementsplaner');
         const data = await res.json();
         const plans = Array.isArray(data?.plans) ? data.plans : [];
