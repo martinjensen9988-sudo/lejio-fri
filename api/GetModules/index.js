@@ -40,11 +40,17 @@ module.exports = async function (context, req) {
   try {
     const result = await pool.query('SELECT selected_modules FROM fri_lessors WHERE id = $1', [lessorId]);
     const selectedModules = result.rows[0]?.selected_modules;
-    const moduleIds = Array.isArray(selectedModules)
-      ? selectedModules
-      : typeof selectedModules === 'string'
-        ? JSON.parse(selectedModules)
-        : [];
+    let moduleIds = [];
+    if (Array.isArray(selectedModules)) {
+      moduleIds = selectedModules;
+    } else if (typeof selectedModules === 'string') {
+      try {
+        const parsed = JSON.parse(selectedModules);
+        moduleIds = Array.isArray(parsed) ? parsed : [];
+      } catch (err) {
+        moduleIds = [];
+      }
+    }
 
     const modules = moduleIds.map((moduleId) => ({
       id: `mod-${lessorId}-${moduleId}`,
@@ -74,7 +80,7 @@ module.exports = async function (context, req) {
         "Access-Control-Allow-Origin": req.headers.origin || "*",
         "Access-Control-Allow-Credentials": "true"
       },
-      body: { error: 'Failed to load modules' }
+      body: { error: err.message || 'Failed to load modules' }
     };
   }
 };
