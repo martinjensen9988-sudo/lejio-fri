@@ -36,7 +36,7 @@ module.exports = async function (context, req) {
     }
 
     const lessorId = await resolveLessorId(userId);
-    const [vehiclesResult, bookingsResult, revenueResult, outstandingResult] = await Promise.all([
+    const [vehiclesResult, bookingsResult, revenueRows, outstandingRows] = await Promise.all([
       pool.query(
         "SELECT COUNT(*)::int as count FROM fri_vehicles WHERE lessor_id = $1 AND is_active = TRUE",
         [lessorId]
@@ -46,21 +46,31 @@ module.exports = async function (context, req) {
         [lessorId]
       ),
       pool.query(
-        "SELECT COALESCE(SUM(total_amount), 0) as total FROM fri_invoices WHERE lessor_id = $1 AND status = 'paid' AND date_trunc('month', created_at) = date_trunc('month', NOW())",
+        "SELECT to_jsonb(i) as row FROM fri_invoices i WHERE lessor_id = $1 AND status = 'paid' AND date_trunc('month', created_at) = date_trunc('month', NOW())",
         [lessorId]
       ),
       pool.query(
-        "SELECT COALESCE(SUM(total_amount), 0) as total FROM fri_invoices WHERE lessor_id = $1 AND status IN ('sent', 'overdue')",
+        "SELECT to_jsonb(i) as row FROM fri_invoices i WHERE lessor_id = $1 AND status IN ('sent', 'overdue')",
         [lessorId]
       ),
     ]);
+
+    const sumInvoiceRows = (rows) =>
+      rows.reduce((sum, entry) => {
+        const row = entry?.row || {};
+        const value = row.total_amount ?? row.amount ?? row.total_price ?? 0;
+        return sum + Number(value || 0);
+      }, 0);
+
+    const revenueTotal = sumInvoiceRows(revenueRows.rows || []);
+    const outstandingTotal = sumInvoiceRows(outstandingRows.rows || []);
 
     context.res.status = 200;
     context.res.body = {
       activeVehicles: vehiclesResult.rows[0]?.count || 0,
       bookingsThisMonth: bookingsResult.rows[0]?.count || 0,
-      revenueThisMonth: revenueResult.rows[0]?.total || 0,
-      outstandingInvoices: outstandingResult.rows[0]?.total || 0,
+      revenueThisMonth: revenueTotal || 0,
+      outstandingInvoices: outstandingTotal || 0,
     };
 
     return context.res;

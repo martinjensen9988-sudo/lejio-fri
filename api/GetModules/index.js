@@ -38,7 +38,7 @@ module.exports = async function (context, req) {
   const now = new Date().toISOString();
 
   try {
-    const result = await pool.query('SELECT selected_modules FROM fri_lessors WHERE id = $1', [lessorId]);
+    const result = await pool.query('SELECT * FROM fri_lessors WHERE id = $1', [lessorId]);
     const selectedModules = result.rows[0]?.selected_modules;
     let moduleIds = [];
     if (Array.isArray(selectedModules)) {
