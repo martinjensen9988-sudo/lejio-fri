@@ -1,7 +1,9 @@
 // Lejio Fri API Client
 // Clean API client for PostgreSQL backend on Render
 
-const API_URL = import.meta.env.VITE_API_URL || "/api";
+const rawApiUrl = import.meta.env.VITE_API_URL || "/api";
+const normalizedApiUrl = rawApiUrl.replace(/\/+$/, "");
+const API_URL = normalizedApiUrl.endsWith("/api") ? normalizedApiUrl : `${normalizedApiUrl}/api`;
 
 // Standalone API request function
 async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
