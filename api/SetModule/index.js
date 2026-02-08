@@ -1,9 +1,6 @@
 const pool = require('../db');
 const { getSessionUserId } = require('../session');
 
-const MODULE_DEPENDENCIES = {
-  garadeal: ['garagebooks', 'garagesync', 'garagechat'],
-};
 
 async function resolveLessorId(userId) {
   let lessorId = userId;
@@ -69,8 +66,6 @@ module.exports = async function (context, req) {
     const updatedModules = new Set(moduleIds);
     if (enabled) {
       updatedModules.add(module_id);
-      const dependencies = MODULE_DEPENDENCIES[module_id] || [];
-      dependencies.forEach((dep) => updatedModules.add(dep));
     } else {
       updatedModules.delete(module_id);
     }
