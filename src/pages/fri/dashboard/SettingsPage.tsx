@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useFriAuthContext } from '@/providers/FriAuthProvider';
 import { useFriSettings } from '@/hooks/useFriSettings';
 import { 
@@ -31,7 +30,7 @@ export function FriSettingsPage() {
   const { user } = useFriAuthContext();
   const { account, updateSubscriptionTier } = useFriSettings(user?.id || null);
   const [saving, setSaving] = useState(false);
-  const [planDialogOpen, setPlanDialogOpen] = useState(false);
+  const [showPlanPicker, setShowPlanPicker] = useState(false);
   const [plans, setPlans] = useState<Array<{ id: string; name: string; description: string; price_monthly: number; category: string }>>([]);
   const [plansError, setPlansError] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<string>('');
@@ -405,68 +404,74 @@ export function FriSettingsPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
                   <Button
                     type="button"
                     variant="outline"
                     className="border-gray-200 text-gray-700"
-                    onClick={() => {
-                      console.log('[SettingsPage] Skift plan clicked, plans count:', plans?.length);
-                      setPlanDialogOpen(true);
-                    }}
+                    onClick={() => setShowPlanPicker(!showPlanPicker)}
                   >
-                    Skift plan
+                    {showPlanPicker ? 'Luk' : 'Skift plan'}
                   </Button>
-                  <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
-                    <DialogContent className="max-w-lg">
-                      <DialogHeader>
-                        <DialogTitle>Skift plan</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        {plansError && (
-                          <div className="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-lg p-3">
-                            {plansError}
-                          </div>
-                        )}
-                        <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-                          {plans.map((plan) => (
-                            <button
-                              key={plan.id}
-                              type="button"
-                              onClick={() => setSelectedPlan(plan.id)}
-                              className={`w-full text-left rounded-xl border px-4 py-3 transition-all ${
-                                selectedPlan === plan.id
-                                  ? 'border-pink-500/70 bg-pink-50'
-                                  : 'border-gray-200 bg-white hover:bg-gray-50'
-                              }`}
-                            >
-                              <div className="flex items-start justify-between gap-4">
-                                <div>
-                                  <p className="text-sm font-semibold text-gray-900">{plan.name}</p>
-                                  <p className="text-xs text-gray-500 mt-1">{plan.description}</p>
-                                </div>
-                                <div className="text-sm font-semibold text-gray-900">
-                                  kr {Number(plan.price_monthly).toLocaleString('da-DK')}/md
-                                </div>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                        <div className="flex justify-end gap-3 pt-2">
-                          <Button variant="outline" className="border-gray-200" onClick={() => setPlanDialogOpen(false)}>
-                            Annuller
-                          </Button>
-                          <Button className="bg-pink-600 hover:bg-pink-700 text-white" onClick={handleUpdatePlan} disabled={updatingPlan || !selectedPlan}>
-                            {updatingPlan ? 'Opdaterer...' : 'Opdater plan'}
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
                   <Button variant="outline" className="border-gray-200 text-gray-700">
                     Fakturahistorik
                   </Button>
                 </div>
+
+                {showPlanPicker && (
+                  <Card className="border-gray-200 bg-gray-50">
+                    <CardHeader>
+                      <CardTitle className="text-lg">Vælg ny plan</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {plansError && (
+                        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3">
+                          {plansError}
+                        </div>
+                      )}
+                      <div className="space-y-2 max-h-96 overflow-y-auto">
+                        {plans.map((plan) => (
+                          <button
+                            key={plan.id}
+                            type="button"
+                            onClick={() => setSelectedPlan(plan.id)}
+                            className={`w-full text-left rounded-xl border-2 px-4 py-3 transition-all ${
+                              selectedPlan === plan.id
+                                ? 'border-pink-500 bg-pink-50'
+                                : 'border-gray-200 bg-white hover:bg-gray-100'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <div>
+                                <p className="font-semibold text-gray-900">{plan.name}</p>
+                                <p className="text-xs text-gray-500 mt-1">{plan.description}</p>
+                              </div>
+                              <div className="font-semibold text-gray-900 whitespace-nowrap">
+                                kr {Number(plan.price_monthly).toLocaleString('da-DK')}/md
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex justify-end gap-3 pt-3 border-t border-gray-200">
+                        <Button
+                          variant="outline"
+                          className="border-gray-200"
+                          onClick={() => setShowPlanPicker(false)}
+                        >
+                          Annuller
+                        </Button>
+                        <Button
+                          className="bg-pink-600 hover:bg-pink-700 text-white"
+                          onClick={handleUpdatePlan}
+                          disabled={updatingPlan || !selectedPlan}
+                        >
+                          {updatingPlan ? 'Opdaterer...' : 'Bekræft'}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
