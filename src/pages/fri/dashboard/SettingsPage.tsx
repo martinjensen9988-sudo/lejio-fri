@@ -95,8 +95,8 @@ export function FriSettingsPage() {
       setUpdatingPlan(true);
       console.log('[Plan Update] Calling updateSubscriptionTier...');
       await updateSubscriptionTier({ subscription_tier: selectedPlan });
-      console.log('[Plan Update] Success, closing dialog');
-      setPlanDialogOpen(false);
+      console.log('[Plan Update] Success, closing plan picker');
+      setShowPlanPicker(false);
       toast.success('Plan opdateret');
     } catch (err) {
       console.error('[Plan Update] Error:', err);
