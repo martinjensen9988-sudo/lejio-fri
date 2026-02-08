@@ -100,10 +100,16 @@ module.exports = async function (context, req) {
     // Always require authentication
     const userId = await getSessionUserId(req);
     if (!userId) {
+      console.log('[DbQuery] Authentication failed:', {
+        hasCookie: !!req.headers.cookie,
+        cookiePreview: req.headers.cookie ? req.headers.cookie.substring(0, 50) + '...' : 'no cookie',
+        origin: req.headers.origin,
+      });
       context.res.status = 401;
       context.res.body = { error: 'Not authenticated' };
       return;
     }
+    console.log('[DbQuery] Authenticated user:', userId);
 
     if (admin) {
       // Admin mode: verify admin status, query without lessor scoping
