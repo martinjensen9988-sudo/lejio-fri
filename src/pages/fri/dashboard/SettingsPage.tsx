@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useFriAuthContext } from '@/providers/FriAuthProvider';
 import { useFriSettings } from '@/hooks/useFriSettings';
 import { 
@@ -396,17 +396,15 @@ export function FriSettingsPage() {
                 </div>
 
                 <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="border-gray-200 text-gray-700"
+                    onClick={() => setPlanDialogOpen(true)}
+                  >
+                    Skift plan
+                  </Button>
                   <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="border-gray-200 text-gray-700"
-                        onClick={() => setPlanDialogOpen(true)}
-                      >
-                        Skift plan
-                      </Button>
-                    </DialogTrigger>
                     <DialogContent className="max-w-lg">
                       <DialogHeader>
                         <DialogTitle>Skift plan</DialogTitle>
