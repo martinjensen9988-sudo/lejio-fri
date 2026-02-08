@@ -33,6 +33,7 @@ const FriAdminLessorDetailsPage = lazy(() => import("./pages/fri/admin/LessorDet
 const FriAdminTicketsPage = lazy(() => import("./pages/fri/admin/TicketsPage").then(m => ({ default: m.FriAdminTicketsPage })));
 const FriAdminTicketDetailsPage = lazy(() => import("./pages/fri/admin/TicketDetailsPage").then(m => ({ default: m.FriAdminTicketDetailsPage })));
 const FriAdminPaymentsPage = lazy(() => import("./pages/fri/admin/PaymentsPage").then(m => ({ default: m.FriAdminPaymentsPage })));
+const FriAdminModulesPage = lazy(() => import("./pages/fri/admin/ModulesPage").then(m => ({ default: m.FriAdminModulesPage })));
 const FriAdminLayout = lazy(() => import("./pages/fri/admin/Layout").then(m => ({ default: m.FriAdminLayout })));
 
 // Fri Lessor Pages - lazy loaded
@@ -45,6 +46,7 @@ const FriVehiclesPage = lazy(() => import("./pages/fri/dashboard/VehiclesPage").
 const FriBookingsPage = lazy(() => import("./pages/fri/dashboard/BookingsPage").then(m => ({ default: m.FriBookingsPage })));
 const FriPaymentsPage = lazy(() => import("./pages/fri/dashboard/PaymentsPage").then(m => ({ default: m.FriPaymentsPage })));
 const FriSettingsPage = lazy(() => import("./pages/fri/dashboard/SettingsPage").then(m => ({ default: m.FriSettingsPage })));
+const FriDealerHubPage = lazy(() => import("./pages/fri/dashboard/DealerHubPage").then(m => ({ default: m.default })));
 
 // Workshop Pages - lazy loaded
 const GaragePlanPage = lazy(() => import("./pages/fri/workshop/GaragePlan").then(m => ({ default: m.GaragePlanPage })));
@@ -152,6 +154,15 @@ export default function App() {
                     </FriAuthProvider>
                   </BrandProvider>
                 } />
+                <Route path="/fri/dashboard/dealer" element={
+                  <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
+                    <FriAuthProvider>
+                      <ProtectedRoute permission="dealer">
+                        <FriDealerHubPage />
+                      </ProtectedRoute>
+                    </FriAuthProvider>
+                  </BrandProvider>
+                } />
                 <Route path="/fri/dashboard/bookings" element={
                   <BrandProvider branding={{ primary_color: '#0066cc', secondary_color: '#00cc99', company_name: 'Lejio Fri' }} domain="fri">
                     <FriAuthProvider>
@@ -211,6 +222,7 @@ export default function App() {
                       <Route path="/support" element={<FriAdminTicketsPage />} />
                       <Route path="/support/:ticketId" element={<FriAdminTicketDetailsPage />} />
                       <Route path="/payments" element={<FriAdminPaymentsPage />} />
+                      <Route path="/modules" element={<FriAdminModulesPage />} />
                       <Route path="/" element={<Navigate to="/fri/admin/dashboard" replace />} />
                     </Routes>
                   </FriAdminLayout>

@@ -11,7 +11,8 @@ import {
   BarChart3,
   CreditCard,
   Package,
-  Key
+  Key,
+  Store
 } from 'lucide-react';
 import { useFriAuthContext } from '@/providers/FriAuthProvider';
 import { useRole, roleLabels } from '@/hooks/useRole';
@@ -24,6 +25,7 @@ const FriSidebar = () => {
   const allMenuItems = [
     { label: 'Dashboard', icon: Home, path: '/fri/dashboard', permission: 'dashboard' },
     { label: 'Køretøjer', icon: Car, path: '/fri/dashboard/vehicles', permission: 'vehicles' },
+    { label: 'Bilforhandler', icon: Store, path: '/fri/dashboard/dealer', permission: 'dealer' },
     { label: 'Bookinger', icon: Calendar, path: '/fri/dashboard/bookings', permission: 'bookings' },
     { label: 'Fakturaer', icon: FileText, path: '/fri/dashboard/invoices', permission: 'invoices' },
     { label: 'Team', icon: Users, path: '/fri/dashboard/team', permission: 'team' },

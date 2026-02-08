@@ -166,10 +166,21 @@ const UserEditPage = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="free">Gratis</SelectItem>
-                  <SelectItem value="basic">Basic</SelectItem>
-                  <SelectItem value="pro">Pro</SelectItem>
-                  <SelectItem value="enterprise">Enterprise</SelectItem>
+                  <SelectItem value="trial">Proeveperiode</SelectItem>
+                  <SelectItem value="dealer_start">Bilforhandler Start</SelectItem>
+                  <SelectItem value="dealer_plus">Bilforhandler Plus</SelectItem>
+                  <SelectItem value="dealer_pro">Bilforhandler Pro</SelectItem>
+                  <SelectItem value="dealer_elite">Bilforhandler Elite</SelectItem>
+                  <SelectItem value="rental_start">Biludlejning Start</SelectItem>
+                  <SelectItem value="rental_growth">Biludlejning Growth</SelectItem>
+                  <SelectItem value="workshop_start">Autovaerksted Start</SelectItem>
+                  <SelectItem value="workshop_flow">Autovaerksted Flow</SelectItem>
+                  <SelectItem value="workshop_scale">Autovaerksted Scale</SelectItem>
+                  <SelectItem value="custom_mix">Bland selv</SelectItem>
+                  <SelectItem value="free">Gratis (legacy)</SelectItem>
+                  <SelectItem value="basic">Basic (legacy)</SelectItem>
+                  <SelectItem value="pro">Pro (legacy)</SelectItem>
+                  <SelectItem value="enterprise">Enterprise (legacy)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -7,18 +7,18 @@ import type { FriUserRole } from '@/hooks/useFriAuth';
  */
 const rolePermissions: Record<FriUserRole, string[]> = {
   owner: [
-    'dashboard', 'vehicles', 'bookings', 'invoices', 'team',
+    'dashboard', 'vehicles', 'dealer', 'bookings', 'invoices', 'team',
     'analytics', 'payments', 'modules', 'api-keys', 'settings',
     'settings.billing', 'create-vehicle', 'create-booking',
     'create-invoice', 'page-builder', 'payout',
   ],
   manager: [
-    'dashboard', 'vehicles', 'bookings', 'invoices', 'team',
+    'dashboard', 'vehicles', 'dealer', 'bookings', 'invoices', 'team',
     'analytics', 'modules', 'api-keys', 'settings',
     'create-vehicle', 'create-booking', 'create-invoice',
   ],
   salesperson: [
-    'dashboard', 'vehicles', 'bookings',
+    'dashboard', 'vehicles', 'dealer', 'bookings',
     'create-booking',
   ],
   accountant: [

@@ -6,6 +6,8 @@ export interface CreateLessorAccountInput {
   custom_domain: string;
   cvr_number?: string;
   primary_color?: string;
+  subscription_tier?: string;
+  selected_modules?: string[];
 }
 
 /**
@@ -19,6 +21,8 @@ export async function createLessorAccount(input: CreateLessorAccountInput) {
       custom_domain: input.custom_domain,
       cvr_number: input.cvr_number,
       primary_color: input.primary_color || '#0066cc',
+      subscription_tier: input.subscription_tier,
+      selected_modules: input.selected_modules || [],
     });
   } catch (error) {
     console.error('Error creating lessor account:', error);

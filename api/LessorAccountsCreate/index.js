@@ -8,7 +8,7 @@ module.exports = async function (context, req) {
     "Access-Control-Allow-Credentials": "true",
   };
 
-  const { user_id, company_name, custom_domain, cvr_number, primary_color } = req.body || {};
+  const { user_id, company_name, custom_domain, cvr_number, primary_color, subscription_tier, selected_modules } = req.body || {};
 
   if (!user_id || !company_name || !custom_domain) {
     context.res.status = 400;
@@ -31,10 +31,21 @@ module.exports = async function (context, req) {
           company_name = $1, 
           custom_domain = $2, 
           cvr_number = $3, 
-          primary_color = $4, 
-          updated_at = $5
-         WHERE id = $6`,
-        [company_name, custom_domain, cvr_number || null, primary_color || '#0066cc', now, user_id]
+          primary_color = $4,
+          subscription_tier = COALESCE($5, subscription_tier),
+          selected_modules = COALESCE($6::jsonb, selected_modules),
+          updated_at = $7
+         WHERE id = $8`,
+        [
+          company_name,
+          custom_domain,
+          cvr_number || null,
+          primary_color || '#0066cc',
+          subscription_tier || null,
+          Array.isArray(selected_modules) ? JSON.stringify(selected_modules) : null,
+          now,
+          user_id,
+        ]
       );
 
       context.res.status = 200;
@@ -57,9 +68,20 @@ module.exports = async function (context, req) {
 
     // Use user_id as lessor id so RLS mapping works (session user_id = lessor_id)
     await db.query(
-      `INSERT INTO fri_lessors (id, email, company_name, custom_domain, cvr_number, primary_color, trial_start_date, trial_end_date, subscription_status, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW() + INTERVAL '30 days', 'trial', $7, $8)`,
-      [user_id, email, company_name, custom_domain, cvr_number || null, primary_color || '#0066cc', now, now]
+      `INSERT INTO fri_lessors (id, email, company_name, custom_domain, cvr_number, primary_color, subscription_tier, selected_modules, trial_start_date, trial_end_date, subscription_status, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, NOW(), NOW() + INTERVAL '30 days', 'trial', $9, $10)`,
+      [
+        user_id,
+        email,
+        company_name,
+        custom_domain,
+        cvr_number || null,
+        primary_color || '#0066cc',
+        subscription_tier || null,
+        Array.isArray(selected_modules) ? JSON.stringify(selected_modules) : JSON.stringify([]),
+        now,
+        now,
+      ]
     );
 
     context.res.status = 200;

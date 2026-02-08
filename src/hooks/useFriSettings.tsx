@@ -7,7 +7,7 @@ export interface LessorAccount {
   company_name: string;
   custom_domain?: string;
   cvr_number?: string;
-  subscription_tier: 'trial' | 'professional' | 'business' | 'enterprise';
+  subscription_tier: string;
   trial_expires_at?: string;
   subscription_started_at?: string;
   stripe_customer_id?: string;
@@ -42,10 +42,11 @@ const normalizeRows = (response: any) => {
   return response.data ?? response;
 };
 
-const mapTier = (status?: string): LessorAccount['subscription_tier'] => {
+const mapTier = (status?: string, tier?: string): LessorAccount['subscription_tier'] => {
+  if (tier) return tier;
   if (status === 'trial') return 'trial';
-  if (status === 'active') return 'business';
-  if (status === 'suspended') return 'business';
+  if (status === 'active') return 'dealer_plus';
+  if (status === 'suspended') return 'dealer_plus';
   return 'trial';
 };
 
@@ -71,7 +72,7 @@ export function useFriSettings(userId: string | null) {
           company_name: data.company_name || '',
           custom_domain: data.custom_domain || undefined,
           cvr_number: data.cvr_number || undefined,
-          subscription_tier: mapTier(data.subscription_status),
+          subscription_tier: mapTier(data.subscription_status, data.subscription_tier),
           trial_expires_at: data.trial_end_date || undefined,
           subscription_started_at: data.created_at || undefined,
           stripe_customer_id: data.stripe_customer_id || undefined,

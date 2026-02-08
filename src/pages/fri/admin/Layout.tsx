@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useFriAdminAuth } from '@/hooks/useFriAdminAuth';
-import { LayoutDashboard, Users, MessageSquare, DollarSign, LogOut, Menu, X, Shield, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, DollarSign, LogOut, Menu, X, Shield, Sparkles, Layers } from 'lucide-react';
 import { useState } from 'react';
 
 interface FriAdminLayoutProps {
@@ -31,6 +31,7 @@ export const FriAdminLayout = ({ children }: FriAdminLayoutProps) => {
     { path: '/fri/admin/lessors', label: 'Lessors', icon: Users, gradient: 'from-blue-500 to-cyan-400' },
     { path: '/fri/admin/support', label: 'Support', icon: MessageSquare, gradient: 'from-emerald-500 to-teal-400' },
     { path: '/fri/admin/payments', label: 'Betalinger', icon: DollarSign, gradient: 'from-amber-500 to-orange-400' },
+    { path: '/fri/admin/modules', label: 'Moduler', icon: Layers, gradient: 'from-amber-400 to-yellow-300' },
   ];
 
   return (
