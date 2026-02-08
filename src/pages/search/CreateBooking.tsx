@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { useAuth } from '@/hooks/useAuth';
 import VehicleLocationMap from '@/components/search/VehicleLocationMap';
 import { MCLicenseCheck } from '@/components/search/MCLicenseCheck';

@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { azureApi } from '@/integrations/azure/client';
+import { api as azureApi } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 

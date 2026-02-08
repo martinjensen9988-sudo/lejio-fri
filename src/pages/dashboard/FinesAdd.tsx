@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useFines } from '@/hooks/useFines';
 import { useVehicles } from '@/hooks/useVehicles';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

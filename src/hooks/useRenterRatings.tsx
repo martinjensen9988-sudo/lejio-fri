@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
 

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { Shield, ShieldCheck, Eye, UserPlus, MoreHorizontal, Trash2, Search, Users } from 'lucide-react';
 import { format } from 'date-fns';

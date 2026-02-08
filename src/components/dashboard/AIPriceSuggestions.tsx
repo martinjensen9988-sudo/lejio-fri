@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, TrendingUp, Loader2, Check, AlertCircle, Lightbulb } from 'lucide-react';
 import { Vehicle } from '@/hooks/useVehicles';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { toast } from 'sonner';
 
 interface PriceSuggestion {

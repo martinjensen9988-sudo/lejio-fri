@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { MessageCircle, Send, Loader2, User, Bot, CheckCircle2, Clock, Mail, Phone, AlertCircle, Users, Eye } from 'lucide-react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useVisitorPresence } from '@/hooks/useVisitorPresence';
 import { toast } from 'sonner';

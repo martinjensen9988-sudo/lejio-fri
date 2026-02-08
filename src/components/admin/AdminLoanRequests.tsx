@@ -32,7 +32,7 @@ import {
   Clock, AlertTriangle, Calculator, FileText, Sparkles,
   Download, ExternalLink, Upload, File, X, Loader2
 } from 'lucide-react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { format } from 'date-fns';

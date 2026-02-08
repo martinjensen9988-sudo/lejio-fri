@@ -18,7 +18,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 
 // Validation schemas
 const emailSchema = z.string().email("Ugyldig email").max(255);

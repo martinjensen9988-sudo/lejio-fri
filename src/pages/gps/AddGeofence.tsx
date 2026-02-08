@@ -13,7 +13,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useGeofences } from '@/hooks/useGeofences';
 import { useVehicles } from '@/hooks/useVehicles';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { Circle, Pentagon, Trash2, ArrowLeft, Save, Loader2, MapPin } from 'lucide-react';
 
 // Predefined country boundaries (simplified)

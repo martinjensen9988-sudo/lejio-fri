@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { AlertCircle, TrendingUp, TrendingDown, DollarSign, AlertTriangle, Calendar } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 

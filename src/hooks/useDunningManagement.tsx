@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useToast } from './use-toast';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { addDays, isBefore, isAfter } from 'date-fns';
 
 interface PaymentReminder {

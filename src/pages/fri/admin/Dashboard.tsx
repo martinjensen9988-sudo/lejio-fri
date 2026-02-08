@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { azureApi } from '@/integrations/azure/client';
+import { api as azureApi } from '@/integrations/api/client';
 import { Card } from '@/components/ui/card';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Users, Zap, TrendingUp, DollarSign, Activity } from 'lucide-react';

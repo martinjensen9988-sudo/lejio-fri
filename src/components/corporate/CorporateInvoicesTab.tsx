@@ -23,7 +23,7 @@ import { FileText, Download, Eye, Calendar, CreditCard, Plus, Loader2 } from 'lu
 import { CorporateInvoice } from '@/hooks/useCorporateFleet';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { da } from 'date-fns/locale';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { toast } from 'sonner';
 
 interface CorporateInvoicesTabProps {

@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { FileText, Download, Loader2, Eye, Wallet, CreditCard, TrendingDown } from 'lucide-react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { FleetPremiumSummary } from '@/hooks/useFleetPremiumVehicles';

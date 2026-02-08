@@ -8,7 +8,7 @@ import VehicleCardSkeleton from "@/components/search/VehicleCardSkeleton";
 import ActiveFilterPills from "@/components/search/ActiveFilterPills";
 import EmptySearchState from "@/components/search/EmptySearchState";
 import SearchMap from "@/components/search/SearchMap";
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { Car, ArrowUpDown, Search as SearchIcon, X, Truck, Tent, Sparkles, Filter, Grid3X3, List, Map, Bike } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {

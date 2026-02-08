@@ -15,7 +15,7 @@ import { useVehicleLookup } from '@/hooks/useVehicleLookup';
 import { useVehicles, VehicleInsert } from '@/hooks/useVehicles';
 import { useAuth } from '@/hooks/useAuth';
 import { useDealerLocations } from '@/hooks/useDealerLocations';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { Plus, Search, Loader2, Car, Check, CreditCard, CalendarClock, MapPin, AlertTriangle, Lock, Edit, Truck, Tent, Bike } from 'lucide-react';
 import { toast } from 'sonner';
 import { TrailerFields } from './TrailerFields';

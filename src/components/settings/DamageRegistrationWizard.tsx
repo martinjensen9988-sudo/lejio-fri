@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useVehicles, Vehicle } from '@/hooks/useVehicles';
 import { useBookings, Booking } from '@/hooks/useBookings';
 import { useDamageReports } from '@/hooks/useDamageReports';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';

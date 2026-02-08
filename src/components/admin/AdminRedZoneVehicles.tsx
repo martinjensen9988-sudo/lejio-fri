@@ -15,7 +15,7 @@ import {
   AlertTriangle, Car, TrendingDown, Target, 
   Calendar, Building2, Loader2, Bell
 } from 'lucide-react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { format, startOfYear, differenceInDays } from 'date-fns';

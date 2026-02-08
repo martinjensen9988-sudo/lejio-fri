@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, createContext, useContext, ReactNode } from 'react';
-import { azureApi, supabase } from '@/integrations/azure/client';
+import { api as azureApi } from '@/integrations/api/client';
 
 // Local user type (NOT from Supabase)
 export interface AuthUser {

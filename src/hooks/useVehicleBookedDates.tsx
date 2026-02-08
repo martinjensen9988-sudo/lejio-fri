@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { eachDayOfInterval, parseISO, isWithinInterval, startOfDay } from 'date-fns';
 
 interface BookedPeriod {

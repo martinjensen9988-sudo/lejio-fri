@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 
 interface AccountingEntry {

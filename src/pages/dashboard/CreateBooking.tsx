@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useVehicles, Vehicle } from '@/hooks/useVehicles';
 import { useDealerLocations } from '@/hooks/useDealerLocations';
 import { useVehicleBookedDates } from '@/hooks/useVehicleBookedDates';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

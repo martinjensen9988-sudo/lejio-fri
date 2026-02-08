@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { differenceInDays, startOfDay, addDays } from 'date-fns';
 
 // Webhook event types

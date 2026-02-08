@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AdminDashboardLayout } from '@/components/admin/AdminDashboardLayout';
 import { useSalesLeads, SalesLead } from '@/hooks/useSalesLeads';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { 
   ArrowLeft, ArrowRight, Phone, Mail, Sparkles, Copy, Send, 
   Loader2, Building2, Check, CheckCircle2, Clock, MessageSquare,

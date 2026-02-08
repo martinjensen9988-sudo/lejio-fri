@@ -13,7 +13,7 @@ import { AdminFleetFinance } from '@/components/admin/AdminFleetFinance';
 import { AdminRedZoneVehicles } from '@/components/admin/AdminRedZoneVehicles';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, BarChart3, Settings, Wrench, Wallet, AlertTriangle, TrendingDown, CreditCard } from 'lucide-react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 
 const AdminFleetPage = () => {
   const navigate = useNavigate();

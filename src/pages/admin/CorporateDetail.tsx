@@ -5,7 +5,7 @@ import { AdminDashboardLayout } from '@/components/admin/AdminDashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { Loader2, ArrowLeft, Building2, Users, Car, FileText, Mail, Phone, MapPin } from 'lucide-react';
 import { format } from 'date-fns';

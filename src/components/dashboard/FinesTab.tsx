@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useFines, Fine } from '@/hooks/useFines';
 import { useVehicles } from '@/hooks/useVehicles';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

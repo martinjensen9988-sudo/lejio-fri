@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { azureApi } from '@/integrations/azure/client';
+import { api as azureApi } from '@/integrations/api/client';
 
 export interface FriLessor {
   id: string;

@@ -18,7 +18,7 @@ import {
   Calendar,
   Mail
 } from 'lucide-react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { da } from 'date-fns/locale';

@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { SearchVehicle, SearchFiltersState } from "@/pages/Search";
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import VehicleLocationMap from "./VehicleLocationMap";
 import { MCLicenseCheck } from "./MCLicenseCheck";
 import { MCCategory } from "@/lib/mcLicenseValidation";

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { azureApi } from '@/integrations/azure/client';
+import { api as azureApi } from '@/integrations/api/client';
 import { useFriAuth } from '@/hooks/useFriAuth';
 import { toast } from 'sonner';
 

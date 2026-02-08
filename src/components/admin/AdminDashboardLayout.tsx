@@ -11,7 +11,7 @@ import { Card } from '@/components/ui/card';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 
 interface AdminDashboardLayoutProps {
   children: ReactNode;

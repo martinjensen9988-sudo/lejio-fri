@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, Plus, Edit2, Trash2, Shield } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 
 interface CorporateRole {
   id: string;

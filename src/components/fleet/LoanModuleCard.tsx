@@ -25,7 +25,7 @@ import {
   Wallet, CreditCard, FileText, Plus, 
   AlertTriangle, CheckCircle, Clock, TrendingDown
 } from 'lucide-react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { format } from 'date-fns';

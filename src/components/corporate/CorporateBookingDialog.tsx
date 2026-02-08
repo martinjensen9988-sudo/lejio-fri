@@ -12,7 +12,7 @@ import { format, addDays, differenceInDays } from 'date-fns';
 import { da } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 
 interface CorporateBookingDialogProps {
   open: boolean;

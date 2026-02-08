@@ -26,8 +26,8 @@ async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T
   return response.json();
 }
 
-// API Client for communication with Azure Functions backend
-export const azureApi = {
+// API Client for communication with Render PostgreSQL backend
+export const api = {
   request: apiRequest,
 
   async get<T>(endpoint: string) {
@@ -61,7 +61,7 @@ export const azureApi = {
 };
 
 // Configuration export
-export const azureConfig = {
+export const apiConfig = {
   apiUrl: API_URL,
 };
 
@@ -145,23 +145,23 @@ export const supabase = {
     },
     signInWithPassword: async (credentials: { email: string; password: string }) => {
       try {
-        const response: any = await azureApi.post('/auth-login', credentials);
+        const response: any = await api.post('/auth-login', credentials);
         return { data: { user: response.user, session: { user: response.user } }, error: null };
       } catch (error: any) { return { data: null, error }; }
     },
     signInWithOAuth: async (_options: { provider: string; options?: any }) => notImplemented('OAuth'),
     signUp: async (credentials: { email: string; password: string }) => {
       try {
-        const response: any = await azureApi.post('/auth-signup', credentials);
+        const response: any = await api.post('/auth-signup', credentials);
         return { data: { user: response.user, session: { user: response.user } }, error: null };
       } catch (error: any) { return { data: null, error }; }
     },
     signOut: async () => {
-      try { await azureApi.post('/auth-logout', {}); return { error: null }; }
+      try { await api.post('/auth-logout', {}); return { error: null }; }
       catch (error: any) { return { error }; }
     },
     onAuthStateChange: (callback: (event: string, session: any) => void) => {
-      azureApi.get('/auth-session').then((response: any) => {
+      api.get('/auth-session').then((response: any) => {
         callback('INITIAL_SESSION', response.user ? { user: response.user } : null);
       }).catch(() => { callback('INITIAL_SESSION', null); });
       return { data: { subscription: { unsubscribe: () => {} } } };
@@ -180,4 +180,4 @@ export const supabase = {
   removeChannel: (_sub: any) => ({ data: null }),
 };
 
-export default azureApi;
+export default api;

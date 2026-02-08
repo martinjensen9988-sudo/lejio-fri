@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { GpsDeviceWithLatest } from '@/hooks/useGpsDevices';
 import { Geofence } from '@/hooks/useGeofences';
 import { MapPin } from 'lucide-react';

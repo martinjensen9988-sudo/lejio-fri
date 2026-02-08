@@ -2,7 +2,7 @@
 
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { Card } from '@/components/ui/card';
 import ReactMarkdown from 'react-markdown';
 

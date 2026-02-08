@@ -3,7 +3,7 @@ import { useInvoices } from '@/hooks/useInvoices';
 import { useAuth } from '@/hooks/useAuth';
 import { useDunningManagement } from '@/hooks/useDunningManagement';
 import { useSubscriptionBilling } from '@/hooks/useSubscriptionBilling';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

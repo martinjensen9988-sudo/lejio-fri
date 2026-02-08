@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 
 interface DriverLicenseStatus {
   status: 'none' | 'pending' | 'verified' | 'rejected';

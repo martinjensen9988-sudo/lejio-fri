@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
 import { differenceInDays, parseISO, addYears } from 'date-fns';

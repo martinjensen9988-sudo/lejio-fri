@@ -19,7 +19,7 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Vehicle } from '@/hooks/useVehicles';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useDealerLocations } from '@/hooks/useDealerLocations';
 import { useVehicleBookedDates } from '@/hooks/useVehicleBookedDates';

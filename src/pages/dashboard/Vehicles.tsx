@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import VehicleCard from '@/components/dashboard/VehicleCard';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Car, Loader2, Plus } from 'lucide-react';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 
 const VehiclesPage = () => {
   const navigate = useNavigate();

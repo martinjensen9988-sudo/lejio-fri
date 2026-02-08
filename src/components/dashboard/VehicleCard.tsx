@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Car, Calendar, Fuel, Trash2, ToggleLeft, ToggleRight, Pencil } from 'lucide-react';
 import ImageCarousel from '@/components/shared/ImageCarousel';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 
 interface VehicleCardProps {
   vehicle: Vehicle;

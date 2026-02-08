@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useFavorites } from '@/hooks/useFavorites';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';

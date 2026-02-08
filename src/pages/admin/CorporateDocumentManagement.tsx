@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Loader2, Upload, Download, Trash2, Plus, FileIcon, Lock, Share2, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 
 interface Document {
   id: string;

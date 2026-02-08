@@ -11,7 +11,7 @@ async function generateAIDescription({ title, slug }: { title: string; slug: str
   return data.description;
 }
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

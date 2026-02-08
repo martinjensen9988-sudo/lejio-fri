@@ -6,7 +6,7 @@ import { useRenterRatings } from '@/hooks/useRenterRatings';
 import { useAuth } from '@/hooks/useAuth';
 import { useVehicles } from '@/hooks/useVehicles';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { supabase } from '@/integrations/azure/client';
+import { supabase } from '@/integrations/api/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
