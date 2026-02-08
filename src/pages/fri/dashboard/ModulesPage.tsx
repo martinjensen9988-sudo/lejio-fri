@@ -55,6 +55,7 @@ export function FriModulesPage() {
           {workshopModules.map((module) => {
             const isEnabled = enabledModuleIds.has(module.id);
             const isExpanded = expandedModule === module.id;
+            const effectiveStatus = module.id === 'garadeal' ? 'Klar' : module.status;
             
             return (
               <Card key={module.id} className="bg-white border border-gray-100 shadow-sm text-gray-900 overflow-hidden">
@@ -68,7 +69,7 @@ export function FriModulesPage() {
                         <div className="flex items-center gap-3">
                           <CardTitle className="text-gray-900">{module.name}</CardTitle>
                           <span className="text-xs px-2 py-1 rounded-full border border-gray-200 text-gray-500">
-                            {module.status}
+                            {effectiveStatus}
                           </span>
                         </div>
                         <CardDescription className="text-gray-500 mt-1">{module.tag}</CardDescription>
@@ -143,9 +144,9 @@ export function FriModulesPage() {
                         variant={isEnabled ? 'outline' : 'default'}
                         className={isEnabled ? 'border-gray-200 text-gray-700 hover:bg-gray-50' : 'bg-pink-600 hover:bg-pink-700 text-white'}
                         onClick={() => setModule({ moduleId: module.id, enabled: !isEnabled })}
-                        disabled={module.status !== 'Klar' || isUpdating || isLoading}
+                        disabled={effectiveStatus !== 'Klar' || isUpdating || isLoading}
                       >
-                        {isLoading ? 'Indlæser...' : module.status === 'Klar' ? (isEnabled ? 'Deaktiver' : 'Aktiver') : 'Book demo'}
+                        {isLoading ? 'Indlæser...' : effectiveStatus === 'Klar' ? (isEnabled ? 'Deaktiver' : 'Aktiver') : 'Book demo'}
                       </Button>
                     </div>
                   </CardContent>
