@@ -47,7 +47,7 @@ const FriSidebar = () => {
   };
 
   return (
-    <aside className="w-64 bg-white text-gray-900 flex flex-col h-screen fixed left-0 top-0 z-40 border-r border-gray-200 shadow-sm">
+    <aside className="w-64 bg-white text-brown-900 flex flex-col h-screen fixed left-0 top-0 z-40 border-r border-gray-200 shadow-sm">
       {/* Logo/Branding Area */}
       <div className="p-6 border-b border-gray-100">
         <div className="flex items-center gap-3">
@@ -57,7 +57,7 @@ const FriSidebar = () => {
             </svg>
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-900">Din platform</h1>
+            <h1 className="text-lg font-bold text-brown-900">Din platform</h1>
             <p className="text-xs text-gray-500">Biludlejningsplatform</p>
           </div>
         </div>
@@ -75,7 +75,7 @@ const FriSidebar = () => {
               className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
                 active
                   ? 'bg-pink-50 text-pink-600 font-medium'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-brown-900'
               }`}
             >
               <Icon className={`w-5 h-5 ${active ? 'text-pink-500' : 'text-gray-400'}`} />
@@ -92,7 +92,7 @@ const FriSidebar = () => {
             {user?.email?.[0]?.toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">{user?.email || 'Bruger'}</p>
+            <p className="text-sm font-medium text-brown-900 truncate">{user?.email || 'Bruger'}</p>
             <p className="text-xs text-gray-500">{roleLabel}</p>
           </div>
         </div>

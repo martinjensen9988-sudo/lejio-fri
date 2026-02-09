@@ -119,7 +119,7 @@ export default function FriDealerHubPage() {
     <FriDashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Bilforhandler</h1>
+          <h1 className="text-3xl font-bold text-brown-900">Bilforhandler</h1>
           <p className="text-gray-500 mt-2">
             Saml salgsflow, leads og kampagner i et samlet overblik. Her kan du oprette salgsannoncer, tracke dialoger og afslutte handler.
           </p>
@@ -168,14 +168,14 @@ export default function FriDealerHubPage() {
               {listings.map((listing) => (
                 <div key={listing.id} className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-lg border border-gray-100 p-4">
                   <div>
-                    <p className="font-semibold text-gray-900">{listing.title}</p>
+                    <p className="font-semibold text-brown-900">{listing.title}</p>
                     <p className="text-sm text-gray-500">Reg.nr: {listing.reg} · Oprettet {listing.createdAt}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={`text-xs px-2.5 py-1 rounded-full border ${statusStyles[listing.status]}`}>
                       {listing.status}
                     </span>
-                    <span className="text-sm font-semibold text-gray-900">kr. {listing.price.toLocaleString('da-DK')}</span>
+                    <span className="text-sm font-semibold text-brown-900">kr. {listing.price.toLocaleString('da-DK')}</span>
                   </div>
                 </div>
               ))}
@@ -276,7 +276,7 @@ export default function FriDealerHubPage() {
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {dealerFeatures.map((feature) => (
               <div key={feature.title} className="rounded-lg border border-gray-100 p-4">
-                <p className="font-semibold text-gray-900">{feature.title}</p>
+                <p className="font-semibold text-brown-900">{feature.title}</p>
                 <p className="text-sm text-gray-500 mt-1">{feature.description}</p>
               </div>
             ))}

@@ -553,7 +553,7 @@ export function PageBuilder() {
               <Button
                 onClick={publishPageHandler}
                 disabled={isSaving || page.is_published}
-                className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110"
+                className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110"
               >
                 <Zap className="w-4 h-4 mr-2" />
                 {page.is_published ? "Publiceret" : "Publicer"}

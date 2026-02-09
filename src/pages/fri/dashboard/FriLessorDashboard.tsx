@@ -326,7 +326,7 @@ const FriLessorDashboard = () => {
             Opdater
           </Button>
           <Link to="/fri/dashboard/vehicles">
-            <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
+            <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">
               <Car className="w-4 h-4 mr-2" />
               Tilføj køretoej
             </Button>

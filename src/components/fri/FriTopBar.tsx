@@ -17,7 +17,7 @@ const FriTopBar: React.FC = () => {
               placeholder="Søg køretøjer, bookinger..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-pink-500"
+              className="pl-10 bg-gray-50 border-gray-200 text-brown-900 placeholder:text-gray-400 focus:bg-white focus:border-pink-500"
             />
           </div>
         </div>

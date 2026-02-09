@@ -97,7 +97,7 @@ const statusBgColors: Record<string, string> = {
   pending: 'bg-yellow-100 dark:bg-yellow-900/30',
   confirmed: 'bg-blue-100 dark:bg-blue-900/30',
   active: 'bg-green-100 dark:bg-green-900/30',
-  completed: 'bg-gray-100 dark:bg-gray-900/30',
+  completed: 'bg-gray-100 dark:bg-brown-900/30',
   cancelled: 'bg-red-100 dark:bg-red-900/30',
 };
 
@@ -709,7 +709,7 @@ const SmartBookingCalendar = ({
               <p className="text-2xl font-bold text-green-700 dark:text-green-400">{stats.active}</p>
               <p className="text-xs text-green-600 dark:text-green-500">Aktive</p>
             </div>
-            <div className="bg-gray-100 dark:bg-gray-900/30 rounded-lg p-3 text-center">
+            <div className="bg-gray-100 dark:bg-brown-900/30 rounded-lg p-3 text-center">
               <p className="text-2xl font-bold text-gray-700 dark:text-gray-400">{stats.completed}</p>
               <p className="text-xs text-gray-600 dark:text-gray-500">Afsluttet</p>
             </div>

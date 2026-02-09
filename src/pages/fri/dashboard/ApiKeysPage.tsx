@@ -109,7 +109,7 @@ export const FriApiKeysPage = () => {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <Key className="w-8 h-8 text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-900">API Keys</h2>
+            <h2 className="text-2xl font-bold text-brown-900">API Keys</h2>
           </div>
           <p className="text-gray-600">Administrer dine API nøgler til integrationer</p>
         </div>
@@ -171,7 +171,7 @@ export const FriApiKeysPage = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <div className="bg-gray-900 p-4 rounded-lg font-mono text-sm break-all">
+              <div className="bg-brown-900 p-4 rounded-lg font-mono text-sm break-all">
                 <code className="text-green-400">{newKeyData.full_key}</code>
               </div>
               <Button
@@ -199,7 +199,7 @@ export const FriApiKeysPage = () => {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-semibold text-gray-900">{apiKey.name}</h3>
+                    <h3 className="font-semibold text-brown-900">{apiKey.name}</h3>
                     <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
                       apiKey.status === 'active'
                         ? 'bg-green-100 text-green-800'

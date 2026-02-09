@@ -28,11 +28,11 @@ export function FriLandingPage() {
               <Button variant="ghost" className="text-white/80 hover:text-amber-100 hover:bg-white/10">Log ind</Button>
             </Link>
             <Link to="/fri/signup">
-              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">Kom i gang</Button>
+              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">Kom i gang</Button>
             </Link>
           </div>
           <Link to="/fri/signup" className="md:hidden">
-            <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">Kom i gang</Button>
+            <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">Kom i gang</Button>
           </Link>
         </div>
       </nav>
@@ -53,7 +53,7 @@ export function FriLandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
               <Link to="/fri/trial">
-                <Button size="lg" className="gap-2 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
+                <Button size="lg" className="gap-2 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">
                   Start gratis prøveperiode <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
@@ -194,7 +194,7 @@ export function FriLandingPage() {
 
             <Card className="bg-gradient-to-b from-amber-500/20 to-white/5 border-amber-400/50 text-white shadow-[0_0_40px_rgba(245,158,11,0.2)]">
               <CardHeader>
-                <div className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black px-3 py-1 rounded-full text-sm w-fit mb-2 font-semibold">Mest populær</div>
+                <div className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 px-3 py-1 rounded-full text-sm w-fit mb-2 font-semibold">Mest populær</div>
                 <CardTitle className="text-amber-100">Business</CardTitle>
                 <CardDescription className="text-amber-100/60">Voksende virksomheder</CardDescription>
               </CardHeader>
@@ -212,7 +212,7 @@ export function FriLandingPage() {
                   <li className="flex items-center gap-2"><Check className="w-4 h-4 text-amber-400" />Email + Slack support</li>
                 </ul>
                 <Link to="/signup?tier=business">
-                  <Button className="w-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110 font-semibold">Kom i gang</Button>
+                  <Button className="w-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110 font-semibold">Kom i gang</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -255,7 +255,7 @@ export function FriLandingPage() {
             <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-200 bg-clip-text text-transparent">Klar til en premium oplevelse?</h2>
             <p className="text-amber-100/70 mb-8">14 dages gratis prøve. Ingen kreditkort. Opsætning på få minutter.</p>
             <Link to="/trial">
-              <Button size="lg" className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110 font-semibold shadow-[0_0_20px_rgba(245,158,11,0.4)]">
+              <Button size="lg" className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110 font-semibold shadow-[0_0_20px_rgba(245,158,11,0.4)]">
                 Start gratis prøveperiode
               </Button>
             </Link>

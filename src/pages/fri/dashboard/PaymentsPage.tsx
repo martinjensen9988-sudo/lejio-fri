@@ -22,7 +22,7 @@ export function FriPaymentsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Betalinger</h1>
+            <h1 className="text-3xl font-bold text-brown-900">Betalinger</h1>
             <p className="text-gray-500 mt-1">Oversigt over alle betalinger og transaktioner</p>
           </div>
           <Button className="bg-pink-600 hover:bg-pink-700 text-white">
@@ -38,7 +38,7 @@ export function FriPaymentsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 font-medium">Total Omsætning</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">kr {stats.totalRevenue.toLocaleString('da-DK')}</p>
+                  <p className="text-2xl font-bold text-brown-900 mt-1">kr {stats.totalRevenue.toLocaleString('da-DK')}</p>
                   <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
                     <ArrowUpRight className="w-3 h-3" /> 0% vs. forrige måned
                   </p>
@@ -67,7 +67,7 @@ export function FriPaymentsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 font-medium">Betalt Denne Måned</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">kr {stats.paidThisMonth.toLocaleString('da-DK')}</p>
+                  <p className="text-2xl font-bold text-brown-900 mt-1">kr {stats.paidThisMonth.toLocaleString('da-DK')}</p>
                 </div>
                 <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-blue-600" />
@@ -93,7 +93,7 @@ export function FriPaymentsPage() {
         {/* Payment Methods */}
         <Card className="border-gray-100">
           <CardHeader>
-            <CardTitle className="text-gray-900 flex items-center gap-2">
+            <CardTitle className="text-brown-900 flex items-center gap-2">
               <CreditCard className="w-5 h-5 text-pink-500" />
               Betalingsmetoder
             </CardTitle>
@@ -106,7 +106,7 @@ export function FriPaymentsPage() {
                     <CreditCard className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Stripe</p>
+                    <p className="font-medium text-brown-900">Stripe</p>
                     <p className="text-xs text-gray-500">Kortbetaling</p>
                   </div>
                 </div>
@@ -118,7 +118,7 @@ export function FriPaymentsPage() {
                     <Banknote className="w-5 h-5 text-purple-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">MobilePay</p>
+                    <p className="font-medium text-brown-900">MobilePay</p>
                     <p className="text-xs text-gray-500">Mobilbetaling</p>
                   </div>
                 </div>
@@ -130,7 +130,7 @@ export function FriPaymentsPage() {
                     <DollarSign className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Bankoverførsel</p>
+                    <p className="font-medium text-brown-900">Bankoverførsel</p>
                     <p className="text-xs text-gray-500">Manuel betaling</p>
                   </div>
                 </div>
@@ -143,7 +143,7 @@ export function FriPaymentsPage() {
         {/* Recent Transactions */}
         <Card className="border-gray-100">
           <CardHeader>
-            <CardTitle className="text-gray-900 flex items-center gap-2">
+            <CardTitle className="text-brown-900 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-pink-500" />
               Seneste Transaktioner
             </CardTitle>
@@ -152,7 +152,7 @@ export function FriPaymentsPage() {
             {recentTransactions.length === 0 ? (
               <div className="text-center py-12">
                 <DollarSign className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">Ingen transaktioner endnu</h3>
+                <h3 className="text-lg font-semibold text-brown-900 mb-1">Ingen transaktioner endnu</h3>
                 <p className="text-gray-500">Transaktioner vil vises her når du modtager betalinger</p>
               </div>
             ) : (

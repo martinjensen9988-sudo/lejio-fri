@@ -208,7 +208,7 @@ export function FriVehicleList({ lessorId }: FriVehicleListProps) {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
                   <div>
                     <p className="text-gray-500">Nummerplade</p>
-                    <p className="font-mono font-semibold text-gray-900">
+                    <p className="font-mono font-semibold text-brown-900">
                       {vehicle.license_plate}
                     </p>
                   </div>
@@ -221,7 +221,7 @@ export function FriVehicleList({ lessorId }: FriVehicleListProps) {
                   {vehicle.daily_rate && (
                     <div>
                       <p className="text-gray-500">Dagpris</p>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-brown-900">
                         kr. {vehicle.daily_rate.toLocaleString('da-DK')}
                       </p>
                     </div>

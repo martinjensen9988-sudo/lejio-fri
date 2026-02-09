@@ -49,7 +49,7 @@ export const FriAdminLoginPage = () => {
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 mb-4 shadow-lg shadow-violet-200">
                 <Sparkles className="w-7 h-7 text-white" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">Lejio Fri Admin</h1>
+              <h1 className="text-2xl font-bold text-brown-900">Lejio Fri Admin</h1>
               <p className="text-gray-400 text-sm mt-2">Administrer lessors og platformen</p>
             </div>
 

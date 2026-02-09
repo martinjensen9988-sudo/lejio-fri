@@ -36,13 +36,13 @@ export function FriMarketingLayout({ children, showCta = true }: FriMarketingLay
             </Link>
             {showCta && (
               <Link to="/fri/signup">
-                <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">Kom i gang</Button>
+                <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">Kom i gang</Button>
               </Link>
             )}
           </div>
           {showCta && (
             <Link to="/fri/signup" className="md:hidden">
-              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">Kom i gang</Button>
+              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">Kom i gang</Button>
             </Link>
           )}
         </div>

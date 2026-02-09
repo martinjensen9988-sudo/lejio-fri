@@ -335,7 +335,7 @@ export function TestimonialBlock({ config, testimonials = [] }: { config: BlockC
 // Footer Block
 export function FooterBlock({ config, lessor = {} }: { config: BlockConfig; lessor?: any }) {
   return (
-    <footer className="bg-gray-900 text-white py-12 px-4">
+    <footer className="bg-brown-900 text-white py-12 px-4">
       <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-8 mb-8">
         <div>
           <h3 className="text-xl font-bold mb-4">{lessor.name || "Company"}</h3>

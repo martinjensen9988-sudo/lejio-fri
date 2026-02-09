@@ -88,7 +88,7 @@ const HowItWorks = () => {
                       <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                         <Icon className="w-7 h-7 text-white" />
                       </div>
-                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-gray-900 text-xs font-bold flex items-center justify-center">
+                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-brown-900 text-xs font-bold flex items-center justify-center">
                         {item.step}
                       </div>
                     </div>
@@ -146,7 +146,7 @@ const HowItWorks = () => {
                       <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                         <Icon className="w-7 h-7 text-white" />
                       </div>
-                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-gray-900 text-xs font-bold flex items-center justify-center">
+                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-brown-900 text-xs font-bold flex items-center justify-center">
                         {item.step}
                       </div>
                     </div>

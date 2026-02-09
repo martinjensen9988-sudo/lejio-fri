@@ -22,7 +22,7 @@ export function WorkshopLanding() {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/fri/workshop/garageplan">
-              <Button size="lg" className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
+              <Button size="lg" className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">
                 Start med GaragePlan <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>

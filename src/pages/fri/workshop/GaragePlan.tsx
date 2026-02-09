@@ -88,7 +88,7 @@ export function GaragePlanPage() {
               GaragePlan er din digitale planlægger. Ingen papir, ingen møder - bare smart planlægning.
             </p>
             <div className="flex gap-4">
-              <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-bold">
+              <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-brown-900 font-bold">
                 Start gratis
               </Button>
               <Button size="lg" variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
@@ -197,7 +197,7 @@ export function GaragePlanPage() {
             <CardContent className="space-y-4">
               <div className="flex gap-4">
                 <div className="bg-amber-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
-                  <span className="text-black font-bold text-sm">1</span>
+                  <span className="text-brown-900 font-bold text-sm">1</span>
                 </div>
                 <div>
                   <p className="font-semibold text-white">Kunde ringer/booker online</p>
@@ -206,7 +206,7 @@ export function GaragePlanPage() {
               </div>
               <div className="flex gap-4">
                 <div className="bg-amber-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
-                  <span className="text-black font-bold text-sm">2</span>
+                  <span className="text-brown-900 font-bold text-sm">2</span>
                 </div>
                 <div>
                   <p className="font-semibold text-white">Du tildeler mekanikere</p>
@@ -215,7 +215,7 @@ export function GaragePlanPage() {
               </div>
               <div className="flex gap-4">
                 <div className="bg-amber-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
-                  <span className="text-black font-bold text-sm">3</span>
+                  <span className="text-brown-900 font-bold text-sm">3</span>
                 </div>
                 <div>
                   <p className="font-semibold text-white">Mekaniker modtager arbejdskort</p>
@@ -224,7 +224,7 @@ export function GaragePlanPage() {
               </div>
               <div className="flex gap-4">
                 <div className="bg-amber-500 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
-                  <span className="text-black font-bold text-sm">4</span>
+                  <span className="text-brown-900 font-bold text-sm">4</span>
                 </div>
                 <div>
                   <p className="font-semibold text-white">Arbejde afsluttes</p>

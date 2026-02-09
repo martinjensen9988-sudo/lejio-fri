@@ -93,7 +93,7 @@ export function PagesDashboard() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Websider</h1>
+        <h1 className="text-3xl font-bold text-brown-900 mb-2">Websider</h1>
         <p className="text-gray-600">
           Opret og administrer dine egne websider
         </p>
@@ -169,7 +169,7 @@ export function PagesDashboard() {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-xl font-bold text-gray-900">{page.title}</h3>
+                    <h3 className="text-xl font-bold text-brown-900">{page.title}</h3>
                     {page.is_published && (
                       <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">
                         Publiceret
@@ -223,7 +223,7 @@ export function PagesDashboard() {
 
       {/* Domain Management Section */}
       <div className="mt-12 border-t pt-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Eget domæne</h2>
+        <h2 className="text-2xl font-bold text-brown-900 mb-4">Eget domæne</h2>
         <Card className="p-6 bg-white">
           <p className="text-gray-600 mb-4">
             Tilslut dit eget domæne til din udlejningshjemmeside

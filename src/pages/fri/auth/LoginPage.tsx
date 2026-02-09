@@ -95,7 +95,7 @@ export function FriLoginPage() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110" disabled={loading}>
+              <Button type="submit" className="w-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110" disabled={loading}>
                 {loading ? 'Logger ind...' : 'Log ind'}
               </Button>
             </form>

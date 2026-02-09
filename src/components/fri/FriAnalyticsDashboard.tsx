@@ -189,22 +189,22 @@ export function FriAnalyticsDashboard({ lessorId }: FriAnalyticsDashboardProps) 
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-2 px-4 font-semibold text-gray-900">Køretøj</th>
-                  <th className="text-right py-2 px-4 font-semibold text-gray-900">Bookinger</th>
-                  <th className="text-right py-2 px-4 font-semibold text-gray-900">Omsætning</th>
-                  <th className="text-right py-2 px-4 font-semibold text-gray-900">Pr. booking</th>
+                  <th className="text-left py-2 px-4 font-semibold text-brown-900">Køretøj</th>
+                  <th className="text-right py-2 px-4 font-semibold text-brown-900">Bookinger</th>
+                  <th className="text-right py-2 px-4 font-semibold text-brown-900">Omsætning</th>
+                  <th className="text-right py-2 px-4 font-semibold text-brown-900">Pr. booking</th>
                 </tr>
               </thead>
               <tbody>
                 {analytics.topVehicles.map((vehicle, index) => (
                   <tr key={index} className="border-b border-gray-100">
-                    <td className="py-3 px-4 text-gray-900">
+                    <td className="py-3 px-4 text-brown-900">
                       {vehicle.make} {vehicle.model}
                     </td>
-                    <td className="text-right py-3 px-4 text-gray-900 font-medium">
+                    <td className="text-right py-3 px-4 text-brown-900 font-medium">
                       {vehicle.bookings}
                     </td>
-                    <td className="text-right py-3 px-4 text-gray-900 font-medium">
+                    <td className="text-right py-3 px-4 text-brown-900 font-medium">
                       kr. {vehicle.revenue.toLocaleString('da-DK')}
                     </td>
                     <td className="text-right py-3 px-4 text-gray-500">
@@ -222,13 +222,13 @@ export function FriAnalyticsDashboard({ lessorId }: FriAnalyticsDashboardProps) 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 rounded-lg border border-gray-200 p-6">
         <div>
           <p className="text-sm text-gray-600">Gennemsnitlig booking værdi</p>
-          <p className="text-xl font-semibold text-gray-900 mt-1">
+          <p className="text-xl font-semibold text-brown-900 mt-1">
             kr. {analytics.averageBookingValue.toLocaleString('da-DK')}
           </p>
         </div>
         <div>
           <p className="text-sm text-gray-600">Fuldførelsesrate</p>
-          <p className="text-xl font-semibold text-gray-900 mt-1">
+          <p className="text-xl font-semibold text-brown-900 mt-1">
             {analytics.totalBookings > 0
               ? (
                   (analytics.completedBookings / analytics.totalBookings) *
@@ -240,13 +240,13 @@ export function FriAnalyticsDashboard({ lessorId }: FriAnalyticsDashboardProps) 
         </div>
         <div>
           <p className="text-sm text-gray-600">Køretøj-udnyttelse</p>
-          <p className="text-xl font-semibold text-gray-900 mt-1">
+          <p className="text-xl font-semibold text-brown-900 mt-1">
             {analytics.bookingRate.toFixed(1)}%
           </p>
         </div>
         <div>
           <p className="text-sm text-gray-600">Betalingsrate</p>
-          <p className="text-xl font-semibold text-gray-900 mt-1">
+          <p className="text-xl font-semibold text-brown-900 mt-1">
             {analytics.totalInvoices > 0
               ? ((analytics.paidInvoices / analytics.totalInvoices) * 100).toFixed(1)
               : '0'}

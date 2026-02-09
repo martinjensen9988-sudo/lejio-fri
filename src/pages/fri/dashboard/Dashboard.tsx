@@ -50,9 +50,9 @@ export function FriDashboard() {
             <div className="w-14 h-14 mx-auto rounded-2xl bg-red-50 flex items-center justify-center mb-4">
               <AlertCircle className="w-7 h-7 text-red-500" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Noget gik galt</h2>
+            <h2 className="text-xl font-bold text-brown-900 mb-2">Noget gik galt</h2>
             <p className="text-gray-500 mb-6">{error.message}</p>
-            <Button onClick={() => navigate('/fri/login')} className="bg-gray-900 hover:bg-gray-800 text-white px-6">
+            <Button onClick={() => navigate('/fri/login')} className="bg-brown-900 hover:bg-gray-800 text-white px-6">
               Gå til login
             </Button>
           </div>
@@ -69,8 +69,8 @@ export function FriDashboard() {
             <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-50 flex items-center justify-center mb-4">
               <Shield className="w-7 h-7 text-amber-500" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Log ind for at fortsætte</h2>
-            <Button onClick={() => navigate('/fri/login')} className="mt-4 bg-gray-900 hover:bg-gray-800 text-white px-6">
+            <h2 className="text-xl font-bold text-brown-900 mb-2">Log ind for at fortsætte</h2>
+            <Button onClick={() => navigate('/fri/login')} className="mt-4 bg-brown-900 hover:bg-gray-800 text-white px-6">
               Gå til login
             </Button>
           </div>
@@ -183,7 +183,7 @@ export function FriDashboard() {
             <div className="flex items-center gap-3">
               <Button
                 onClick={() => navigate('/fri/dashboard/vehicles')}
-                className="bg-white text-gray-900 hover:bg-gray-100 font-semibold shadow-lg shadow-white/10 px-5"
+                className="bg-white text-brown-900 hover:bg-gray-100 font-semibold shadow-lg shadow-white/10 px-5"
                 size="lg"
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -222,7 +222,7 @@ export function FriDashboard() {
                 {statsLoading ? (
                   <div className="h-8 w-20 bg-gray-100 rounded-lg animate-pulse" />
                 ) : (
-                  <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+                  <p className="text-2xl font-bold text-brown-900">{card.value}</p>
                 )}
                 <p className="text-xs text-gray-400 mt-1 font-medium uppercase tracking-wider">{card.suffix}</p>
               </div>
@@ -237,7 +237,7 @@ export function FriDashboard() {
             {/* Quick Actions Row */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <h2 className="text-lg font-bold text-brown-900 flex items-center gap-2">
                   <Zap className="w-5 h-5 text-amber-500" />
                   Hurtige handlinger
                 </h2>
@@ -271,7 +271,7 @@ export function FriDashboard() {
                         <item.icon className={`w-5 h-5 ${item.iconColor}`} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 text-sm group-hover:text-gray-900">{item.label}</p>
+                        <p className="font-semibold text-brown-900 text-sm group-hover:text-brown-900">{item.label}</p>
                         <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
                       </div>
                       <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors mt-0.5 flex-shrink-0" />
@@ -311,7 +311,7 @@ export function FriDashboard() {
             {/* Getting Started Progress */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                <h3 className="font-bold text-brown-900 flex items-center gap-2">
                   <Target className="w-5 h-5 text-violet-500" />
                   Kom i gang
                 </h3>
@@ -360,14 +360,14 @@ export function FriDashboard() {
 
             {/* Account Status */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
-              <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <h3 className="font-bold text-brown-900 mb-4 flex items-center gap-2">
                 <Activity className="w-5 h-5 text-emerald-500" />
                 Kontostatus
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">Plan</span>
-                  <span className="text-sm font-semibold text-gray-900 bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Pro</span>
+                  <span className="text-sm font-semibold text-brown-900 bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Pro</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">Status</span>
@@ -384,7 +384,7 @@ export function FriDashboard() {
               <div className="mt-5 pt-4 border-t border-gray-100">
                 <button
                   onClick={() => navigate('/fri/dashboard/settings')}
-                  className="w-full text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors flex items-center justify-center gap-1.5"
+                  className="w-full text-sm font-semibold text-gray-500 hover:text-brown-900 transition-colors flex items-center justify-center gap-1.5"
                 >
                   Administrer konto
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -398,7 +398,7 @@ export function FriDashboard() {
                 <div className="w-10 h-10 mx-auto rounded-xl bg-white shadow-sm flex items-center justify-center mb-3">
                   <Sparkles className="w-5 h-5 text-violet-500" />
                 </div>
-                <h4 className="font-bold text-gray-900 text-sm mb-1">Brug for hjælp?</h4>
+                <h4 className="font-bold text-brown-900 text-sm mb-1">Brug for hjælp?</h4>
                 <p className="text-xs text-gray-500 mb-4">Kontakt os, så hjælper vi dig i gang</p>
                 <button
                   className="w-full text-sm font-semibold text-violet-600 bg-white hover:bg-violet-50 border border-violet-100 rounded-xl py-2.5 transition-colors"

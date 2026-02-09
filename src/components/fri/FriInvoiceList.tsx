@@ -227,26 +227,26 @@ export function FriInvoiceList({ lessorId }: FriInvoiceListProps) {
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm text-gray-600 mb-3">
                     <div>
                       <p className="text-gray-500">Kunde</p>
-                      <p className="font-semibold text-gray-900">{invoice.customer_name}</p>
+                      <p className="font-semibold text-brown-900">{invoice.customer_name}</p>
                     </div>
 
                     <div>
                       <p className="text-gray-500">Faktureret</p>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-brown-900">
                         {new Date(invoice.issued_date).toLocaleDateString('da-DK')}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-gray-500">Forfald</p>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-brown-900">
                         {new Date(invoice.due_date).toLocaleDateString('da-DK')}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-gray-500">Beløb</p>
-                      <p className="font-semibold text-gray-900">kr. {total.toLocaleString('da-DK')}</p>
+                      <p className="font-semibold text-brown-900">kr. {total.toLocaleString('da-DK')}</p>
                     </div>
 
                     <div>

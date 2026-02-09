@@ -330,19 +330,19 @@ export function FriSettingsPage({ userId }: FriSettingsPageProps) {
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600">Konto-ID:</span>
-              <span className="font-mono text-gray-900">{account.id}</span>
+              <span className="font-mono text-brown-900">{account.id}</span>
             </div>
 
             <div className="flex justify-between">
               <span className="text-gray-600">Oprettet:</span>
-              <span className="text-gray-900">
+              <span className="text-brown-900">
                 {new Date(account.created_at).toLocaleDateString('da-DK')}
               </span>
             </div>
 
             <div className="flex justify-between">
               <span className="text-gray-600">Senest opdateret:</span>
-              <span className="text-gray-900">
+              <span className="text-brown-900">
                 {new Date(account.updated_at).toLocaleDateString('da-DK')}
               </span>
             </div>

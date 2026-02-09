@@ -85,7 +85,7 @@ export function FriTeamInviteForm({ onSubmit, onCancel }: FriTeamInviteFormProps
             </div>
 
             <div className="border-t pt-6">
-              <h3 className="font-medium text-gray-900 mb-4">Rolle</h3>
+              <h3 className="font-medium text-brown-900 mb-4">Rolle</h3>
               <Select value={formData.role} onValueChange={(value: any) =>
                 setFormData({ ...formData, role: value })
               }>

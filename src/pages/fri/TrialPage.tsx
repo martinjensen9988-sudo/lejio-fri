@@ -62,7 +62,7 @@ export function FriTrialPage() {
               <Button variant="ghost" className="text-white/80 hover:text-amber-100 hover:bg-white/10">Log ind</Button>
             </Link>
             <Link to="/fri/signup">
-              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">Kom i gang</Button>
+              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">Kom i gang</Button>
             </Link>
           </div>
         </div>
@@ -224,7 +224,7 @@ export function FriTrialPage() {
           {/* Right: Signup Form */}
           <div className="lg:sticky lg:top-24 lg:h-fit">
             <Card className="border-2 border-amber-500/30 bg-white/5 backdrop-blur-xl shadow-xl shadow-amber-500/10">
-              <CardHeader className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black rounded-t-lg">
+              <CardHeader className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 rounded-t-lg">
                 <CardTitle className="text-2xl">Start din prøveperiode</CardTitle>
                 <CardDescription className="text-amber-900">Gratis i 14 dage. Ingen kreditkort.</CardDescription>
               </CardHeader>
@@ -293,7 +293,7 @@ export function FriTrialPage() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 hover:brightness-110 text-black font-semibold"
+                    className="w-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 hover:brightness-110 text-brown-900 font-semibold"
                     disabled={loading}
                   >
                     {loading ? 'Behandler...' : 'Start gratis prøveperiode'}
@@ -365,7 +365,7 @@ export function FriTrialPage() {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Klar til at få styr på din flåde?</h2>
           <p className="text-lg text-white/70 mb-8">Join hundredvis af danske bilentreprenører, der allerede bruger platformen</p>
           <Link to="#signup-form">
-            <Button size="lg" className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110 font-semibold">
+            <Button size="lg" className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110 font-semibold">
               Start 14-dages gratis prøveperiode
             </Button>
           </Link>

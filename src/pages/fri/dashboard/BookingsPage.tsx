@@ -47,7 +47,7 @@ export function FriBookingsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Bookinger</h1>
+            <h1 className="text-3xl font-bold text-brown-900">Bookinger</h1>
             <p className="text-gray-500 mt-1">Administrer alle dine reservationer</p>
           </div>
           <Button className="bg-pink-600 hover:bg-pink-700 text-white">
@@ -63,7 +63,7 @@ export function FriBookingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 font-medium">Total Bookinger</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
+                  <p className="text-2xl font-bold text-brown-900 mt-1">{stats.total}</p>
                 </div>
                 <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
                   <Calendar className="w-5 h-5 text-blue-600" />
@@ -102,7 +102,7 @@ export function FriBookingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 font-medium">Omsætning</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">kr {stats.revenue.toLocaleString('da-DK')}</p>
+                  <p className="text-2xl font-bold text-brown-900 mt-1">kr {stats.revenue.toLocaleString('da-DK')}</p>
                 </div>
                 <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-purple-600" />
@@ -153,7 +153,7 @@ export function FriBookingsPage() {
             ) : filteredBookings.length === 0 ? (
               <div className="text-center py-16">
                 <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">Ingen bookinger endnu</h3>
+                <h3 className="text-lg font-semibold text-brown-900 mb-1">Ingen bookinger endnu</h3>
                 <p className="text-gray-500 mb-4">Opret din første booking for at komme i gang</p>
                 <Button className="bg-pink-600 hover:bg-pink-700 text-white">
                   <Plus className="w-4 h-4 mr-2" />
@@ -179,18 +179,18 @@ export function FriBookingsPage() {
                       <TableRow key={booking.id} className="hover:bg-gray-50">
                         <TableCell>
                           <div>
-                            <p className="font-medium text-gray-900">{booking.renter_name || 'Ukendt'}</p>
+                            <p className="font-medium text-brown-900">{booking.renter_name || 'Ukendt'}</p>
                             <p className="text-sm text-gray-500">{booking.renter_email || ''}</p>
                           </div>
                         </TableCell>
                         <TableCell className="text-gray-700">{booking.vehicle_info || `Køretøj ${booking.vehicle_id?.substring(0, 8)}`}</TableCell>
                         <TableCell>
                           <div className="text-sm">
-                            <p className="text-gray-900">{booking.start_date ? new Date(booking.start_date).toLocaleDateString('da-DK') : '-'}</p>
+                            <p className="text-brown-900">{booking.start_date ? new Date(booking.start_date).toLocaleDateString('da-DK') : '-'}</p>
                             <p className="text-gray-500">til {booking.end_date ? new Date(booking.end_date).toLocaleDateString('da-DK') : '-'}</p>
                           </div>
                         </TableCell>
-                        <TableCell className="font-medium text-gray-900">kr {(booking.total_price || 0).toLocaleString('da-DK')}</TableCell>
+                        <TableCell className="font-medium text-brown-900">kr {(booking.total_price || 0).toLocaleString('da-DK')}</TableCell>
                         <TableCell>
                           <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${status.color}`}>
                             {status.label}

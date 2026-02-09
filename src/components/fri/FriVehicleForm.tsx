@@ -134,7 +134,7 @@ export function FriVehicleForm({ vehicle, onSubmit, onCancel }: FriVehicleFormPr
 
             {/* Rental Info */}
             <div className="border-t pt-6">
-              <h3 className="font-medium text-gray-900 mb-4">Udlejningsinformation</h3>
+              <h3 className="font-medium text-brown-900 mb-4">Udlejningsinformation</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">

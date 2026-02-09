@@ -235,7 +235,7 @@ export function WorkshopModulesPublic() {
               Bliv med tusindvis af værksteder, leasingselskaber og bilsælgere som bruger Lejio Fri til at drive deres business digitalt
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-bold">
+              <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-brown-900 font-bold">
                 Start gratis prøveperiode
               </Button>
               <Button size="lg" variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">

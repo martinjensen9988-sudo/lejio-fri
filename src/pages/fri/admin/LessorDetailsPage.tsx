@@ -164,7 +164,7 @@ export const FriAdminLessorDetailsPage = () => {
             <ChevronLeft className="w-4 h-4" />
             Tilbage til lessors
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">{lessor.company_name}</h1>
+          <h1 className="text-3xl font-bold text-brown-900">{lessor.company_name}</h1>
           <p className={`text-lg font-medium mt-2 ${statusColor}`}>
             {lessor.subscription_status === 'trial'
               ? 'Prøveperiode'
@@ -183,7 +183,7 @@ export const FriAdminLessorDetailsPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Biler</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{data.vehicles}</p>
+              <p className="text-3xl font-bold text-brown-900 mt-2">{data.vehicles}</p>
             </div>
             <Zap className="w-8 h-8 text-yellow-500 opacity-20" />
           </div>
@@ -193,7 +193,7 @@ export const FriAdminLessorDetailsPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Bookings</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{data.bookings}</p>
+              <p className="text-3xl font-bold text-brown-900 mt-2">{data.bookings}</p>
             </div>
             <TrendingUp className="w-8 h-8 text-blue-500 opacity-20" />
           </div>
@@ -203,7 +203,7 @@ export const FriAdminLessorDetailsPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Revenue</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">
+              <p className="text-3xl font-bold text-brown-900 mt-2">
                 kr. {(data.revenue / 1000).toFixed(1)}k
               </p>
             </div>
@@ -215,7 +215,7 @@ export const FriAdminLessorDetailsPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Aktive</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{data.activeBookings}</p>
+              <p className="text-3xl font-bold text-brown-900 mt-2">{data.activeBookings}</p>
             </div>
             <Users className="w-8 h-8 text-purple-500 opacity-20" />
           </div>
@@ -225,7 +225,7 @@ export const FriAdminLessorDetailsPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Gennemf.</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{data.completedBookings}</p>
+              <p className="text-3xl font-bold text-brown-900 mt-2">{data.completedBookings}</p>
             </div>
             <Calendar className="w-8 h-8 text-indigo-500 opacity-20" />
           </div>
@@ -235,25 +235,25 @@ export const FriAdminLessorDetailsPage = () => {
       {/* Account Info */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Kontooplysninger</h3>
+          <h3 className="text-lg font-semibold text-brown-900 mb-4">Kontooplysninger</h3>
           <div className="space-y-4 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600">Email</span>
-              <span className="font-medium text-gray-900">{lessor.email}</span>
+              <span className="font-medium text-brown-900">{lessor.email}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">CVR</span>
-              <span className="font-medium text-gray-900">{lessor.cvr_number || 'N/A'}</span>
+              <span className="font-medium text-brown-900">{lessor.cvr_number || 'N/A'}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Oprettet</span>
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-brown-900">
                 {formatDistanceToNow(new Date(lessor.created_at), { locale: da, addSuffix: true })}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Domæne</span>
-              <span className="font-medium text-gray-900 text-right max-w-xs break-words">
+              <span className="font-medium text-brown-900 text-right max-w-xs break-words">
                 {lessor.custom_domain || 'Standard'}
               </span>
             </div>
@@ -261,26 +261,26 @@ export const FriAdminLessorDetailsPage = () => {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-brown-900 mb-4">
             {lessor.subscription_status === 'trial' ? 'Prøveperiode' : 'Abonnement'}
           </h3>
           <div className="space-y-4 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600">Status</span>
-              <span className="font-medium text-gray-900 capitalize">
+              <span className="font-medium text-brown-900 capitalize">
                 {lessor.subscription_status}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Start dato</span>
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-brown-900">
                 {new Date(lessor.created_at).toLocaleDateString('da-DK')}
               </span>
             </div>
             {lessor.subscription_plan && (
               <div className="flex justify-between">
                 <span className="text-gray-600">Plan</span>
-                <span className="font-medium text-gray-900">{lessor.subscription_plan}</span>
+                <span className="font-medium text-brown-900">{lessor.subscription_plan}</span>
               </div>
             )}
           </div>
@@ -289,7 +289,7 @@ export const FriAdminLessorDetailsPage = () => {
 
       {/* Monthly Revenue Chart */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Månedlig revenue</h3>
+        <h3 className="text-lg font-semibold text-brown-900 mb-4">Månedlig revenue</h3>
         {data.monthlyData.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data.monthlyData}>

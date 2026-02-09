@@ -50,7 +50,7 @@ export const FriAdminLayout = ({ children }: FriAdminLayoutProps) => {
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-sm font-bold text-gray-900">Lejio Fri</h1>
+                <h1 className="text-sm font-bold text-brown-900">Lejio Fri</h1>
                 <p className="text-[10px] text-gray-400 font-medium tracking-wider uppercase">Admin Panel</p>
               </div>
             </div>
@@ -101,7 +101,7 @@ export const FriAdminLayout = ({ children }: FriAdminLayoutProps) => {
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs text-gray-500">Logget ind som</p>
-                  <p className="text-sm font-semibold text-gray-900 truncate">{admin.admin_email}</p>
+                  <p className="text-sm font-semibold text-brown-900 truncate">{admin.admin_email}</p>
                 </div>
               </div>
               {admin.is_super_admin && (

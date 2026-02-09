@@ -26,7 +26,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
   const checkinUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/checkin/${contract.id}`;
 
   return (
-    <div className="bg-white text-gray-900 font-sans max-w-4xl mx-auto print:max-w-none">
+    <div className="bg-white text-brown-900 font-sans max-w-4xl mx-auto print:max-w-none">
       {/* Professional Header */}
       <header className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/90 text-white rounded-t-xl p-8">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50" />
@@ -79,7 +79,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                 <User className="w-4 h-4 text-primary" />
               </div>
-              <h2 className="text-lg font-bold text-gray-900">Udlejer</h2>
+              <h2 className="text-lg font-bold text-brown-900">Udlejer</h2>
             </div>
             <div className="space-y-2 text-sm">
               <InfoRow label="Navn" value={contract.lessor_name} />
@@ -105,7 +105,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
               <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
                 <User className="w-4 h-4 text-emerald-600" />
               </div>
-              <h2 className="text-lg font-bold text-gray-900">Lejer</h2>
+              <h2 className="text-lg font-bold text-brown-900">Lejer</h2>
             </div>
             <div className="space-y-2 text-sm">
               <InfoRow label="Navn" value={contract.renter_name} />
@@ -141,7 +141,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
             <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
               <Car className="w-4 h-4 text-blue-600" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900">Køretøj</h2>
+            <h2 className="text-lg font-bold text-brown-900">Køretøj</h2>
           </div>
           
           <div className="grid md:grid-cols-3 gap-4">
@@ -159,7 +159,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
             {contract.vehicle_value && (
               <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
                 <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Køretøjets værdi</p>
-                <p className="text-lg font-semibold text-gray-900">{formatCurrency(contract.vehicle_value)}</p>
+                <p className="text-lg font-semibold text-brown-900">{formatCurrency(contract.vehicle_value)}</p>
               </div>
             )}
           </div>
@@ -181,7 +181,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
                 <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
                   <Calendar className="w-4 h-4 text-purple-600" />
                 </div>
-                <h2 className="text-lg font-bold text-gray-900">Lejeperiode</h2>
+                <h2 className="text-lg font-bold text-brown-900">Lejeperiode</h2>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex-1 bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
@@ -208,7 +208,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
                 <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
                   <CreditCard className="w-4 h-4 text-amber-600" />
                 </div>
-                <h2 className="text-lg font-bold text-gray-900">Priser</h2>
+                <h2 className="text-lg font-bold text-brown-900">Priser</h2>
               </div>
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 overflow-hidden">
                 <div className="divide-y divide-gray-100">
@@ -236,7 +236,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
                     </div>
                   )}
                   <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between items-center">
-                    <span className="font-semibold text-gray-900">Total at betale</span>
+                    <span className="font-semibold text-brown-900">Total at betale</span>
                     <span className="text-2xl font-bold text-primary">
                       {formatCurrency((contract.total_price || 0) + (contract.deposit_amount || 0))}
                     </span>
@@ -253,12 +253,12 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
             <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
               <Shield className="w-4 h-4 text-blue-600" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900">Forsikring & Vejhjælp</h2>
+            <h2 className="text-lg font-bold text-brown-900">Forsikring & Vejhjælp</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-4 mb-4">
             <div className="bg-white rounded-xl p-4 border border-blue-200">
               <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Selvrisiko</p>
-              <p className="text-xl font-bold text-gray-900">{formatCurrency(contract.deductible_amount)}</p>
+              <p className="text-xl font-bold text-brown-900">{formatCurrency(contract.deductible_amount)}</p>
             </div>
             {contract.insurance_company && (
               <div className="bg-white rounded-xl p-4 border border-blue-200">
@@ -290,7 +290,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
             <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
               <Car className="w-4 h-4 text-orange-600" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900">Tilstandsrapport</h2>
+            <h2 className="text-lg font-bold text-brown-900">Tilstandsrapport</h2>
           </div>
           
           <div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
@@ -331,7 +331,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
               <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
                 <Fuel className="w-4 h-4 text-amber-600" />
               </div>
-              <h2 className="text-lg font-bold text-gray-900">Brændstofpolitik</h2>
+              <h2 className="text-lg font-bold text-brown-900">Brændstofpolitik</h2>
             </div>
             <div className="bg-amber-50 rounded-xl p-5 border border-amber-200">
               <p className="text-sm text-gray-700 mb-4">
@@ -363,7 +363,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
               <div className="w-8 h-8 rounded-lg bg-cyan-100 flex items-center justify-center">
                 <Car className="w-4 h-4 text-cyan-600" />
               </div>
-              <h2 className="text-lg font-bold text-gray-900">Rengøringsgebyrer</h2>
+              <h2 className="text-lg font-bold text-brown-900">Rengøringsgebyrer</h2>
             </div>
             <div className="bg-cyan-50 rounded-xl p-5 border border-cyan-200">
               <p className="text-sm text-gray-700 mb-4">
@@ -395,7 +395,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
               <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
                 <Clock className="w-4 h-4 text-orange-600" />
               </div>
-              <h2 className="text-lg font-bold text-gray-900">Sen aflevering</h2>
+              <h2 className="text-lg font-bold text-brown-900">Sen aflevering</h2>
             </div>
             <div className="bg-orange-50 rounded-xl p-5 border border-orange-200">
               <p className="text-sm text-gray-700 mb-3">
@@ -416,7 +416,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
             <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center">
               <FileText className="w-4 h-4 text-gray-600" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900">Vilkår & Betingelser</h2>
+            <h2 className="text-lg font-bold text-brown-900">Vilkår & Betingelser</h2>
           </div>
           
           <div className="space-y-4 text-sm text-gray-600">
@@ -440,7 +440,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
             <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center">
               <CreditCard className="w-4 h-4 text-rose-600" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900">Gebyrer</h2>
+            <h2 className="text-lg font-bold text-brown-900">Gebyrer</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="bg-rose-50 rounded-xl p-4 border border-rose-200">
@@ -497,7 +497,7 @@ const ContractPreview = ({ contract, pickupDamageReport, returnDamageReport }: C
             <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
               <PenLine className="w-4 h-4 text-indigo-600" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900">Underskrifter</h2>
+            <h2 className="text-lg font-bold text-brown-900">Underskrifter</h2>
           </div>
           
           <div className="grid md:grid-cols-2 gap-6">
@@ -565,7 +565,7 @@ const LegendItem = ({ color, label, text }: { color: string; label: string; text
 
 const TermsSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="bg-white rounded-lg p-4 border border-gray-200">
-    <h4 className="font-semibold text-gray-900 mb-2">{title}</h4>
+    <h4 className="font-semibold text-brown-900 mb-2">{title}</h4>
     <div className="text-gray-600 leading-relaxed">{children}</div>
   </div>
 );
@@ -583,7 +583,7 @@ const SignatureBox = ({ title, name, signature, signedAt }: {
         <div className="bg-white rounded-lg p-3 border border-gray-200 mb-3">
           <img src={signature} alt={`${title} underskrift`} className="h-16 object-contain mx-auto" />
         </div>
-        <p className="font-medium text-gray-900">{name}</p>
+        <p className="font-medium text-brown-900">{name}</p>
         {signedAt && (
           <p className="text-xs text-gray-500 mt-1">
             {format(new Date(signedAt), "d. MMM yyyy 'kl.' HH:mm", { locale: da })}

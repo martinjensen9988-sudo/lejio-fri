@@ -351,7 +351,7 @@ export function FriFeaturesPage() {
               <Button variant="ghost" className="text-white/80 hover:text-amber-100 hover:bg-white/10">Log ind</Button>
             </Link>
             <Link to="/fri/trial">
-              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">Start prøveperiode</Button>
+              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">Start prøveperiode</Button>
             </Link>
           </div>
         </div>
@@ -367,7 +367,7 @@ export function FriFeaturesPage() {
             En komplet løsning til bilutlejning. Ingen skjulte funktioner – alt er inkluderet i din plan.
           </p>
           <Link to="/fri/trial">
-            <Button size="lg" className="gap-2 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
+            <Button size="lg" className="gap-2 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">
               Start gratis prøveperiode <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
@@ -494,7 +494,7 @@ export function FriFeaturesPage() {
             Prøv alle funktioner helt gratis i 14 dage. Intet kreditkort påkrævet.
           </p>
           <Link to="/fri/trial">
-            <Button size="lg" className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
+            <Button size="lg" className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">
               Start gratis prøveperiode
             </Button>
           </Link>

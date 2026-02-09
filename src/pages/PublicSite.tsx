@@ -138,16 +138,16 @@ export function PublicSiteRenderer({
               </h1>
             </div>
             <div className="space-x-4">
-              <a href="#" className="text-gray-600 hover:text-gray-900">
+              <a href="#" className="text-gray-600 hover:text-brown-900">
                 Home
               </a>
-              <a href="#vehicles" className="text-gray-600 hover:text-gray-900">
+              <a href="#vehicles" className="text-gray-600 hover:text-brown-900">
                 Vehicles
               </a>
-              <a href="#booking" className="text-gray-600 hover:text-gray-900">
+              <a href="#booking" className="text-gray-600 hover:text-brown-900">
                 Book
               </a>
-              <a href="#contact" className="text-gray-600 hover:text-gray-900">
+              <a href="#contact" className="text-gray-600 hover:text-brown-900">
                 Contact
               </a>
             </div>

@@ -160,7 +160,7 @@ export const FriAdminTicketDetailsPage = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Ticket Info */}
           <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
-            <h1 className="text-xl font-bold text-gray-900 mb-4">{ticket.subject}</h1>
+            <h1 className="text-xl font-bold text-brown-900 mb-4">{ticket.subject}</h1>
 
             <div className="mb-6">
               <p className="text-gray-600 whitespace-pre-wrap leading-relaxed">{ticket.description}</p>
@@ -169,7 +169,7 @@ export const FriAdminTicketDetailsPage = () => {
             {/* Lessor Info */}
             <div className="border-t border-gray-100 pt-4">
               <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-2">Fra lessor</p>
-              <p className="font-semibold text-gray-900">{ticket.lessor_name}</p>
+              <p className="font-semibold text-brown-900">{ticket.lessor_name}</p>
               <p className="text-sm text-gray-400">{ticket.lessor_email}</p>
             </div>
           </div>
@@ -180,7 +180,7 @@ export const FriAdminTicketDetailsPage = () => {
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center">
                 <MessageSquare className="w-4 h-4 text-white" />
               </div>
-              <h3 className="text-base font-bold text-gray-900">Beskeder</h3>
+              <h3 className="text-base font-bold text-brown-900">Beskeder</h3>
             </div>
 
             <div className="space-y-3 mb-6 max-h-96 overflow-y-auto">
@@ -195,7 +195,7 @@ export const FriAdminTicketDetailsPage = () => {
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <p className="font-semibold text-sm text-gray-900">
+                      <p className="font-semibold text-sm text-brown-900">
                         {msg.sender_type === 'admin' ? 'Admin' : msg.sender_name}
                       </p>
                       <p className="text-xs text-gray-400">
@@ -287,14 +287,14 @@ export const FriAdminTicketDetailsPage = () => {
                   <Tag className="w-3.5 h-3.5 text-gray-400" />
                   <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Kategori</p>
                 </div>
-                <p className="text-sm font-semibold text-gray-900 capitalize ml-5">{ticket.category}</p>
+                <p className="text-sm font-semibold text-brown-900 capitalize ml-5">{ticket.category}</p>
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Calendar className="w-3.5 h-3.5 text-gray-400" />
                   <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Oprettet</p>
                 </div>
-                <p className="text-sm text-gray-900 ml-5">
+                <p className="text-sm text-brown-900 ml-5">
                   {new Date(ticket.created_at).toLocaleDateString('da-DK')}
                 </p>
               </div>
@@ -303,7 +303,7 @@ export const FriAdminTicketDetailsPage = () => {
                   <Clock className="w-3.5 h-3.5 text-gray-400" />
                   <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Sidst opdateret</p>
                 </div>
-                <p className="text-sm text-gray-900 ml-5">
+                <p className="text-sm text-brown-900 ml-5">
                   {formatDistanceToNow(new Date(ticket.updated_at), { locale: da, addSuffix: true })}
                 </p>
               </div>

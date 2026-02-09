@@ -53,7 +53,7 @@ export function AccessDeniedPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m5-7V8a5 5 0 00-10 0v3m-2 0h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z" />
           </svg>
         </div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Ingen adgang</h2>
+        <h2 className="text-lg font-semibold text-brown-900 mb-1">Ingen adgang</h2>
         <p className="text-sm text-gray-500">Du har ikke adgang til denne side. Kontakt din administrator.</p>
       </div>
     </div>

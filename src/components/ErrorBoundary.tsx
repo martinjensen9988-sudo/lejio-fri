@@ -51,7 +51,7 @@ class ErrorBoundary extends Component<Props, State> {
                   <AlertTriangle className="h-8 w-8 text-red-600" />
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Noget gik galt</h1>
+              <h1 className="text-2xl font-bold text-brown-900 mb-2">Noget gik galt</h1>
               <p className="text-gray-600 mb-6">
                 Vi beklager. Der opstod en uventet fejl. Prøv venligst igen eller kontakt support.
               </p>

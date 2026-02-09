@@ -24,7 +24,7 @@ export function FriModulesPage() {
     <FriDashboardLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Garage Moduler</h1>
+          <h1 className="text-3xl font-bold text-brown-900">Garage Moduler</h1>
           <p className="text-gray-500 mt-2">
             Aktiver de moduler dit værksted har brug for – og udvid når I er klar. Se alle features, benefits og integrationer.
           </p>
@@ -39,15 +39,15 @@ export function FriModulesPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
             <p className="text-sm text-gray-500">Aktive moduler</p>
-            <p className="text-2xl font-bold text-gray-900 mt-2">{stats.enabledCount}</p>
+            <p className="text-2xl font-bold text-brown-900 mt-2">{stats.enabledCount}</p>
           </div>
           <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
             <p className="text-sm text-gray-500">Klar til aktivering</p>
-            <p className="text-2xl font-bold text-gray-900 mt-2">{stats.readyCount}</p>
+            <p className="text-2xl font-bold text-brown-900 mt-2">{stats.readyCount}</p>
           </div>
           <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
             <p className="text-sm text-gray-500">Total moduler</p>
-            <p className="text-2xl font-bold text-gray-900 mt-2">{workshopModules.length}</p>
+            <p className="text-2xl font-bold text-brown-900 mt-2">{workshopModules.length}</p>
           </div>
         </div>
 
@@ -59,7 +59,7 @@ export function FriModulesPage() {
             const effectiveStatus = isGarageDeal ? 'Klar' : module.status;
             
             return (
-              <Card key={module.id} className="bg-white border border-gray-100 shadow-sm text-gray-900 overflow-hidden">
+              <Card key={module.id} className="bg-white border border-gray-100 shadow-sm text-brown-900 overflow-hidden">
                 <div
                   onClick={() => setExpandedModule(isExpanded ? null : module.id)}
                   className="cursor-pointer hover:bg-gray-50 transition-colors"
@@ -68,7 +68,7 @@ export function FriModulesPage() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-3">
-                          <CardTitle className="text-gray-900">{module.name}</CardTitle>
+                          <CardTitle className="text-brown-900">{module.name}</CardTitle>
                           <span className="text-xs px-2 py-1 rounded-full border border-gray-200 text-gray-500">
                             {effectiveStatus}
                           </span>

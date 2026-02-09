@@ -123,7 +123,7 @@ export function FriSettingsPage() {
     <FriDashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Indstillinger</h1>
+          <h1 className="text-3xl font-bold text-brown-900">Indstillinger</h1>
           <p className="text-gray-500 mt-1">Konfigurer din virksomhedsprofil og præferencer</p>
         </div>
 
@@ -152,7 +152,7 @@ export function FriSettingsPage() {
             <div className="grid gap-6">
               <Card className="border-gray-100">
                 <CardHeader>
-                  <CardTitle className="text-gray-900 flex items-center gap-2">
+                  <CardTitle className="text-brown-900 flex items-center gap-2">
                     <Building2 className="w-5 h-5 text-pink-500" />
                     Virksomhedsoplysninger
                   </CardTitle>
@@ -241,7 +241,7 @@ export function FriSettingsPage() {
 
               <Card className="border-gray-100">
                 <CardHeader>
-                  <CardTitle className="text-gray-900 flex items-center gap-2">
+                  <CardTitle className="text-brown-900 flex items-center gap-2">
                     <Clock className="w-5 h-5 text-pink-500" />
                     Åbningstider
                   </CardTitle>
@@ -275,7 +275,7 @@ export function FriSettingsPage() {
           <TabsContent value="notifications">
             <Card className="border-gray-100">
               <CardHeader>
-                <CardTitle className="text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-brown-900 flex items-center gap-2">
                   <Bell className="w-5 h-5 text-pink-500" />
                   Notifikationspræferencer
                 </CardTitle>
@@ -284,28 +284,28 @@ export function FriSettingsPage() {
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100">
                   <div>
-                    <p className="font-medium text-gray-900">Email Notifikationer</p>
+                    <p className="font-medium text-brown-900">Email Notifikationer</p>
                     <p className="text-sm text-gray-500">Modtag vigtige opdateringer på email</p>
                   </div>
                   <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
                 </div>
                 <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100">
                   <div>
-                    <p className="font-medium text-gray-900">Booking Alerts</p>
+                    <p className="font-medium text-brown-900">Booking Alerts</p>
                     <p className="text-sm text-gray-500">Få besked når du modtager nye bookinger</p>
                   </div>
                   <Switch checked={bookingAlerts} onCheckedChange={setBookingAlerts} />
                 </div>
                 <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100">
                   <div>
-                    <p className="font-medium text-gray-900">Betalingsnotifikationer</p>
+                    <p className="font-medium text-brown-900">Betalingsnotifikationer</p>
                     <p className="text-sm text-gray-500">Få besked ved indgående betalinger</p>
                   </div>
                   <Switch checked={paymentAlerts} onCheckedChange={setPaymentAlerts} />
                 </div>
                 <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-gray-100">
                   <div>
-                    <p className="font-medium text-gray-900">Ugentlig Rapport</p>
+                    <p className="font-medium text-brown-900">Ugentlig Rapport</p>
                     <p className="text-sm text-gray-500">Modtag en ugentlig oversigt over din virksomhed</p>
                   </div>
                   <Switch checked={weeklyReport} onCheckedChange={setWeeklyReport} />
@@ -324,7 +324,7 @@ export function FriSettingsPage() {
           <TabsContent value="branding">
             <Card className="border-gray-100">
               <CardHeader>
-                <CardTitle className="text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-brown-900 flex items-center gap-2">
                   <Palette className="w-5 h-5 text-pink-500" />
                   Branding & Udseende
                 </CardTitle>
@@ -369,7 +369,7 @@ export function FriSettingsPage() {
           <TabsContent value="billing">
             <Card className="border-gray-100">
               <CardHeader>
-                <CardTitle className="text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-brown-900 flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-pink-500" />
                   Abonnement
                 </CardTitle>
@@ -392,15 +392,15 @@ export function FriSettingsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
                     <p className="text-sm text-gray-500">Køretøjer inkluderet</p>
-                    <p className="text-xl font-bold text-gray-900 mt-1">Ubegrænset</p>
+                    <p className="text-xl font-bold text-brown-900 mt-1">Ubegrænset</p>
                   </div>
                   <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
                     <p className="text-sm text-gray-500">Team medlemmer</p>
-                    <p className="text-xl font-bold text-gray-900 mt-1">Op til 10</p>
+                    <p className="text-xl font-bold text-brown-900 mt-1">Op til 10</p>
                   </div>
                   <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
                     <p className="text-sm text-gray-500">API adgang</p>
-                    <p className="text-xl font-bold text-gray-900 mt-1">Fuld adgang</p>
+                    <p className="text-xl font-bold text-brown-900 mt-1">Fuld adgang</p>
                   </div>
                 </div>
 
@@ -443,10 +443,10 @@ export function FriSettingsPage() {
                           >
                             <div className="flex items-start justify-between gap-4">
                               <div>
-                                <p className="font-semibold text-gray-900">{plan.name}</p>
+                                <p className="font-semibold text-brown-900">{plan.name}</p>
                                 <p className="text-xs text-gray-500 mt-1">{plan.description}</p>
                               </div>
-                              <div className="font-semibold text-gray-900 whitespace-nowrap">
+                              <div className="font-semibold text-brown-900 whitespace-nowrap">
                                 kr {Number(plan.price_monthly).toLocaleString('da-DK')}/md
                               </div>
                             </div>

@@ -7,7 +7,7 @@ export function FriVehiclesPage() {
     <FriDashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Køretøjer</h1>
+          <h1 className="text-3xl font-bold text-brown-900">Køretøjer</h1>
           <p className="text-gray-500 mt-1">Administrer din flåde af køretøjer</p>
         </div>
         <VehiclesTab />

@@ -159,34 +159,34 @@ export function FriBookingList({ lessorId }: FriBookingListProps) {
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm text-gray-600 mb-3">
                     <div>
                       <p className="text-gray-500">Køretøj</p>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-brown-900">
                         {booking.vehicle_make} {booking.vehicle_model}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-gray-500">Fra dato</p>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-brown-900">
                         {startDate.toLocaleDateString('da-DK')}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-gray-500">Til dato</p>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-brown-900">
                         {endDate.toLocaleDateString('da-DK')}
                       </p>
                     </div>
 
                     <div>
                       <p className="text-gray-500">Dage</p>
-                      <p className="font-semibold text-gray-900">{days} dage</p>
+                      <p className="font-semibold text-brown-900">{days} dage</p>
                     </div>
 
                     {booking.total_price && (
                       <div>
                         <p className="text-gray-500">Pris</p>
-                        <p className="font-semibold text-gray-900">
+                        <p className="font-semibold text-brown-900">
                           kr. {booking.total_price.toLocaleString('da-DK')}
                         </p>
                       </div>

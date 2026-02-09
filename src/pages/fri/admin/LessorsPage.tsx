@@ -110,7 +110,7 @@ export const FriAdminLessorsPage = () => {
             <Users className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Lessors</h1>
+            <h1 className="text-2xl font-bold text-brown-900">Lessors</h1>
             <p className="text-gray-400 text-sm">Administrer alle lessors på platformen</p>
           </div>
         </div>
@@ -156,7 +156,7 @@ export const FriAdminLessorsPage = () => {
                   const lessorStats = stats[lessor.id];
                   return (
                     <TableRow key={lessor.id} className="hover:bg-violet-50/30 transition-colors border-b border-gray-50">
-                      <TableCell className="font-semibold text-gray-900">{lessor.company_name}</TableCell>
+                      <TableCell className="font-semibold text-brown-900">{lessor.company_name}</TableCell>
                       <TableCell className="text-sm text-gray-500">{lessor.email}</TableCell>
                       <TableCell>{getStatusBadge(lessor.subscription_status)}</TableCell>
                       <TableCell className="text-right font-semibold text-gray-700">{lessorStats?.total_vehicles || 0}</TableCell>

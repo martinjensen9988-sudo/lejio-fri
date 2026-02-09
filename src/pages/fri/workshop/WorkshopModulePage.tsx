@@ -16,7 +16,7 @@ export function WorkshopModulePage() {
           <h1 className="text-3xl font-semibold text-white">Modul ikke fundet</h1>
           <p className="text-white/60 mt-4">Vælg et modul fra oversigten.</p>
           <Link to="/fri/workshop">
-            <Button className="mt-6 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
+            <Button className="mt-6 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">
               Tilbage til oversigt
             </Button>
           </Link>
@@ -76,7 +76,7 @@ export function WorkshopModulePage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
+              <Button className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">
                 {module.status === 'Klar' ? 'Aktiver modul' : 'Book demo'}
               </Button>
               <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">

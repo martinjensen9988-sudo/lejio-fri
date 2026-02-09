@@ -455,7 +455,7 @@ export function FriSignupPage() {
                   </div>
                 )}
 
-                <Button type="submit" className="w-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110" disabled={loading}>
+                <Button type="submit" className="w-full bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110" disabled={loading}>
                   {loading ? 'Opretter...' : 'Næste'}
                 </Button>
               </form>
@@ -517,7 +517,7 @@ export function FriSignupPage() {
                   >
                     Tilbage
                   </Button>
-                  <Button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
+                  <Button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">
                     Næste
                   </Button>
                 </div>
@@ -581,7 +581,7 @@ export function FriSignupPage() {
                   >
                     Tilbage
                   </Button>
-                  <Button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110">
+                  <Button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110">
                     Næste
                   </Button>
                 </div>
@@ -684,7 +684,7 @@ export function FriSignupPage() {
                   >
                     Tilbage
                   </Button>
-                  <Button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-black hover:brightness-110" disabled={loading}>
+                  <Button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-brown-900 hover:brightness-110" disabled={loading}>
                     {loading ? 'Opretter...' : 'Godkend og betal'}
                   </Button>
                 </div>
