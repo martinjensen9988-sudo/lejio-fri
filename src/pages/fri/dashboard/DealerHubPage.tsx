@@ -81,6 +81,9 @@ export default function FriDealerHubPage() {
     til: '',
   });
   const [checklistDone, setChecklistDone] = useState<Record<string, boolean>>({});
+  const [showLoyalty, setShowLoyalty] = useState(false);
+  const [showContracts, setShowContracts] = useState(false);
+  const [showCampaigns, setShowCampaigns] = useState(false);
 
   const stats = useMemo(() => {
     const active = listings.filter((listing) => listing.status !== 'sold').length;
@@ -304,36 +307,51 @@ export default function FriDealerHubPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="border-gray-100 shadow-sm">
-            <CardHeader>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Sparkles className="w-4 h-4 text-amber-500" />
-                Loyalitetskort
-              </div>
-              <CardTitle className="text-lg">Kundekort & rabatkoder</CardTitle>
-              <CardDescription>Aktiver kampagner og opsalg direkte i salgsflowet.</CardDescription>
-            </CardHeader>
-          </Card>
-          <Card className="border-gray-100 shadow-sm">
-            <CardHeader>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <FileText className="w-4 h-4 text-emerald-500" />
-                Kontrakter
-              </div>
-              <CardTitle className="text-lg">Digitale aftaler</CardTitle>
-              <CardDescription>Send og underskriv kontrakter direkte fra pipeline.</CardDescription>
-            </CardHeader>
-          </Card>
-          <Card className="border-gray-100 shadow-sm">
-            <CardHeader>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <BadgePercent className="w-4 h-4 text-violet-500" />
-                Kampagner
-              </div>
-              <CardTitle className="text-lg">Udsend tilbud</CardTitle>
-              <CardDescription>Push kampagner til leads og eksisterende kunder.</CardDescription>
-            </CardHeader>
-          </Card>
+          <button
+            onClick={() => setShowLoyalty(true)}
+            className="text-left border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-brown-200 rounded-lg border"
+          >
+            <Card className="border-0">
+              <CardHeader>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  Loyalitetskort
+                </div>
+                <CardTitle className="text-lg">Kundekort & rabatkoder</CardTitle>
+                <CardDescription>Aktiver kampagner og opsalg direkte i salgsflowet.</CardDescription>
+              </CardHeader>
+            </Card>
+          </button>
+          <button
+            onClick={() => setShowContracts(true)}
+            className="text-left border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-brown-200 rounded-lg border"
+          >
+            <Card className="border-0">
+              <CardHeader>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <FileText className="w-4 h-4 text-emerald-500" />
+                  Kontrakter
+                </div>
+                <CardTitle className="text-lg">Digitale aftaler</CardTitle>
+                <CardDescription>Send og underskriv kontrakter direkte fra pipeline.</CardDescription>
+              </CardHeader>
+            </Card>
+          </button>
+          <button
+            onClick={() => setShowCampaigns(true)}
+            className="text-left border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-brown-200 rounded-lg border"
+          >
+            <Card className="border-0">
+              <CardHeader>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <BadgePercent className="w-4 h-4 text-violet-500" />
+                  Kampagner
+                </div>
+                <CardTitle className="text-lg">Udsend tilbud</CardTitle>
+                <CardDescription>Push kampagner til leads og eksisterende kunder.</CardDescription>
+              </CardHeader>
+            </Card>
+          </button>
         </div>
 
         <Card className="border-gray-100 shadow-sm">
@@ -563,6 +581,224 @@ export default function FriDealerHubPage() {
                   >
                     <Save className="w-4 h-4 mr-2" />
                     {isUpdating ? 'Gemmer...' : 'Gem ændringer'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Loyalitetskort Modal */}
+        {showLoyalty && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-2xl border-0 shadow-xl">
+              <CardHeader className="flex flex-row items-start justify-between pb-4 border-b">
+                <div>
+                  <CardTitle className="text-2xl text-brown-900">Loyalitetskort & rabatkoder</CardTitle>
+                  <CardDescription className="mt-1">Opret og styr kundekort, rabatkoder og loyalitetsprogrammer</CardDescription>
+                </div>
+                <button
+                  onClick={() => setShowLoyalty(false)}
+                  className="p-1 hover:bg-gray-100 rounded transition-colors"
+                >
+                  <X className="w-6 h-6 text-gray-500" />
+                </button>
+              </CardHeader>
+
+              <CardContent className="space-y-6 pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Kort navn</label>
+                    <Input
+                      placeholder="F.eks. Premium medlem"
+                      className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Rabatprocent</label>
+                    <Input
+                      type="number"
+                      placeholder="F.eks. 10"
+                      min="0"
+                      max="100"
+                      className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Gyldig periode</label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="date"
+                        className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
+                      />
+                      <Input
+                        type="date"
+                        className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4 border-t">
+                  <Button
+                    onClick={() => setShowLoyalty(false)}
+                    variant="outline"
+                    className="flex-1 border-gray-300"
+                  >
+                    Luk
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowLoyalty(false);
+                      toast({ title: 'Loyalitetskort oprettet', description: 'Kort er nu aktivt.' });
+                    }}
+                    className="flex-1 bg-brown-500 hover:bg-brown-600 text-white font-semibold"
+                  >
+                    Gem kort
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Kontrakter Modal */}
+        {showContracts && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-2xl border-0 shadow-xl">
+              <CardHeader className="flex flex-row items-start justify-between pb-4 border-b">
+                <div>
+                  <CardTitle className="text-2xl text-brown-900">Digitale kontrakter</CardTitle>
+                  <CardDescription className="mt-1">Send og administrer salgkontrakter direkte i systemet</CardDescription>
+                </div>
+                <button
+                  onClick={() => setShowContracts(false)}
+                  className="p-1 hover:bg-gray-100 rounded transition-colors"
+                >
+                  <X className="w-6 h-6 text-gray-500" />
+                </button>
+              </CardHeader>
+
+              <CardContent className="space-y-6 pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Vælg kontrakttype</label>
+                    <Select defaultValue="sales">
+                      <SelectTrigger className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sales">Salgskontrakt</SelectItem>
+                        <SelectItem value="lease">Lejekontrakt</SelectItem>
+                        <SelectItem value="service">Serviceaftale</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Kundens e-mail</label>
+                    <Input
+                      type="email"
+                      placeholder="kunde@eksempel.dk"
+                      className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Besked til kunde</label>
+                    <Input
+                      placeholder="Hej, venligst underskriv kontrakten..."
+                      className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4 border-t">
+                  <Button
+                    onClick={() => setShowContracts(false)}
+                    variant="outline"
+                    className="flex-1 border-gray-300"
+                  >
+                    Luk
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowContracts(false);
+                      toast({ title: 'Kontrakt sendt', description: 'Kunde modtager underskrivningslink.' });
+                    }}
+                    className="flex-1 bg-brown-500 hover:bg-brown-600 text-white font-semibold"
+                  >
+                    Send kontrakt
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Kampagner Modal */}
+        {showCampaigns && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-2xl border-0 shadow-xl">
+              <CardHeader className="flex flex-row items-start justify-between pb-4 border-b">
+                <div>
+                  <CardTitle className="text-2xl text-brown-900">Kampagner</CardTitle>
+                  <CardDescription className="mt-1">Push salgstilbud til leads og eksisterende kunder</CardDescription>
+                </div>
+                <button
+                  onClick={() => setShowCampaigns(false)}
+                  className="p-1 hover:bg-gray-100 rounded transition-colors"
+                >
+                  <X className="w-6 h-6 text-gray-500" />
+                </button>
+              </CardHeader>
+
+              <CardContent className="space-y-6 pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Kampagnetitel</label>
+                    <Input
+                      placeholder="F.eks. Vinteris tilbud 2026"
+                      className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Tilbudstekst</label>
+                    <Input
+                      placeholder="Beskriv dit tilbud kort og præcist"
+                      className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Send til</label>
+                    <Select defaultValue="all">
+                      <SelectTrigger className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Alle leads</SelectItem>
+                        <SelectItem value="active">Aktive leads</SelectItem>
+                        <SelectItem value="previous">Tidligere kunder</SelectItem>
+                        <SelectItem value="custom">Tilpasset liste</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4 border-t">
+                  <Button
+                    onClick={() => setShowCampaigns(false)}
+                    variant="outline"
+                    className="flex-1 border-gray-300"
+                  >
+                    Annuller
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowCampaigns(false);
+                      toast({ title: 'Kampagne sendt', description: 'Alle modtagere er notificeret.' });
+                    }}
+                    className="flex-1 bg-brown-500 hover:bg-brown-600 text-white font-semibold"
+                  >
+                    Send kampagne
                   </Button>
                 </div>
               </CardContent>
