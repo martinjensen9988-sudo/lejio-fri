@@ -61,6 +61,23 @@ export interface DealerCampaign {
   createdAt: string;
 }
 
+export interface ContractSignature {
+  id: string;
+  signatureCode: string;
+  customerName: string;
+  customerEmail: string;
+  ipAddress: string;
+  ipCountry?: string;
+  ipCity?: string;
+  browser: string;
+  os: string;
+  device: string;
+  signatureTimestamp: string;
+  isValid: boolean;
+  rejectionReason?: string;
+  createdAt: string;
+}
+
 export function useDealerListings() {
   const { user } = useFriAuthContext();
   const queryClient = useQueryClient();
@@ -237,6 +254,37 @@ export function useDealerListings() {
     },
   });
 
+  // Contract signature mutations
+  const signContractMutation = useMutation({
+    mutationFn: async (input: { contractId: string; customerName: string; customerEmail: string }) => {
+      const response = await fetch(`${API_BASE}/SignDealerContract`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(input),
+      });
+      if (!response.ok) throw new Error('Failed to sign contract');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dealerContracts', user?.lessor_id] });
+    },
+  });
+
+  const getSignaturesQuery = (contractId: string | null) => useQuery({
+    queryKey: ['contractSignatures', contractId, user?.lessor_id],
+    queryFn: async () => {
+      if (!contractId || !user?.lessor_id) throw new Error('No contract ID or lessor_id');
+      const response = await fetch(`${API_BASE}/GetContractSignatures?contractId=${contractId}`, {
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to fetch signatures');
+      const data = await response.json();
+      return (data.signatures || []) as ContractSignature[];
+    },
+    enabled: !!contractId && !!user?.lessor_id,
+  });
+
   return {
     // Listings
     listings: listingsQuery.data || [],
@@ -269,5 +317,10 @@ export function useDealerListings() {
     campaignsLoading: campaignsQuery.isLoading,
     sendCampaign: sendCampaignMutation.mutateAsync,
     isSendingCampaign: sendCampaignMutation.isPending,
+
+    // Contract Signatures
+    signContract: signContractMutation.mutateAsync,
+    isSigningContract: signContractMutation.isPending,
+    getSignatures: getSignaturesQuery,
   };
 }

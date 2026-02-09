@@ -237,6 +237,23 @@ CREATE POLICY fri_dealer_campaigns_delete ON fri_dealer_campaigns FOR DELETE
   USING (lessor_id = current_setting('app.lessor_id', true));
 
 -- ============================================================================
+-- CONTRACT SIGNATURES AUDIT LOG RLS
+-- ============================================================================
+
+ALTER TABLE fri_contract_signatures ENABLE ROW LEVEL SECURITY;
+ALTER TABLE fri_contract_signatures FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY fri_contract_signatures_select ON fri_contract_signatures FOR SELECT
+  USING (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_contract_signatures_insert ON fri_contract_signatures FOR INSERT
+  WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_contract_signatures_update ON fri_contract_signatures FOR UPDATE
+  USING (lessor_id = current_setting('app.lessor_id', true))
+  WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_contract_signatures_delete ON fri_contract_signatures FOR DELETE
+  USING (lessor_id = current_setting('app.lessor_id', true));
+
+-- ============================================================================
 -- NOTE: The following tables do NOT have RLS (intentional):
 -- - fri_users (auth table - accessed by auth endpoints only)
 -- - fri_sessions (session table - accessed by session.js only)

@@ -218,6 +218,10 @@ CREATE TABLE IF NOT EXISTS fri_dealer_contracts (
     contract_text TEXT,
     signed_at TIMESTAMP,
     signed_by VARCHAR(255),
+    signature_id VARCHAR(10),
+    signature_ip_address VARCHAR(45),
+    signature_timestamp TIMESTAMP WITH TIME ZONE,
+    signature_metadata JSONB,
     status VARCHAR(50) NOT NULL DEFAULT 'draft',
     pdf_url TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -228,6 +232,46 @@ CREATE TABLE IF NOT EXISTS fri_dealer_contracts (
 
 CREATE INDEX IF NOT EXISTS idx_fri_contracts_lessor ON fri_dealer_contracts(lessor_id);
 CREATE INDEX IF NOT EXISTS idx_fri_contracts_status ON fri_dealer_contracts(status);
+CREATE INDEX IF NOT EXISTS idx_fri_contracts_signature_id ON fri_dealer_contracts(signature_id);
+
+-- ============================================================================
+-- 3d.1 CONTRACT SIGNATURE AUDIT LOG TABLE
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS fri_contract_signatures (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    contract_id UUID NOT NULL,
+    lessor_id VARCHAR(36) NOT NULL,
+    signature_code VARCHAR(10) NOT NULL UNIQUE,
+    customer_name VARCHAR(255) NOT NULL,
+    customer_email VARCHAR(255) NOT NULL,
+    signed_by VARCHAR(255),
+    ip_address VARCHAR(45) NOT NULL,
+    ip_country VARCHAR(2),
+    ip_city VARCHAR(100),
+    user_agent TEXT,
+    browser_name VARCHAR(100),
+    browser_version VARCHAR(50),
+    os_name VARCHAR(100),
+    os_version VARCHAR(50),
+    device_type VARCHAR(50),
+    device_brand VARCHAR(100),
+    device_model VARCHAR(100),
+    signature_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    signature_metadata JSONB,
+    is_valid BOOLEAN NOT NULL DEFAULT TRUE,
+    rejection_reason VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (contract_id) REFERENCES fri_dealer_contracts(id),
+    FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_signatures_contract ON fri_contract_signatures(contract_id);
+CREATE INDEX IF NOT EXISTS idx_signatures_lessor ON fri_contract_signatures(lessor_id);
+CREATE INDEX IF NOT EXISTS idx_signatures_code ON fri_contract_signatures(signature_code);
+CREATE INDEX IF NOT EXISTS idx_signatures_timestamp ON fri_contract_signatures(signature_timestamp);
+CREATE INDEX IF NOT EXISTS idx_signatures_email ON fri_contract_signatures(customer_email);
+CREATE INDEX IF NOT EXISTS idx_signatures_ip ON fri_contract_signatures(ip_address);
 
 -- ============================================================================
 -- 3e. DEALER CAMPAIGNS TABLE
