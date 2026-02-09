@@ -15,7 +15,7 @@ const LayoutError = () => (
       <p className="text-gray-600 mb-6">Der var et problem med indlæsning af dashboardet.</p>
       <button
         onClick={() => window.location.reload()}
-        className="bg-pink-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-pink-600 transition-colors"
+        className="bg-brown-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-brown-600 transition-colors"
       >
         Genindlæs siden
       </button>

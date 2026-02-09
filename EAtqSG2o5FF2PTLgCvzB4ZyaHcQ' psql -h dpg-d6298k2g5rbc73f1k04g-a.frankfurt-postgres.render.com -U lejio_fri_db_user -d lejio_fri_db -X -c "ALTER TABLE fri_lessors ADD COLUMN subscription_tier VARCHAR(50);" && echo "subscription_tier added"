@@ -1,0 +1,36 @@
+                                       Table "public.fri_lessors"
+       Column        |            Type             | Collation | Nullable |           Default            
+---------------------+-----------------------------+-----------+----------+------------------------------
+ id                  | character varying(36)       |           | not null | 
+ email               | character varying(255)      |           | not null | 
+ company_name        | character varying(255)      |           | not null | 
+ cvr_number          | character varying(50)       |           |          | 
+ custom_domain       | character varying(255)      |           |          | 
+ primary_color       | character varying(7)        |           |          | '#3b82f6'::character varying
+ logo_url            | text                        |           |          | 
+ trial_start_date    | timestamp without time zone |           | not null | 
+ trial_end_date      | timestamp without time zone |           | not null | 
+ subscription_status | character varying(50)       |           | not null | 'trial'::character varying
+ tenant_id           | character varying(36)       |           |          | 
+ created_at          | timestamp without time zone |           | not null | CURRENT_TIMESTAMP
+ updated_at          | timestamp without time zone |           | not null | CURRENT_TIMESTAMP
+ selected_modules    | jsonb                       |           | not null | '[]'::jsonb
+Indexes:
+    "fri_lessors_pkey" PRIMARY KEY, btree (id)
+    "fri_lessors_custom_domain_key" UNIQUE CONSTRAINT, btree (custom_domain)
+    "fri_lessors_cvr_number_key" UNIQUE CONSTRAINT, btree (cvr_number)
+    "fri_lessors_email_key" UNIQUE CONSTRAINT, btree (email)
+    "idx_fri_lessors_domain" btree (custom_domain)
+    "idx_fri_lessors_email" btree (email)
+    "idx_fri_lessors_status" btree (subscription_status)
+    "idx_fri_lessors_tenant" btree (tenant_id)
+Referenced by:
+    TABLE "fri_api_keys" CONSTRAINT "fri_api_keys_lessor_id_fkey" FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+    TABLE "fri_audit_logs" CONSTRAINT "fri_audit_logs_lessor_id_fkey" FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+    TABLE "fri_bookings" CONSTRAINT "fri_bookings_lessor_id_fkey" FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+    TABLE "fri_invoices" CONSTRAINT "fri_invoices_lessor_id_fkey" FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+    TABLE "fri_lessor_team_members" CONSTRAINT "fri_lessor_team_members_lessor_id_fkey" FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+    TABLE "fri_payments" CONSTRAINT "fri_payments_lessor_id_fkey" FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+    TABLE "fri_support_tickets" CONSTRAINT "fri_support_tickets_lessor_id_fkey" FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+    TABLE "fri_vehicles" CONSTRAINT "fri_vehicles_lessor_id_fkey" FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+

@@ -139,7 +139,7 @@ export function FriDashboard() {
     {
       title: 'Vækst',
       items: [
-        { label: 'Analytik', desc: 'Indsigt & rapporter', icon: BarChart3, path: '/fri/dashboard/analytics', iconColor: 'text-pink-500', permission: 'analytics' },
+        { label: 'Analytik', desc: 'Indsigt & rapporter', icon: BarChart3, path: '/fri/dashboard/analytics', iconColor: 'text-brown-500', permission: 'analytics' },
         { label: 'Team', desc: 'Medarbejdere & roller', icon: Users, path: '/fri/dashboard/team', iconColor: 'text-orange-500', permission: 'team' },
         { label: 'Betalinger', desc: 'Transaktioner & flow', icon: CreditCard, path: '/fri/dashboard/payments', iconColor: 'text-teal-500', permission: 'payments' },
       ].filter(i => hasAccess(i.permission))

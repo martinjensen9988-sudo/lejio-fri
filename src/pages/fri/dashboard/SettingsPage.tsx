@@ -153,7 +153,7 @@ export function FriSettingsPage() {
               <Card className="border-gray-100">
                 <CardHeader>
                   <CardTitle className="text-brown-900 flex items-center gap-2">
-                    <Building2 className="w-5 h-5 text-pink-500" />
+                    <Building2 className="w-5 h-5 text-brown-500" />
                     Virksomhedsoplysninger
                   </CardTitle>
                   <CardDescription>Grundlæggende information om din virksomhed</CardDescription>
@@ -242,7 +242,7 @@ export function FriSettingsPage() {
               <Card className="border-gray-100">
                 <CardHeader>
                   <CardTitle className="text-brown-900 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-pink-500" />
+                    <Clock className="w-5 h-5 text-brown-500" />
                     Åbningstider
                   </CardTitle>
                 </CardHeader>
@@ -276,7 +276,7 @@ export function FriSettingsPage() {
             <Card className="border-gray-100">
               <CardHeader>
                 <CardTitle className="text-brown-900 flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-pink-500" />
+                  <Bell className="w-5 h-5 text-brown-500" />
                   Notifikationspræferencer
                 </CardTitle>
                 <CardDescription>Vælg hvilke notifikationer du vil modtage</CardDescription>
@@ -325,7 +325,7 @@ export function FriSettingsPage() {
             <Card className="border-gray-100">
               <CardHeader>
                 <CardTitle className="text-brown-900 flex items-center gap-2">
-                  <Palette className="w-5 h-5 text-pink-500" />
+                  <Palette className="w-5 h-5 text-brown-500" />
                   Branding & Udseende
                 </CardTitle>
                 <CardDescription>Tilpas dit brand og din kundevendte side</CardDescription>
@@ -370,12 +370,12 @@ export function FriSettingsPage() {
             <Card className="border-gray-100">
               <CardHeader>
                 <CardTitle className="text-brown-900 flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-pink-500" />
+                  <CreditCard className="w-5 h-5 text-brown-500" />
                   Abonnement
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl p-6 text-white">
+                <div className="bg-gradient-to-r from-brown-500 to-brown-600 rounded-xl p-6 text-white">
                   <div className="flex items-center justify-between">
                     <div>
                       <Badge className="bg-white/20 text-white border-0 mb-2">{planLabel}</Badge>
@@ -437,7 +437,7 @@ export function FriSettingsPage() {
                             onClick={() => setSelectedPlan(plan.id)}
                             className={`w-full text-left rounded-xl border-2 px-4 py-3 transition-all ${
                               selectedPlan === plan.id
-                                ? 'border-pink-500 bg-pink-50'
+                                ? 'border-brown-500 bg-brown-50'
                                 : 'border-gray-200 bg-white hover:bg-gray-100'
                             }`}
                           >
