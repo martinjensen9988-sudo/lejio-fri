@@ -166,7 +166,12 @@ export default function FriDealerHubPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {listings.map((listing) => (
-                <div key={listing.id} className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-lg border border-gray-100 p-4">
+                <button
+                  key={listing.id}
+                  type="button"
+                  onClick={() => toast({ title: listing.title, description: `Status: ${listing.status}` })}
+                  className="w-full flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-lg border border-gray-100 p-4 hover:bg-gray-50 hover:border-brown-200 transition-all cursor-pointer text-left"
+                >
                   <div>
                     <p className="font-semibold text-brown-900">{listing.title}</p>
                     <p className="text-sm text-gray-500">Reg.nr: {listing.reg} · Oprettet {listing.createdAt}</p>
@@ -177,7 +182,7 @@ export default function FriDealerHubPage() {
                     </span>
                     <span className="text-sm font-semibold text-brown-900">kr. {listing.price.toLocaleString('da-DK')}</span>
                   </div>
-                </div>
+                </button>
               ))}
             </CardContent>
           </Card>
@@ -188,13 +193,14 @@ export default function FriDealerHubPage() {
               <CardDescription>Opret et nyt bilsalg pa under 1 minut</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleCreateListing} className="space-y-4">
+              <form onSubmit={handleCreateListing} className="space-y-4" noValidate>
                 <div>
                   <label className="text-sm font-medium text-gray-700">Titel</label>
                   <Input
                     value={form.title}
                     onChange={(event) => setForm({ ...form, title: event.target.value })}
                     placeholder="F.eks. Audi A4 S line"
+                    className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
                   />
                 </div>
                 <div>
@@ -203,6 +209,7 @@ export default function FriDealerHubPage() {
                     value={form.reg}
                     onChange={(event) => setForm({ ...form, reg: event.target.value })}
                     placeholder="AB12345"
+                    className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
                   />
                 </div>
                 <div>
@@ -212,12 +219,13 @@ export default function FriDealerHubPage() {
                     value={form.price}
                     onChange={(event) => setForm({ ...form, price: event.target.value })}
                     placeholder="189900"
+                    className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
                   />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">Status</label>
                   <Select value={form.status} onValueChange={(value) => setForm({ ...form, status: value as ListingStatus })}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -227,7 +235,7 @@ export default function FriDealerHubPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button type="submit" className="w-full bg-pink-600 hover:bg-pink-700 text-white">
+                <Button type="submit" className="w-full bg-brown-500 hover:bg-brown-600 text-white font-semibold">
                   Opret annonce
                 </Button>
               </form>
@@ -301,19 +309,22 @@ export default function FriDealerHubPage() {
                   placeholder="Kundenavn"
                   value={guleSeddel.kunde}
                   onChange={(event) => setGuleSeddel({ ...guleSeddel, kunde: event.target.value })}
+                  className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
                 />
                 <Input
                   placeholder="Reg.nr"
                   value={guleSeddel.reg}
                   onChange={(event) => setGuleSeddel({ ...guleSeddel, reg: event.target.value })}
+                  className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
                 />
                 <Input
                   type="date"
                   value={guleSeddel.dato}
                   onChange={(event) => setGuleSeddel({ ...guleSeddel, dato: event.target.value })}
+                  className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
                 />
                 <div className="md:col-span-3">
-                  <Button type="submit" className="bg-pink-600 hover:bg-pink-700 text-white">
+                  <Button type="submit" className="bg-brown-500 hover:bg-brown-600 text-white font-semibold">
                     Generer guleseddel
                   </Button>
                 </div>
@@ -338,23 +349,27 @@ export default function FriDealerHubPage() {
                   placeholder="Kundenavn"
                   value={proevekoersel.kunde}
                   onChange={(event) => setProevekoersel({ ...proevekoersel, kunde: event.target.value })}
+                  className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
                 />
                 <Input
                   placeholder="Reg.nr"
                   value={proevekoersel.reg}
                   onChange={(event) => setProevekoersel({ ...proevekoersel, reg: event.target.value })}
+                  className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
                 />
                 <Input
                   type="datetime-local"
                   value={proevekoersel.fra}
                   onChange={(event) => setProevekoersel({ ...proevekoersel, fra: event.target.value })}
+                  className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
                 />
                 <Input
                   type="datetime-local"
                   value={proevekoersel.til}
                   onChange={(event) => setProevekoersel({ ...proevekoersel, til: event.target.value })}
+                  className="bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
                 />
-                <Button type="submit" className="w-full bg-pink-600 hover:bg-pink-700 text-white">
+                <Button type="submit" className="w-full bg-brown-500 hover:bg-brown-600 text-white font-semibold">
                   Gem provekoersel
                 </Button>
               </form>
