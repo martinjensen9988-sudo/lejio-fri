@@ -35,6 +35,9 @@ function injectLessorFilter(query, lessorId) {
   const touchesTenantTable = TENANT_TABLES.some(t => queryLower.includes(t));
   if (!touchesTenantTable) return query;
   
+  // Skip fri_lessors - it doesn't have lessor_id column, it IS the lessor
+  if (queryLower.includes('fri_lessors')) return query;
+  
   // Already has a lessor_id filter — don't double-filter
   if (queryLower.includes('lessor_id')) return query;
   
