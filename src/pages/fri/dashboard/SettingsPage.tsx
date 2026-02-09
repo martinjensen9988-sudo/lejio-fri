@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import FriDashboardLayout from '@/components/fri/FriDashboardLayout';
+import { supabase } from '@/integrations/api/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,6 +55,8 @@ export function FriSettingsPage() {
   const [primaryColor, setPrimaryColor] = useState(account?.branding?.primary_color || '#ec4899');
   const [secondaryColor, setSecondaryColor] = useState('#3b82f6');
   const [logoUrl, setLogoUrl] = useState(account?.branding?.logo_url || '');
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!account?.subscription_tier) return;
@@ -114,6 +117,64 @@ export function FriSettingsPage() {
       toast.error(err instanceof Error ? err.message : 'Kunne ikke opdatere plan');
     } finally {
       setUpdatingPlan(false);
+    }
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Kun billedfiler er tilladt (PNG, JPG, SVG)');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Logo må max være 2MB');
+      return;
+    }
+
+    setUploadingLogo(true);
+    try {
+      // Read file as base64 (data URL)
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error('Kunne ikke læse filen'));
+        reader.readAsDataURL(file);
+      });
+
+      const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+
+      // Upload via backend function
+      const { data, error } = await supabase.functions.invoke('upload-company-logo', {
+        body: {
+          imageBase64: dataUrl,
+          contentType: file.type,
+          fileExt,
+        },
+      });
+
+      if (error) {
+        console.error('[SettingsPage] Upload error:', error);
+        toast.error('Kunne ikke uploade logo');
+        return;
+      }
+
+      if (data?.publicUrl) {
+        console.log('[SettingsPage] Logo uploaded:', data.publicUrl);
+        setLogoUrl(data.publicUrl);
+        toast.success('Logo uploadet - gem branding for at gemme ændringerne');
+      }
+    } catch (err) {
+      console.error('[SettingsPage] Error uploading logo:', err);
+      toast.error(err instanceof Error ? err.message : 'Kunne ikke uploade logo');
+    } finally {
+      setUploadingLogo(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -348,9 +409,20 @@ export function FriSettingsPage() {
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <Label className="text-gray-700">Logo</Label>
-                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-pink-300 transition-colors cursor-pointer">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    disabled={uploadingLogo}
+                    className="hidden"
+                  />
+                  <div 
+                    onClick={() => !uploadingLogo && fileInputRef.current?.click()}
+                    className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-pink-300 transition-colors cursor-pointer"
+                  >
                     <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-500">Klik for at uploade dit logo</p>
+                    <p className="text-sm text-gray-500">{uploadingLogo ? 'Uploader...' : 'Klik for at uploade dit logo'}</p>
                     <p className="text-xs text-gray-400 mt-1">PNG, JPG eller SVG (max 2MB)</p>
                   </div>
                 </div>
