@@ -87,6 +87,10 @@ const ProSubscriptionCard = ({ vehicleCount = 0 }: ProSubscriptionCardProps) => 
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly');
+  const [showPlanSelector, setShowPlanSelector] = useState(false);
+  const [selectedNewTier, setSelectedNewTier] = useState<string | null>(null);
+  const [paymentMethodForPlan, setPaymentMethodForPlan] = useState<string>('');
+  const [changingPlan, setChangingPlan] = useState(false);
 
   const checkSubscription = async () => {
     try {
@@ -282,75 +286,248 @@ const ProSubscriptionCard = ({ vehicleCount = 0 }: ProSubscriptionCardProps) => 
     );
   }
 
-  // If user has active subscription, show management view
+  // If user has active subscription, show management view with upgrade/downgrade options
   if (subscription?.subscribed) {
     const currentTier = TIERS.find(t => t.id === subscription.tier) || TIERS[0];
-    
-    return (
-      <Card className="border-primary">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Crown className="w-5 h-5 text-primary" />
-                Dit Pro-abonnement
-              </CardTitle>
-              <CardDescription>
-                Administrer dit månedlige abonnement
-              </CardDescription>
-            </div>
-            <Badge className="bg-primary">
-              <CheckCircle className="w-3 h-3 mr-1" />
-              Aktiv
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="bg-muted p-4 rounded-lg space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Nuværende plan</span>
-              <span className="font-semibold">{subscription.tier_name}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Pris</span>
-              <span className="font-semibold">{currentTier.monthlyPrice} kr/md</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Maks. køretøjer</span>
-              <span className="font-semibold">{subscription.max_vehicles === 999 ? 'Ubegrænset' : subscription.max_vehicles}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Dine køretøjer</span>
-              <span className="font-semibold">{vehicleCount}</span>
-            </div>
-            {subscription.subscription_end && (
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Næste betaling</span>
-                <span className="font-semibold">
-                  {format(new Date(subscription.subscription_end), 'd. MMMM yyyy', { locale: da })}
-                </span>
-              </div>
-            )}
-          </div>
 
-          <Button 
-            onClick={handleManageSubscription} 
-            variant="outline" 
-            className="w-full"
-            disabled={portalLoading}
-          >
-            {portalLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-            ) : (
-              <Settings className="w-4 h-4 mr-2" />
-            )}
-            Administrer abonnement
-          </Button>
-          <p className="text-xs text-center text-muted-foreground">
-            Her kan du ændre betalingsmetode, opgradere/nedgradere eller annullere dit abonnement
-          </p>
-        </CardContent>
-      </Card>
+    const handleChangePlan = async (newTierId: string) => {
+      if (!paymentMethodForPlan) {
+        toast.error('Vælg en betalingsmetode');
+        return;
+      }
+
+      setChangingPlan(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('change-pro-plan', {
+          body: { 
+            newTier: newTierId, 
+            paymentMethod: paymentMethodForPlan 
+          },
+        });
+
+        if (error) throw error;
+
+        toast.success('Plan ændret succesfuldt!', {
+          description: `Dit abonnement er opdateret til ${TIERS.find(t => t.id === newTierId)?.name}`,
+        });
+
+        // Refresh subscription status
+        setShowPlanSelector(false);
+        setSelectedNewTier(null);
+        setPaymentMethodForPlan('');
+        setTimeout(() => checkSubscription(), 1500);
+      } catch (error: unknown) {
+        console.error('Plan change error:', error);
+        toast.error('Kunne ikke ændre plan', {
+          description: error.message || 'Prøv igen senere',
+        });
+      } finally {
+        setChangingPlan(false);
+      }
+    };
+
+    return (
+      <div className="space-y-6">
+        <Card className="border-primary">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Crown className="w-5 h-5 text-primary" />
+                  Dit Pro-abonnement
+                </CardTitle>
+                <CardDescription>
+                  Administrer dit månedlige abonnement
+                </CardDescription>
+              </div>
+              <Badge className="bg-primary">
+                <CheckCircle className="w-3 h-3 mr-1" />
+                Aktiv
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="bg-muted p-4 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Nuværende plan</span>
+                <span className="font-semibold">{subscription.tier_name}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Pris</span>
+                <span className="font-semibold">{currentTier.monthlyPrice} kr/md</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Maks. køretøjer</span>
+                <span className="font-semibold">{subscription.max_vehicles === 999 ? 'Ubegrænset' : subscription.max_vehicles}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Dine køretøjer</span>
+                <span className="font-semibold">{vehicleCount}</span>
+              </div>
+              {subscription.subscription_end && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Næste betaling</span>
+                  <span className="font-semibold">
+                    {format(new Date(subscription.subscription_end), 'd. MMMM yyyy', { locale: da })}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => setShowPlanSelector(!showPlanSelector)} 
+                variant="default"
+                className="flex-1"
+              >
+                Skift plan
+              </Button>
+              <Button 
+                onClick={handleManageSubscription} 
+                variant="outline"
+                className="flex-1"
+                disabled={portalLoading}
+              >
+                {portalLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                ) : (
+                  <Settings className="w-4 h-4 mr-2" />
+                )}
+                Rediger
+              </Button>
+            </div>
+            <p className="text-xs text-center text-muted-foreground">
+              "Rediger" åbner Stripe-portalen hvor du kan ændre betalingsmetode eller annullere
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Plan Selector for Changing Plans */}
+        {showPlanSelector && (
+          <Card className="border-primary/50 bg-gradient-to-br from-primary/5 to-transparent">
+            <CardHeader>
+              <CardTitle>Skift til en anden plan</CardTitle>
+              <CardDescription>
+                Vælg en ny plan og betalingsmetode
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-3 md:grid-cols-3">
+                {TIERS.map((tier) => (
+                  <div 
+                    key={tier.id}
+                    onClick={() => setSelectedNewTier(tier.id)}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedNewTier === tier.id 
+                        ? 'border-primary bg-primary/5' 
+                        : 'border-muted hover:border-muted-foreground/50'
+                    } ${
+                      tier.id === subscription.tier ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    <div className="font-semibold">{tier.name}</div>
+                    <div className="text-sm text-muted-foreground">{tier.monthlyPrice} kr/md</div>
+                    {tier.id === subscription.tier && (
+                      <div className="text-xs text-primary mt-2">Nuværende plan</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {selectedNewTier && (
+                <div className="space-y-4 p-4 rounded-lg bg-muted/50">
+                  <div>
+                    <Label className="font-semibold mb-3 block">Vælg betalingsmetode</Label>
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer hover:bg-muted transition-colors" 
+                             style={{
+                               borderColor: paymentMethodForPlan === 'card' ? '#3b82f6' : 'var(--border)',
+                               backgroundColor: paymentMethodForPlan === 'card' ? 'rgba(59, 130, 246, 0.05)' : 'transparent'
+                             }}>
+                        <input 
+                          type="radio" 
+                          name="payment" 
+                          value="card"
+                          checked={paymentMethodForPlan === 'card'}
+                          onChange={(e) => setPaymentMethodForPlan(e.target.value)}
+                          className="w-4 h-4"
+                        />
+                        <div>
+                          <div className="font-medium">Kreditkort</div>
+                          <div className="text-sm text-muted-foreground">Visa, Mastercard via Stripe</div>
+                        </div>
+                      </label>
+
+                      <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer hover:bg-muted transition-colors"
+                             style={{
+                               borderColor: paymentMethodForPlan === 'bank_transfer' ? '#3b82f6' : 'var(--border)',
+                               backgroundColor: paymentMethodForPlan === 'bank_transfer' ? 'rgba(59, 130, 246, 0.05)' : 'transparent'
+                             }}>
+                        <input 
+                          type="radio" 
+                          name="payment" 
+                          value="bank_transfer"
+                          checked={paymentMethodForPlan === 'bank_transfer'}
+                          onChange={(e) => setPaymentMethodForPlan(e.target.value)}
+                          className="w-4 h-4"
+                        />
+                        <div>
+                          <div className="font-medium">Bankoverførsel</div>
+                          <div className="text-sm text-muted-foreground">Direkte fra din bankkonto</div>
+                        </div>
+                      </label>
+
+                      <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer hover:bg-muted transition-colors"
+                             style={{
+                               borderColor: paymentMethodForPlan === 'invoice' ? '#3b82f6' : 'var(--border)',
+                               backgroundColor: paymentMethodForPlan === 'invoice' ? 'rgba(59, 130, 246, 0.05)' : 'transparent'
+                             }}>
+                        <input 
+                          type="radio" 
+                          name="payment" 
+                          value="invoice"
+                          checked={paymentMethodForPlan === 'invoice'}
+                          onChange={(e) => setPaymentMethodForPlan(e.target.value)}
+                          className="w-4 h-4"
+                        />
+                        <div>
+                          <div className="font-medium">Faktura</div>
+                          <div className="text-sm text-muted-foreground">Vi sender en faktura via email</div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => handleChangePlan(selectedNewTier)}
+                      className="flex-1"
+                      disabled={!paymentMethodForPlan || changingPlan}
+                    >
+                      {changingPlan ? (
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      ) : null}
+                      Bekræft ændring
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        setShowPlanSelector(false);
+                        setSelectedNewTier(null);
+                        setPaymentMethodForPlan('');
+                      }}
+                      variant="outline"
+                      className="flex-1"
+                      disabled={changingPlan}
+                    >
+                      Annuller
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
     );
   }
 
