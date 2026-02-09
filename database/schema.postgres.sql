@@ -174,6 +174,7 @@ CREATE TABLE IF NOT EXISTS fri_dealer_listings (
     reg_number VARCHAR(20) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'Klar',
+    image_url TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
@@ -181,6 +182,73 @@ CREATE TABLE IF NOT EXISTS fri_dealer_listings (
 
 CREATE INDEX IF NOT EXISTS idx_fri_dealer_listings_lessor ON fri_dealer_listings(lessor_id);
 CREATE INDEX IF NOT EXISTS idx_fri_dealer_listings_status ON fri_dealer_listings(status);
+
+-- ============================================================================
+-- 3c. DEALER LOYALTY CARDS TABLE
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS fri_dealer_loyalty_cards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    lessor_id VARCHAR(36) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    discount_percent DECIMAL(5, 2) NOT NULL,
+    valid_from TIMESTAMP NOT NULL,
+    valid_to TIMESTAMP NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_fri_loyalty_cards_lessor ON fri_dealer_loyalty_cards(lessor_id);
+CREATE INDEX IF NOT EXISTS idx_fri_loyalty_cards_active ON fri_dealer_loyalty_cards(is_active);
+
+-- ============================================================================
+-- 3d. DEALER CONTRACTS TABLE
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS fri_dealer_contracts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    lessor_id VARCHAR(36) NOT NULL,
+    listing_id UUID,
+    contract_type VARCHAR(50) NOT NULL,
+    customer_name VARCHAR(255) NOT NULL,
+    customer_email VARCHAR(255) NOT NULL,
+    customer_phone VARCHAR(20),
+    contract_text TEXT,
+    signed_at TIMESTAMP,
+    signed_by VARCHAR(255),
+    status VARCHAR(50) NOT NULL DEFAULT 'draft',
+    pdf_url TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id),
+    FOREIGN KEY (listing_id) REFERENCES fri_dealer_listings(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_fri_contracts_lessor ON fri_dealer_contracts(lessor_id);
+CREATE INDEX IF NOT EXISTS idx_fri_contracts_status ON fri_dealer_contracts(status);
+
+-- ============================================================================
+-- 3e. DEALER CAMPAIGNS TABLE
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS fri_dealer_campaigns (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    lessor_id VARCHAR(36) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    offer_text TEXT NOT NULL,
+    target_group VARCHAR(50) NOT NULL,
+    sent_count INTEGER NOT NULL DEFAULT 0,
+    response_count INTEGER NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_fri_campaigns_lessor ON fri_dealer_campaigns(lessor_id);
+CREATE INDEX IF NOT EXISTS idx_fri_campaigns_active ON fri_dealer_campaigns(is_active);
 
 -- ============================================================================
 -- 4. BOOKING TABLES

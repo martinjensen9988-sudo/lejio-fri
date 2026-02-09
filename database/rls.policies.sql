@@ -186,6 +186,57 @@ CREATE POLICY fri_dealer_listings_delete ON fri_dealer_listings FOR DELETE
   USING (lessor_id = current_setting('app.lessor_id', true));
 
 -- ============================================================================
+-- DEALER LOYALTY CARDS RLS
+-- ============================================================================
+
+ALTER TABLE fri_dealer_loyalty_cards ENABLE ROW LEVEL SECURITY;
+ALTER TABLE fri_dealer_loyalty_cards FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY fri_dealer_loyalty_cards_select ON fri_dealer_loyalty_cards FOR SELECT
+  USING (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_loyalty_cards_insert ON fri_dealer_loyalty_cards FOR INSERT
+  WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_loyalty_cards_update ON fri_dealer_loyalty_cards FOR UPDATE
+  USING (lessor_id = current_setting('app.lessor_id', true))
+  WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_loyalty_cards_delete ON fri_dealer_loyalty_cards FOR DELETE
+  USING (lessor_id = current_setting('app.lessor_id', true));
+
+-- ============================================================================
+-- DEALER CONTRACTS RLS
+-- ============================================================================
+
+ALTER TABLE fri_dealer_contracts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE fri_dealer_contracts FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY fri_dealer_contracts_select ON fri_dealer_contracts FOR SELECT
+  USING (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_contracts_insert ON fri_dealer_contracts FOR INSERT
+  WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_contracts_update ON fri_dealer_contracts FOR UPDATE
+  USING (lessor_id = current_setting('app.lessor_id', true))
+  WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_contracts_delete ON fri_dealer_contracts FOR DELETE
+  USING (lessor_id = current_setting('app.lessor_id', true));
+
+-- ============================================================================
+-- DEALER CAMPAIGNS RLS
+-- ============================================================================
+
+ALTER TABLE fri_dealer_campaigns ENABLE ROW LEVEL SECURITY;
+ALTER TABLE fri_dealer_campaigns FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY fri_dealer_campaigns_select ON fri_dealer_campaigns FOR SELECT
+  USING (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_campaigns_insert ON fri_dealer_campaigns FOR INSERT
+  WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_campaigns_update ON fri_dealer_campaigns FOR UPDATE
+  USING (lessor_id = current_setting('app.lessor_id', true))
+  WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_campaigns_delete ON fri_dealer_campaigns FOR DELETE
+  USING (lessor_id = current_setting('app.lessor_id', true));
+
+-- ============================================================================
 -- NOTE: The following tables do NOT have RLS (intentional):
 -- - fri_users (auth table - accessed by auth endpoints only)
 -- - fri_sessions (session table - accessed by session.js only)

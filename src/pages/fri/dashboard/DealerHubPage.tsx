@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useDealerListings, type DealerListing } from '@/hooks/useDealerListings';
-import { Car, BadgePercent, Sparkles, FileText, TrendingUp, X, Trash2, Save } from 'lucide-react';
+import { Car, BadgePercent, Sparkles, FileText, TrendingUp, X, Trash2, Save, Search, Upload } from 'lucide-react';
 
 type ListingStatus = 'available' | 'reserved' | 'sold';
 
@@ -84,6 +84,19 @@ export default function FriDealerHubPage() {
   const [showLoyalty, setShowLoyalty] = useState(false);
   const [showContracts, setShowContracts] = useState(false);
   const [showCampaigns, setShowCampaigns] = useState(false);
+  
+  // Search & Filter
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState<'all' | ListingStatus>('all');
+  
+  // Loyalty Card form
+  const [loyaltyForm, setLoyaltyForm] = useState({ name: '', discount: '', validFrom: '', validTo: '' });
+  
+  // Contract form
+  const [contractForm, setContractForm] = useState({ type: 'sales', name: '', email: '' });
+  
+  // Campaign form
+  const [campaignForm, setCampaignForm] = useState({ title: '', text: '', target: 'all' });
 
   const stats = useMemo(() => {
     const active = listings.filter((listing) => listing.status !== 'sold').length;
@@ -93,6 +106,19 @@ export default function FriDealerHubPage() {
       .reduce((sum, listing) => sum + listing.price, 0);
     return { active, sold, pipelineValue };
   }, [listings]);
+
+  const filteredListings = useMemo(() => {
+    return listings.filter((listing) => {
+      const matchesSearch =
+        searchQuery === '' ||
+        listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        listing.reg.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesStatus = filterStatus === 'all' || listing.status === filterStatus;
+      
+      return matchesSearch && matchesStatus;
+    });
+  }, [listings, searchQuery, filterStatus]);
 
   const handleCreateListing = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -221,32 +247,64 @@ export default function FriDealerHubPage() {
               <CardTitle>Aktive salgsannoncer</CardTitle>
               <CardDescription>Hold styr pa status, pris og næste handling</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {isLoading ? (
-                <p className="text-gray-500 text-center py-8">Indlæser annoncer...</p>
-              ) : listings.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">Ingen annoncer endnu. Opret en ny nedenfor.</p>
-              ) : (
-                listings.map((listing) => (
-                  <button
-                    key={listing.id}
-                    type="button"
-                    onClick={() => handleSelectListing(listing)}
-                    className="w-full flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-lg border border-gray-100 p-4 hover:bg-gray-50 hover:border-brown-200 transition-all cursor-pointer text-left"
-                  >
-                    <div>
-                      <p className="font-semibold text-brown-900">{listing.title}</p>
-                      <p className="text-sm text-gray-500">Reg.nr: {listing.reg} · Oprettet {new Date(listing.createdAt).toLocaleDateString('da-DK')}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`text-xs px-2.5 py-1 rounded-full border ${statusStyles[listing.status]}`}>
-                        {statusDisplay[listing.status]}
-                      </span>
-                      <span className="text-sm font-semibold text-brown-900">kr. {listing.price.toLocaleString('da-DK')}</span>
-                    </div>
-                  </button>
-                ))
-              )}
+            <CardContent className="space-y-4">
+              {/* Search & Filter */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <Input
+                    placeholder="Søg efter titel eller reg.nr..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 bg-white border-gray-300 focus:border-brown-500"
+                  />
+                </div>
+                <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as any)}>
+                  <SelectTrigger className="sm:w-40 bg-white border-gray-300">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Alle status</SelectItem>
+                    <SelectItem value="available">Klar</SelectItem>
+                    <SelectItem value="reserved">I dialog</SelectItem>
+                    <SelectItem value="sold">Solgt</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Listings */}
+              <div className="space-y-3">
+                {isLoading ? (
+                  <p className="text-gray-500 text-center py-8">Indlæser annoncer...</p>
+                ) : listings.length === 0 ? (
+                  <p className="text-gray-500 text-center py-8">Ingen annoncer endnu. Opret en ny nedenfor.</p>
+                ) : filteredListings.length === 0 ? (
+                  <p className="text-gray-500 text-center py-8">Ingen annoncer matcher dine søgekriteria.</p>
+                ) : (
+                  filteredListings.map((listing) => (
+                    <button
+                      key={listing.id}
+                      type="button"
+                      onClick={() => handleSelectListing(listing)}
+                      className="w-full flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-lg border border-gray-100 p-4 hover:bg-gray-50 hover:border-brown-200 transition-all cursor-pointer text-left overflow-hidden"
+                    >
+                      {listing.imageUrl && (
+                        <img src={listing.imageUrl} alt={listing.title} className="w-16 h-12 rounded object-cover" />
+                      )}
+                      <div className="flex-1">
+                        <p className="font-semibold text-brown-900">{listing.title}</p>
+                        <p className="text-sm text-gray-500">Reg.nr: {listing.reg} · Oprettet {new Date(listing.createdAt).toLocaleDateString('da-DK')}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-xs px-2.5 py-1 rounded-full border ${statusStyles[listing.status]}`}>
+                          {statusDisplay[listing.status]}
+                        </span>
+                        <span className="text-sm font-semibold text-brown-900 whitespace-nowrap">kr. {listing.price.toLocaleString('da-DK')}</span>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
             </CardContent>
           </Card>
 
