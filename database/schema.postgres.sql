@@ -485,6 +485,60 @@ CREATE INDEX IF NOT EXISTS idx_fri_tenants_domain ON fri_tenants(domain);
 CREATE INDEX IF NOT EXISTS idx_fri_tenants_status ON fri_tenants(status);
 
 -- ============================================================================
+-- 10b. TENANT PROVISIONING TRACKING TABLE
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS fri_tenant_provisioning (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id VARCHAR(36) NOT NULL UNIQUE,
+    lessor_id VARCHAR(36) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'pending',
+    step VARCHAR(100),
+    progress_percent INTEGER DEFAULT 0,
+    error_message TEXT,
+    provisioned_at TIMESTAMP,
+    estimated_completion TIMESTAMP,
+    trial_end_timestamp TIMESTAMP,
+    migration_source VARCHAR(50) DEFAULT 'shared_trial',
+    attempted_count INTEGER DEFAULT 0,
+    last_attempt_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES fri_tenants(id),
+    FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_provisioning_tenant ON fri_tenant_provisioning(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_provisioning_lessor ON fri_tenant_provisioning(lessor_id);
+CREATE INDEX IF NOT EXISTS idx_provisioning_status ON fri_tenant_provisioning(status);
+CREATE INDEX IF NOT EXISTS idx_provisioning_trial_end ON fri_tenant_provisioning(trial_end_timestamp);
+
+-- ============================================================================
+-- 10c. TENANT MIGRATION HISTORY TABLE
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS fri_tenant_migrations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id VARCHAR(36) NOT NULL,
+    lessor_id VARCHAR(36) NOT NULL,
+    migration_type VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'pending',
+    started_at TIMESTAMP,
+    completed_at TIMESTAMP,
+    records_migrated INTEGER DEFAULT 0,
+    error_details JSONB,
+    migration_log TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES fri_tenants(id),
+    FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_migrations_tenant ON fri_tenant_migrations(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_migrations_lessor ON fri_tenant_migrations(lessor_id);
+CREATE INDEX IF NOT EXISTS idx_migrations_status ON fri_tenant_migrations(status);
+CREATE INDEX IF NOT EXISTS idx_migrations_date ON fri_tenant_migrations(created_at);
+
+-- ============================================================================
 -- 11. PAGE BUILDER TABLES
 -- ============================================================================
 
