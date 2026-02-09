@@ -1,3 +1,6 @@
+const { withLessorClient } = require('../rls');
+const pool = require('../db');
+
 module.exports = async function (context, req) {
   context.res = context.res || {};
   context.res.headers = {
