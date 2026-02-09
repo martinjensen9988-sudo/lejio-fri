@@ -11,29 +11,21 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useDealerListings, type DealerListing } from '@/hooks/useDealerListings';
 import { Car, BadgePercent, Sparkles, FileText, TrendingUp, X, Trash2, Save } from 'lucide-react';
 
-type ListingStatus = 'Klar' | 'I dialog' | 'Solgt';
+type ListingStatus = 'available' | 'reserved' | 'sold';
 
-type Listing = {
-  id: string;
-  title: string;
-  reg: string;
-  price: number;
-  status: ListingStatus;
-  createdAt: string;
+const statusDisplay: Record<ListingStatus, string> = {
+  available: 'Klar',
+  reserved: 'I dialog',
+  sold: 'Solgt',
 };
 
-const initialListings: Listing[] = [
-  { id: '1', title: 'VW Golf 1.5 TSI', reg: 'AB12345', price: 189900, status: 'I dialog', createdAt: '2026-02-03' },
-  { id: '2', title: 'BMW 320d Touring', reg: 'CD67890', price: 249900, status: 'Klar', createdAt: '2026-02-01' },
-  { id: '3', title: 'Tesla Model 3 Long Range', reg: 'EF54321', price: 329900, status: 'Solgt', createdAt: '2026-01-27' },
-];
-
 const statusStyles: Record<ListingStatus, string> = {
-  Klar: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  'I dialog': 'bg-amber-50 text-amber-700 border-amber-200',
-  Solgt: 'bg-slate-50 text-slate-600 border-slate-200',
+  available: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  reserved: 'bg-amber-50 text-amber-700 border-amber-200',
+  sold: 'bg-slate-50 text-slate-600 border-slate-200',
 };
 
 const dealerFeatures = [
@@ -65,16 +57,17 @@ const salesChecklist = [
 
 export default function FriDealerHubPage() {
   const { toast } = useToast();
-  const [listings, setListings] = useState<Listing[]>(initialListings);
-  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const { listings, isLoading, create, update, delete: deleteListing, isCreating, isUpdating, isDeleting } = useDealerListings();
+  
+  const [selectedListing, setSelectedListing] = useState<DealerListing | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editPrice, setEditPrice] = useState('');
-  const [editStatus, setEditStatus] = useState<ListingStatus>('Klar');
+  const [editStatus, setEditStatus] = useState<ListingStatus>('available');
   const [form, setForm] = useState({
     title: '',
     reg: '',
     price: '',
-    status: 'Klar' as ListingStatus,
+    status: 'available' as ListingStatus,
   });
   const [guleSeddel, setGuleSeddel] = useState({
     kunde: '',
@@ -90,36 +83,36 @@ export default function FriDealerHubPage() {
   const [checklistDone, setChecklistDone] = useState<Record<string, boolean>>({});
 
   const stats = useMemo(() => {
-    const active = listings.filter((listing) => listing.status !== 'Solgt').length;
-    const sold = listings.filter((listing) => listing.status === 'Solgt').length;
+    const active = listings.filter((listing) => listing.status !== 'sold').length;
+    const sold = listings.filter((listing) => listing.status === 'sold').length;
     const pipelineValue = listings
-      .filter((listing) => listing.status !== 'Solgt')
+      .filter((listing) => listing.status !== 'sold')
       .reduce((sum, listing) => sum + listing.price, 0);
     return { active, sold, pipelineValue };
   }, [listings]);
 
-  const handleCreateListing = (event: React.FormEvent) => {
+  const handleCreateListing = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!form.title || !form.reg || !form.price) {
       toast({ title: 'Udfyld alle felter', variant: 'destructive' });
       return;
     }
 
-    const next: Listing = {
-      id: crypto.randomUUID(),
-      title: form.title,
-      reg: form.reg.toUpperCase(),
-      price: Number(form.price),
-      status: form.status,
-      createdAt: new Date().toISOString().slice(0, 10),
-    };
-
-    setListings((current) => [next, ...current]);
-    setForm({ title: '', reg: '', price: '', status: 'Klar' });
-    toast({ title: 'Annoncen er oprettet', description: 'Bilforhandler flowet er opdateret.' });
+    try {
+      await create({
+        title: form.title,
+        reg_number: form.reg.toUpperCase(),
+        price: Number(form.price),
+        status: form.status,
+      });
+      setForm({ title: '', reg: '', price: '', status: 'available' });
+      toast({ title: 'Annoncen er oprettet', description: 'Bilforhandler flowet er opdateret.' });
+    } catch (error) {
+      toast({ title: 'Fejl', description: 'Kunne ikke oprette annonce.', variant: 'destructive' });
+    }
   };
 
-  const handleSelectListing = (listing: Listing) => {
+  const handleSelectListing = (listing: DealerListing) => {
     setSelectedListing(listing);
     setEditTitle(listing.title);
     setEditPrice(String(listing.price));
@@ -130,40 +123,50 @@ export default function FriDealerHubPage() {
     setSelectedListing(null);
   };
 
-  const handleSaveListing = () => {
+  const handleSaveListing = async () => {
     if (!selectedListing) return;
     if (!editTitle || !editPrice) {
       toast({ title: 'Udfyld alle felter', variant: 'destructive' });
       return;
     }
 
-    setListings((current) =>
-      current.map((l) =>
-        l.id === selectedListing.id
-          ? { ...l, title: editTitle, price: Number(editPrice), status: editStatus }
-          : l
-      )
-    );
-    
-    setSelectedListing(null);
-    toast({ title: 'Bilannonce opdateret', description: 'Ændringerne er gemt.' });
+    try {
+      await update({
+        id: selectedListing.id,
+        title: editTitle,
+        price: Number(editPrice),
+        status: editStatus,
+      });
+      
+      setSelectedListing(null);
+      toast({ title: 'Bilannonce opdateret', description: 'Ændringerne er gemt.' });
+    } catch (error) {
+      toast({ title: 'Fejl', description: 'Kunne ikke opdatere annonce.', variant: 'destructive' });
+    }
   };
 
-  const handleDeleteListing = (id: string) => {
-    setListings((current) => current.filter((l) => l.id !== id));
-    setSelectedListing(null);
-    toast({ title: 'Bilannonce slettet', description: 'Annoncen er fjernet.' });
+  const handleDeleteListing = async (id: string) => {
+    try {
+      await deleteListing(id);
+      setSelectedListing(null);
+      toast({ title: 'Bilannonce slettet', description: 'Annoncen er fjernet.' });
+    } catch (error) {
+      toast({ title: 'Fejl', description: 'Kunne ikke slette annonce.', variant: 'destructive' });
+    }
   };
 
-  const handleMarkAsSold = () => {
+  const handleMarkAsSold = async () => {
     if (!selectedListing) return;
-    setListings((current) =>
-      current.map((l) =>
-        l.id === selectedListing.id ? { ...l, status: 'Solgt' } : l
-      )
-    );
-    setSelectedListing(null);
-    toast({ title: 'Markeret som solgt', description: 'Annoncen status er ændret til Solgt.' });
+    try {
+      await update({
+        id: selectedListing.id,
+        status: 'sold',
+      });
+      setSelectedListing(null);
+      toast({ title: 'Markeret som solgt', description: 'Annoncen status er ændret til Solgt.' });
+    } catch (error) {
+      toast({ title: 'Fejl', description: 'Kunne ikke opdatere status.', variant: 'destructive' });
+    }
   };
 
   return (
@@ -216,25 +219,31 @@ export default function FriDealerHubPage() {
               <CardDescription>Hold styr pa status, pris og næste handling</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {listings.map((listing) => (
-                <button
-                  key={listing.id}
-                  type="button"
-                  onClick={() => handleSelectListing(listing)}
-                  className="w-full flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-lg border border-gray-100 p-4 hover:bg-gray-50 hover:border-brown-200 transition-all cursor-pointer text-left"
-                >
-                  <div>
-                    <p className="font-semibold text-brown-900">{listing.title}</p>
-                    <p className="text-sm text-gray-500">Reg.nr: {listing.reg} · Oprettet {listing.createdAt}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`text-xs px-2.5 py-1 rounded-full border ${statusStyles[listing.status]}`}>
-                      {listing.status}
-                    </span>
-                    <span className="text-sm font-semibold text-brown-900">kr. {listing.price.toLocaleString('da-DK')}</span>
-                  </div>
-                </button>
-              ))}
+              {isLoading ? (
+                <p className="text-gray-500 text-center py-8">Indlæser annoncer...</p>
+              ) : listings.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">Ingen annoncer endnu. Opret en ny nedenfor.</p>
+              ) : (
+                listings.map((listing) => (
+                  <button
+                    key={listing.id}
+                    type="button"
+                    onClick={() => handleSelectListing(listing)}
+                    className="w-full flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-lg border border-gray-100 p-4 hover:bg-gray-50 hover:border-brown-200 transition-all cursor-pointer text-left"
+                  >
+                    <div>
+                      <p className="font-semibold text-brown-900">{listing.title}</p>
+                      <p className="text-sm text-gray-500">Reg.nr: {listing.reg} · Oprettet {new Date(listing.createdAt).toLocaleDateString('da-DK')}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-xs px-2.5 py-1 rounded-full border ${statusStyles[listing.status]}`}>
+                        {statusDisplay[listing.status]}
+                      </span>
+                      <span className="text-sm font-semibold text-brown-900">kr. {listing.price.toLocaleString('da-DK')}</span>
+                    </div>
+                  </button>
+                ))
+              )}
             </CardContent>
           </Card>
 
@@ -280,14 +289,14 @@ export default function FriDealerHubPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Klar">Klar</SelectItem>
-                      <SelectItem value="I dialog">I dialog</SelectItem>
-                      <SelectItem value="Solgt">Solgt</SelectItem>
+                      <SelectItem value="available">Klar</SelectItem>
+                      <SelectItem value="reserved">I dialog</SelectItem>
+                      <SelectItem value="sold">Solgt</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <Button type="submit" className="w-full bg-brown-500 hover:bg-brown-600 text-white font-semibold">
-                  Opret annonce
+                <Button type="submit" disabled={isCreating} className="w-full bg-brown-500 hover:bg-brown-600 text-white font-semibold disabled:opacity-50">
+                  {isCreating ? 'Opretter...' : 'Opret annonce'}
                 </Button>
               </form>
             </CardContent>
@@ -505,9 +514,9 @@ export default function FriDealerHubPage() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Klar">Klar</SelectItem>
-                          <SelectItem value="I dialog">I dialog</SelectItem>
-                          <SelectItem value="Solgt">Solgt</SelectItem>
+                          <SelectItem value="available">Klar</SelectItem>
+                          <SelectItem value="reserved">I dialog</SelectItem>
+                          <SelectItem value="sold">Solgt</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -525,6 +534,7 @@ export default function FriDealerHubPage() {
                     onClick={handleCloseListing}
                     variant="outline"
                     className="flex-1 border-gray-300"
+                    disabled={isDeleting || isUpdating}
                   >
                     Luk
                   </Button>
@@ -532,24 +542,27 @@ export default function FriDealerHubPage() {
                     onClick={() => handleDeleteListing(selectedListing.id)}
                     variant="destructive"
                     className="flex-1"
+                    disabled={isDeleting || isUpdating}
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
-                    Slet
+                    {isDeleting ? 'Sletter...' : 'Slet'}
                   </Button>
-                  {editStatus !== 'Solgt' && (
+                  {editStatus !== 'sold' && (
                     <Button
                       onClick={handleMarkAsSold}
-                      className="flex-1 bg-amber-500 hover:bg-amber-600 text-white"
+                      className="flex-1 bg-amber-500 hover:bg-amber-600 text-white disabled:opacity-50"
+                      disabled={isDeleting || isUpdating}
                     >
                       Markér som solgt
                     </Button>
                   )}
                   <Button
                     onClick={handleSaveListing}
-                    className="flex-1 bg-brown-500 hover:bg-brown-600 text-white font-semibold"
+                    className="flex-1 bg-brown-500 hover:bg-brown-600 text-white font-semibold disabled:opacity-50"
+                    disabled={isDeleting || isUpdating}
                   >
                     <Save className="w-4 h-4 mr-2" />
-                    Gem ændringer
+                    {isUpdating ? 'Gemmer...' : 'Gem ændringer'}
                   </Button>
                 </div>
               </CardContent>

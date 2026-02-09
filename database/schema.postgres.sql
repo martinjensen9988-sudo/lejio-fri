@@ -164,6 +164,25 @@ CREATE INDEX IF NOT EXISTS idx_fri_vehicles_status ON fri_vehicles(availability_
 CREATE INDEX IF NOT EXISTS idx_fri_vehicles_tenant ON fri_vehicles(tenant_id);
 
 -- ============================================================================
+-- 3b. DEALER LISTINGS TABLE (Car sales listings)
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS fri_dealer_listings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    lessor_id VARCHAR(36) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    reg_number VARCHAR(20) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'Klar',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lessor_id) REFERENCES fri_lessors(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_fri_dealer_listings_lessor ON fri_dealer_listings(lessor_id);
+CREATE INDEX IF NOT EXISTS idx_fri_dealer_listings_status ON fri_dealer_listings(status);
+
+-- ============================================================================
 -- 4. BOOKING TABLES
 -- ============================================================================
 

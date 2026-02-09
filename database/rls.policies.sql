@@ -170,6 +170,22 @@ CREATE POLICY fri_audit_insert ON fri_audit_logs FOR INSERT
   WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
 
 -- ============================================================================
+-- DEALER LISTINGS
+-- ============================================================================
+ALTER TABLE fri_dealer_listings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE fri_dealer_listings FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY fri_dealer_listings_select ON fri_dealer_listings FOR SELECT
+  USING (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_listings_insert ON fri_dealer_listings FOR INSERT
+  WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_listings_update ON fri_dealer_listings FOR UPDATE
+  USING (lessor_id = current_setting('app.lessor_id', true))
+  WITH CHECK (lessor_id = current_setting('app.lessor_id', true));
+CREATE POLICY fri_dealer_listings_delete ON fri_dealer_listings FOR DELETE
+  USING (lessor_id = current_setting('app.lessor_id', true));
+
+-- ============================================================================
 -- NOTE: The following tables do NOT have RLS (intentional):
 -- - fri_users (auth table - accessed by auth endpoints only)
 -- - fri_sessions (session table - accessed by session.js only)
