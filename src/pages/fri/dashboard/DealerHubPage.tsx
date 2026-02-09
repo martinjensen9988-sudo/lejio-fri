@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Car, BadgePercent, Sparkles, FileText, TrendingUp } from 'lucide-react';
+import { Car, BadgePercent, Sparkles, FileText, TrendingUp, X, Trash2, Save } from 'lucide-react';
 
 type ListingStatus = 'Klar' | 'I dialog' | 'Solgt';
 
@@ -66,6 +66,10 @@ const salesChecklist = [
 export default function FriDealerHubPage() {
   const { toast } = useToast();
   const [listings, setListings] = useState<Listing[]>(initialListings);
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editPrice, setEditPrice] = useState('');
+  const [editStatus, setEditStatus] = useState<ListingStatus>('Klar');
   const [form, setForm] = useState({
     title: '',
     reg: '',
@@ -113,6 +117,53 @@ export default function FriDealerHubPage() {
     setListings((current) => [next, ...current]);
     setForm({ title: '', reg: '', price: '', status: 'Klar' });
     toast({ title: 'Annoncen er oprettet', description: 'Bilforhandler flowet er opdateret.' });
+  };
+
+  const handleSelectListing = (listing: Listing) => {
+    setSelectedListing(listing);
+    setEditTitle(listing.title);
+    setEditPrice(String(listing.price));
+    setEditStatus(listing.status);
+  };
+
+  const handleCloseListing = () => {
+    setSelectedListing(null);
+  };
+
+  const handleSaveListing = () => {
+    if (!selectedListing) return;
+    if (!editTitle || !editPrice) {
+      toast({ title: 'Udfyld alle felter', variant: 'destructive' });
+      return;
+    }
+
+    setListings((current) =>
+      current.map((l) =>
+        l.id === selectedListing.id
+          ? { ...l, title: editTitle, price: Number(editPrice), status: editStatus }
+          : l
+      )
+    );
+    
+    setSelectedListing(null);
+    toast({ title: 'Bilannonce opdateret', description: 'Ændringerne er gemt.' });
+  };
+
+  const handleDeleteListing = (id: string) => {
+    setListings((current) => current.filter((l) => l.id !== id));
+    setSelectedListing(null);
+    toast({ title: 'Bilannonce slettet', description: 'Annoncen er fjernet.' });
+  };
+
+  const handleMarkAsSold = () => {
+    if (!selectedListing) return;
+    setListings((current) =>
+      current.map((l) =>
+        l.id === selectedListing.id ? { ...l, status: 'Solgt' } : l
+      )
+    );
+    setSelectedListing(null);
+    toast({ title: 'Markeret som solgt', description: 'Annoncen status er ændret til Solgt.' });
   };
 
   return (
@@ -169,7 +220,7 @@ export default function FriDealerHubPage() {
                 <button
                   key={listing.id}
                   type="button"
-                  onClick={() => toast({ title: listing.title, description: `Status: ${listing.status}` })}
+                  onClick={() => handleSelectListing(listing)}
                   className="w-full flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-lg border border-gray-100 p-4 hover:bg-gray-50 hover:border-brown-200 transition-all cursor-pointer text-left"
                 >
                   <div>
@@ -398,6 +449,113 @@ export default function FriDealerHubPage() {
             ))}
           </CardContent>
         </Card>
+
+        {/* Listing Details Modal */}
+        {selectedListing && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-2xl border-0 shadow-xl">
+              <CardHeader className="flex flex-row items-start justify-between pb-4 border-b">
+                <div>
+                  <CardTitle className="text-2xl text-brown-900">Bilannonce detaljer</CardTitle>
+                  <CardDescription className="mt-1">Rediger eller opdater denne salgsannonce</CardDescription>
+                </div>
+                <button
+                  onClick={handleCloseListing}
+                  className="p-1 hover:bg-gray-100 rounded transition-colors"
+                >
+                  <X className="w-6 h-6 text-gray-500" />
+                </button>
+              </CardHeader>
+
+              <CardContent className="space-y-6 pt-6">
+                {/* Display Info */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2 p-4 bg-brown-50 rounded-lg border border-brown-100">
+                    <p className="text-sm text-gray-600">Registreringsnummer</p>
+                    <p className="text-xl font-semibold text-brown-900">{selectedListing.reg}</p>
+                  </div>
+                </div>
+
+                {/* Editable Fields */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Bilmodel</label>
+                    <Input
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
+                      placeholder="F.eks. BMW 320d Touring"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Pris (kr.)</label>
+                      <Input
+                        type="number"
+                        value={editPrice}
+                        onChange={(e) => setEditPrice(e.target.value)}
+                        className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Status</label>
+                      <Select value={editStatus} onValueChange={(value) => setEditStatus(value as ListingStatus)}>
+                        <SelectTrigger className="mt-1 bg-white border-gray-300 focus:border-brown-500 focus:ring-brown-500">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Klar">Klar</SelectItem>
+                          <SelectItem value="I dialog">I dialog</SelectItem>
+                          <SelectItem value="Solgt">Solgt</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-600">Oprettet</p>
+                    <p className="font-semibold text-gray-900">{selectedListing.createdAt}</p>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4 border-t">
+                  <Button
+                    onClick={handleCloseListing}
+                    variant="outline"
+                    className="flex-1 border-gray-300"
+                  >
+                    Luk
+                  </Button>
+                  <Button
+                    onClick={() => handleDeleteListing(selectedListing.id)}
+                    variant="destructive"
+                    className="flex-1"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Slet
+                  </Button>
+                  {editStatus !== 'Solgt' && (
+                    <Button
+                      onClick={handleMarkAsSold}
+                      className="flex-1 bg-amber-500 hover:bg-amber-600 text-white"
+                    >
+                      Markér som solgt
+                    </Button>
+                  )}
+                  <Button
+                    onClick={handleSaveListing}
+                    className="flex-1 bg-brown-500 hover:bg-brown-600 text-white font-semibold"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Gem ændringer
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </FriDashboardLayout>
   );
