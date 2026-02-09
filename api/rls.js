@@ -41,8 +41,16 @@ async function withLessorClient(req, handler) {
 
     const lessorId = await getLessorIdFromSession(userId);
 
+    // Validate lessorId is a valid UUID to prevent SQL injection
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(lessorId)) {
+      const error = new Error("Invalid lessor ID");
+      error.statusCode = 401;
+      throw error;
+    }
+
     await client.query("BEGIN");
-    await client.query("SET LOCAL app.lessor_id = $1", [lessorId]);
+    // SET LOCAL doesn't support parameterized queries, so we use string interpolation after validation
+    await client.query(`SET LOCAL app.lessor_id = '${lessorId}'`);
 
     const result = await handler(client, lessorId);
 
