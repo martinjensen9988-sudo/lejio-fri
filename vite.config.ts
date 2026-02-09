@@ -31,9 +31,9 @@ export default defineConfig(({ mode }) => ({
       injectRegister: "script-defer",
       includeAssets: ["favicon.ico", "robots.txt"],
       manifest: {
-        name: "LEJIO Fri – Biludlejningsplatform",
+        name: "LEJIO Fri – Alt-i-én løsning til autobranchen",
         short_name: "LEJIO Fri",
-        description: "LEJIO Fri - white-label biludlejningsplatform for forhandlere.",
+        description: "LEJIO Fri - komplet løsning til flådestyring, bookinger og kundestyring i autobranchen.",
         theme_color: "#3b82f6",
         background_color: "#FDF8F3",
         display: "standalone",

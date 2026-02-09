@@ -58,7 +58,7 @@ const FriSidebar = () => {
           </div>
           <div>
             <h1 className="text-lg font-bold text-brown-900">Din platform</h1>
-            <p className="text-xs text-gray-500">Biludlejningsplatform</p>
+            <p className="text-xs text-gray-500">Alt-i-én til autobranchen</p>
           </div>
         </div>
       </div>
