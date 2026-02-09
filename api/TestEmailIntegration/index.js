@@ -1,20 +1,14 @@
 import { HttpRequest, HttpResponseInit, app } from '@azure/functions';
 import * as nodemailer from 'nodemailer';
 
-interface TestIntegrationRequest {
-  type: 'gmail' | 'outlook' | 'custom_smtp';
-  email: string;
-  metadata: {
-    passwordHash?: string;
-    smtpHost?: string;
-    smtpPort?: number;
-    smtpUser?: string;
-    smtpPassword?: string;
-    [key: string]: any;
-  };
-}
+/**
+ * @typedef {Object} TestIntegrationRequest
+ * @property {string} type - Integration type: 'gmail', 'outlook', or 'custom_smtp'
+ * @property {string} email - Email address
+ * @property {Object} metadata - Integration metadata with credentials
+ */
 
-async function testEmailIntegration(request: HttpRequest): Promise<HttpResponseInit> {
+async function testEmailIntegration(request) {
   try {
     const body: TestIntegrationRequest = await request.json();
     const { type, email, metadata } = body;
@@ -26,7 +20,7 @@ async function testEmailIntegration(request: HttpRequest): Promise<HttpResponseI
       };
     }
 
-    let transporter: nodemailer.Transporter;
+    let transporter;
 
     if (type === 'gmail') {
       // Gmail SMTP configuration

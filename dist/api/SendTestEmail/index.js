@@ -7,14 +7,15 @@ const supabaseKey = process.env.SUPABASE_SERVICE_KEY || '';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-interface SendTestEmailRequest {
-  integrationId: string;
-  testEmail: string;
-}
+/**
+ * @typedef {Object} SendTestEmailRequest
+ * @property {string} integrationId - Email integration ID
+ * @property {string} testEmail - Email to send test to
+ */
 
-async function sendTestEmail(request: HttpRequest): Promise<HttpResponseInit> {
+async function sendTestEmail(request) {
   try {
-    const body: SendTestEmailRequest = await request.json();
+    const body = await request.json();
     const { integrationId, testEmail } = body;
 
     if (!integrationId || !testEmail) {

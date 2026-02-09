@@ -6,37 +6,16 @@ const supabaseKey = process.env.SUPABASE_SERVICE_KEY || '';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-interface PaymentHistoryResponse {
-  paid: Array<{
-    id: string;
-    invoiceNumber: string;
-    amount: number;
-    paidDate: string;
-    paymentMethod: string;
-    lessorName: string;
-  }>;
-  unpaid: Array<{
-    id: string;
-    invoiceNumber: string;
-    amount: number;
-    dueDate: string;
-    status: 'unpaid' | 'overdue';
-    lessorName: string;
-  }>;
-  totalPaid: number;
-  totalUnpaid: number;
-  statistics: {
-    totalInvoices: number;
-    paidInvoices: number;
-    unpaidInvoices: number;
-    overdueInvoices: number;
-    totalAmountPaid: number;
-    totalAmountUnpaid: number;
-    averagePaymentTime: number; // in days
-  };
-}
+/**
+ * @typedef {Object} PaymentHistoryResponse
+ * @property {Array} paid - List of paid invoices
+ * @property {Array} unpaid - List of unpaid invoices
+ * @property {number} totalPaid - Total paid amount
+ * @property {number} totalUnpaid - Total unpaid amount
+ * @property {Object} statistics - Payment statistics
+ */
 
-async function getPaymentHistory(request: HttpRequest): Promise<HttpResponseInit> {
+async function getPaymentHistory(request) {
   try {
     const lessorId = request.query.get('lessor_id');
     const startDate = request.query.get('start_date');

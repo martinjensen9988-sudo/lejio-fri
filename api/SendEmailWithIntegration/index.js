@@ -7,19 +7,18 @@ const supabaseKey = process.env.SUPABASE_SERVICE_KEY || '';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-interface SendEmailRequest {
-  lessorId: string;
-  recipient: string;
-  subject: string;
-  html: string;
-  text?: string;
-  emailType?: string;
-  integrationId?: string; // If specified, use this integration. Otherwise use default.
-}
+/**
+ * @typedef {Object} SendEmailRequest
+ * @property {string} lessorId - Lessor ID
+ * @property {string} recipient - Recipient email
+ * @property {string} subject - Email subject
+ * @property {string} html - Email HTML content
+ * @property {string} [text] - Plain text fallback
+ * @property {string} [emailType] - Email type identifier
+ * @property {string} [integrationId] - Specific integration to use
+ */
 
-async function sendEmailWithIntegration(
-  request: HttpRequest
-): Promise<HttpResponseInit> {
+async function sendEmailWithIntegration(request) {
   try {
     const body: SendEmailRequest = await request.json();
     const { lessorId, recipient, subject, html, text, emailType, integrationId } = body;
@@ -66,8 +65,8 @@ async function sendEmailWithIntegration(
     }
 
     // Create transporter based on integration type
-    let transporter: nodemailer.Transporter;
-    const metadata = integration.metadata as Record<string, any>;
+    let transporter;
+    const metadata = integration.metadata || {};
 
     if (integration.type === 'gmail') {
       transporter = nodemailer.createTransport({
@@ -150,12 +149,7 @@ async function sendEmailWithIntegration(
 }
 
 // Fallback to system SMTP
-async function sendWithSystemSMTP(
-  recipient: string,
-  subject: string,
-  html: string,
-  text?: string
-): Promise<HttpResponseInit> {
+async function sendWithSystemSMTP(recipient, subject, html, text) {
   try {
     const smtpHost = process.env.SMTP_HOST || '';
     const smtpUser = process.env.SMTP_USER || '';

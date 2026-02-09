@@ -21,17 +21,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-interface InvoicePaymentRequestBody {
-  invoiceId: string;
-  email: string;
-  paymentMethod?: 'invoice' | 'bank_transfer';
-}
+/**
+ * @typedef {Object} InvoicePaymentRequestBody
+ * @property {string} invoiceId - Invoice ID
+ * @property {string} email - Recipient email
+ * @property {string} [paymentMethod] - Payment method type
+ */
 
-async function sendInvoicePaymentRequest(
-  request: HttpRequest
-): Promise<HttpResponseInit> {
+async function sendInvoicePaymentRequest(request) {
   try {
-    const body: InvoicePaymentRequestBody = await request.json();
+    const body = await request.json();
     const { invoiceId, email, paymentMethod = 'invoice' } = body;
 
     if (!invoiceId || !email) {
