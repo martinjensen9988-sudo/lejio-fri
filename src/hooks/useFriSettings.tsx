@@ -137,11 +137,19 @@ export function useFriSettings(userId: string | null) {
     if (!input.subscription_tier) throw new Error('Subscription tier is required');
     setError(null);
     setSuccess(null);
-    await azureApi.post('/update-subscription-tier', {
-      subscription_tier: input.subscription_tier,
-    });
-    await fetchSettings();
-    setSuccess('Plan opdateret');
+    try {
+      console.log('[useFriSettings] Updating subscription tier to:', input.subscription_tier);
+      const response = await azureApi.post('/update-subscription-tier', {
+        subscription_tier: input.subscription_tier,
+      });
+      console.log('[useFriSettings] Update response:', response);
+      await fetchSettings();
+      console.log('[useFriSettings] Settings refetched after update');
+      setSuccess('Plan opdateret');
+    } catch (err) {
+      console.error('[useFriSettings] Update error:', err);
+      throw err;
+    }
     return null;
   }, [userId, fetchSettings]);
 
