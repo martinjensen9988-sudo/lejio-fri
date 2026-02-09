@@ -28,7 +28,7 @@ import { toast } from 'sonner';
 
 export function FriSettingsPage() {
   const { user } = useFriAuthContext();
-  const { account, updateSubscriptionTier } = useFriSettings(user?.id || null);
+  const { account, updateSubscriptionTier, updateBranding } = useFriSettings(user?.id || null);
   const [saving, setSaving] = useState(false);
   const [showPlanPicker, setShowPlanPicker] = useState(false);
   const [plans, setPlans] = useState<Array<{ id: string; name: string; description: string; price_monthly: number; category: string }>>([]);
@@ -50,10 +50,21 @@ export function FriSettingsPage() {
   const [paymentAlerts, setPaymentAlerts] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(false);
 
+  // Branding settings
+  const [primaryColor, setPrimaryColor] = useState(account?.branding?.primary_color || '#ec4899');
+  const [secondaryColor, setSecondaryColor] = useState('#3b82f6');
+  const [logoUrl, setLogoUrl] = useState(account?.branding?.logo_url || '');
+
   useEffect(() => {
     if (!account?.subscription_tier) return;
     setSelectedPlan(account.subscription_tier);
   }, [account?.subscription_tier]);
+
+  useEffect(() => {
+    if (!account?.branding) return;
+    setPrimaryColor(account.branding.primary_color || '#ec4899');
+    setLogoUrl(account.branding.logo_url || '');
+  }, [account?.branding?.primary_color, account?.branding?.logo_url]);
 
   useEffect(() => {
     const loadPlans = async () => {
@@ -109,11 +120,15 @@ export function FriSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // TODO: Connect to API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success('Indstillinger gemt');
-    } catch {
-      toast.error('Kunne ikke gemme indstillinger');
+      console.log('[SettingsPage] Saving branding with:', { primaryColor, logoUrl });
+      await updateBranding({ 
+        primary_color: primaryColor, 
+        logo_url: logoUrl 
+      });
+      toast.success('Branding gemt');
+    } catch (err) {
+      console.error('[SettingsPage] Error saving branding:', err);
+      toast.error(err instanceof Error ? err.message : 'Kunne ikke gemme branding');
     } finally {
       setSaving(false);
     }
@@ -343,18 +358,60 @@ export function FriSettingsPage() {
                   <div className="space-y-2">
                     <Label className="text-gray-700">Primær Farve</Label>
                     <div className="flex items-center gap-3">
-                      <input type="color" defaultValue="#ec4899" className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer" />
-                      <Input defaultValue="#ec4899" className="border-gray-200 font-mono" />
+                      <input 
+                        type="color" 
+                        value={primaryColor} 
+                        onChange={(e) => setPrimaryColor(e.target.value)}
+                        className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer" 
+                      />
+                      <Input 
+                        value={primaryColor} 
+                        onChange={(e) => setPrimaryColor(e.target.value)}
+                        className="border-gray-200 font-mono" 
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-gray-700">Sekundær Farve</Label>
                     <div className="flex items-center gap-3">
-                      <input type="color" defaultValue="#3b82f6" className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer" />
-                      <Input defaultValue="#3b82f6" className="border-gray-200 font-mono" />
+                      <input 
+                        type="color" 
+                        value={secondaryColor} 
+                        onChange={(e) => setSecondaryColor(e.target.value)}
+                        className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer" 
+                      />
+                      <Input 
+                        value={secondaryColor} 
+                        onChange={(e) => setSecondaryColor(e.target.value)}
+                        className="border-gray-200 font-mono" 
+                      />
                     </div>
                   </div>
                 </div>
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Logo URL</Label>
+                  <Input 
+                    type="url"
+                    value={logoUrl} 
+                    onChange={(e) => setLogoUrl(e.target.value)}
+                    placeholder="https://eksempel.dk/logo.png"
+                    className="border-gray-200" 
+                  />
+                  <p className="text-xs text-gray-500">Direkte link til dit logo-billede</p>
+                </div>
+                {logoUrl && (
+                  <div className="border-t pt-4">
+                    <p className="text-sm text-gray-600 mb-2">Logoforhåndsvisning:</p>
+                    <img
+                      src={logoUrl}
+                      alt="Logo preview"
+                      className="h-12 max-w-xs"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
                 <div className="flex justify-end">
                   <Button onClick={handleSave} disabled={saving} className="bg-pink-600 hover:bg-pink-700 text-white">
                     <Save className="w-4 h-4 mr-2" />
