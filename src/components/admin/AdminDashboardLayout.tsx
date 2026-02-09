@@ -4,7 +4,7 @@ import {
   Shield, Users, Calendar, Receipt, Tag, Truck, AlertTriangle, Flag, 
   UserCog, MessageCircle, Headphones, ShieldCheck, MapPin, BarChart3,
   Menu, Camera, Building2, Facebook, UsersRound, LogOut, CheckCircle, Clock, Sparkles, HeadphonesIcon,
-  FileText, Key, Briefcase, DollarSign
+  FileText, Key, Briefcase, DollarSign, CreditCard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -27,6 +27,7 @@ const menuItems = [
   { value: 'locations', icon: MapPin, label: 'Lokationer', path: '/admin/locations' },
   { value: 'fees', icon: Receipt, label: 'Gebyrer', path: '/admin/fees' },
   { value: 'discounts', icon: Tag, label: 'Rabatkoder', path: '/admin/discounts' },
+  { value: 'subscriptions', icon: CreditCard, label: 'Abonnementer', path: '/admin/subscriptions' },
   { value: 'fleet', icon: Truck, label: 'Fleet', path: '/admin/fleet' },
   { value: 'warnings', icon: AlertTriangle, label: 'Advarsler', path: '/admin/warnings' },
   { value: 'lessor-reports', icon: Flag, label: 'Rapporter', path: '/admin/reports' },

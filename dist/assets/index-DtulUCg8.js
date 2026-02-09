@@ -1,1 +1,0 @@
-import{r,K as t,aa as a}from"./index-BwvCDrdg.js";var s=a[" useId ".trim().toString()]||(()=>{}),i=0;function n(a){const[n,e]=r.useState(s());return t(()=>{e(r=>r??String(i++))},[a]),a||(n?`radix-${n}`:"")}export{n as u};
