@@ -82,12 +82,11 @@ export const EmailIntegrationSettings = ({ userId }: { userId: string }) => {
   const fetchIntegrations = async () => {
     try {
       setIsLoading(true);
-      const query = supabase
-        .from('lessor_email_integrations')
+      const { data, error } = await supabase
+        .from('email_integrations')
         .select('*')
-        .eq('lessor_id', userId);
-
-      const { data, error } = await query.order('created_at', { ascending: false });
+        .eq('lessor_id', user.id)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       setIntegrations(data || []);
@@ -150,10 +149,9 @@ export const EmailIntegrationSettings = ({ userId }: { userId: string }) => {
       if (!testResult?.success) throw new Error(testResult?.error || 'Connection test failed');
 
       // Save integration
-      const insertQuery = supabase
+      const { error: saveError } = await supabase
         .from('lessor_email_integrations')
         .insert([integrationData]);
-      const { error: saveError } = await insertQuery;
 
       if (saveError) throw saveError;
 
@@ -180,18 +178,18 @@ export const EmailIntegrationSettings = ({ userId }: { userId: string }) => {
   const handleSetDefault = async (id: string) => {
     try {
       // Unset all defaults
-      const unsetQuery = supabase
+      const { error: unsetError } = await supabase
         .from('lessor_email_integrations')
         .update({ is_default: false })
         .eq('lessor_id', userId);
-      await unsetQuery;
+      
+      if (unsetError) throw unsetError;
 
       // Set new default
-      const setQuery = supabase
+      const { error } = await supabase
         .from('lessor_email_integrations')
         .update({ is_default: true })
         .eq('id', id);
-      const { error } = await setQuery;
 
       if (error) throw error;
 

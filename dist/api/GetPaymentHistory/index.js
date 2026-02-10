@@ -65,12 +65,12 @@ async function getPaymentHistory(request) {
 
     // Categorize invoices
     const today = new Date();
-    const paid: PaymentHistoryResponse['paid'] = [];
-    const unpaid: PaymentHistoryResponse['unpaid'] = [];
+    const paid = [];
+    const unpaid = [];
     let totalPaid = 0;
     let totalUnpaid = 0;
     let overdueCount = 0;
-    let paymentTimes: number[] = [];
+    let paymentTimes = [];
 
     if (invoices) {
       for (const inv of invoices) {
@@ -118,7 +118,7 @@ async function getPaymentHistory(request) {
         ? Math.round(paymentTimes.reduce((a, b) => a + b) / paymentTimes.length)
         : 0;
 
-    const response: PaymentHistoryResponse = {
+    const response = {
       paid: paid.slice(0, 50), // Limit to last 50
       unpaid,
       totalPaid,

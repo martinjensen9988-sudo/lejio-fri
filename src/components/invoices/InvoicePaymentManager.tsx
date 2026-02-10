@@ -109,12 +109,11 @@ export const InvoicePaymentManager: React.FC<InvoicePaymentManagerProps> = ({ us
       const bookingIds = bookings.map(b => b.id);
 
       // Get invoices for these bookings
-      const query = supabase
+      const { data: invoicesData, error: invoicesError } = await supabase
         .from('invoices')
         .select('*')
+        .order('created_at', { ascending: false })
         .in('booking_id', bookingIds);
-
-      const { data: invoicesData, error: invoicesError } = await query.order('created_at', { ascending: false });
 
       if (invoicesError) throw invoicesError;
 
@@ -205,13 +204,20 @@ export const InvoicePaymentManager: React.FC<InvoicePaymentManagerProps> = ({ us
       }
 
       // For bank transfer or invoice, mark as payment requested
-      const { error } = await supabase
-        .from('invoices')
-        .update({
-          payment_method: selectedPaymentMethod,
-          payment_requested_at: new Date().toISOString(),
-        })
-        .in('id', selectedInvoices);
+      let error = null;
+      for (const invoiceId of selectedInvoices) {
+        const { error: updateError } = await supabase
+          .from('invoices')
+          .update({
+            payment_method: selectedPaymentMethod,
+            payment_requested_at: new Date().toISOString(),
+          })
+          .eq('id', invoiceId);
+        if (updateError) {
+          error = updateError;
+          break;
+        }
+      }
 
       if (error) throw error;
 
@@ -275,12 +281,11 @@ export const InvoicePaymentManager: React.FC<InvoicePaymentManagerProps> = ({ us
 
   const handleDownloadInvoice = async (invoiceId: string) => {
     try {
-      const query = supabase
+      const { data, error } = await supabase
         .from('invoices')
         .select('*')
-        .eq('id', invoiceId);
-
-      const { data, error } = await query.single();
+        .eq('id', invoiceId)
+        .single();
 
       if (error) throw error;
 

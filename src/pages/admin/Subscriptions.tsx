@@ -80,12 +80,11 @@ const AdminSubscriptionsPage = () => {
   const fetchSubscriptions = async () => {
     setIsLoading(true);
     try {
-      const query = supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_type', 'lessor');
-
-      const { data, error } = await query.order('created_at', { ascending: false });
+        .eq('user_type', 'lessor')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 

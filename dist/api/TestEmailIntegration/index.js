@@ -10,7 +10,7 @@ import * as nodemailer from 'nodemailer';
 
 async function testEmailIntegration(request) {
   try {
-    const body: TestIntegrationRequest = await request.json();
+    const body = await request.json();
     const { type, email, metadata } = body;
 
     if (!type || !email || !metadata) {

@@ -1,7 +1,7 @@
-import { HttpRequest, HttpResponseInit, app } from '@azure/functions';
-import { createClient } from '@supabase/supabase-js';
-import Stripe from 'stripe';
-import * as nodemailer from 'nodemailer';
+const { createClient } = require('@supabase/supabase-js');
+const Stripe = require('stripe');
+const nodemailer = require('nodemailer');
+const { getSessionUserId } = require('../session');
 
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY || '';
@@ -10,172 +10,11 @@ const stripeKey = process.env.STRIPE_SECRET_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 const stripe = new Stripe(stripeKey);
 
-/**
- * @typedef {Object} ChangePlanRequest
- * @property {string} newTier - New subscription tier (starter, standard, enterprise)
- * @property {string} paymentMethod - Payment method (card, bank_transfer, invoice)
- */
-
 const TIERS = {
   starter: { name: 'Starter', monthlyPrice: 349, yearlyPrice: 3560, maxVehicles: 5, stripeId: 'price_starter_monthly' },
   standard: { name: 'Standard', monthlyPrice: 599, yearlyPrice: 6110, maxVehicles: 15, stripeId: 'price_standard_monthly' },
   enterprise: { name: 'Enterprise', monthlyPrice: 899, yearlyPrice: 9170, maxVehicles: 35, stripeId: 'price_enterprise_monthly' },
 };
-
-async function changePlan(request) {
-  try {
-    const body = await request.json();
-    const { newTier, paymentMethod } = body;
-
-    if (!newTier || !paymentMethod) {
-      return {
-        status: 400,
-        jsonBody: { error: 'Missing required fields: newTier, paymentMethod' },
-      };
-    }
-
-    if (!TIERS[newTier]) {
-      return {
-        status: 400,
-        jsonBody: { error: 'Invalid tier: ' + newTier },
-      };
-    }
-
-    // Get authenticated user
-    const { data: { user } } = await supabase.auth.getUser(request.headers.get('authorization'));
-    if (!user) {
-      return {
-        status: 401,
-        jsonBody: { error: 'Not authenticated' },
-      };
-    }
-
-    // Get user profile with current subscription
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-
-    if (profileError || !profile) {
-      return {
-        status: 404,
-        jsonBody: { error: 'Profile not found' },
-      };
-    }
-
-    // Get current subscription from Stripe if they have one
-    const currentTier = profile.subscription_tier || 'free';
-    const stripeSubscriptionId = profile.stripe_subscription_id;
-
-    // If changing via card payment and has Stripe subscription, use Stripe
-    if (paymentMethod === 'card') {
-      if (!stripeSubscriptionId) {
-        return {
-          status: 400,
-          jsonBody: { error: 'No active Stripe subscription found. Please use portal to upgrade.' },
-        };
-      }
-
-      // Update Stripe subscription
-      const tierConfig = TIERS[newTier];
-      try {
-        await stripe.subscriptions.update(stripeSubscriptionId, {
-          items: [
-            {
-              id: (await stripe.subscriptions.retrieve(stripeSubscriptionId)).items.data[0].id,
-              price: tierConfig.stripeId,
-            },
-          ],
-          proration_behavior: 'create_prorations',
-        });
-
-        // Update database
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({
-            subscription_tier: newTier,
-            subscription_status: 'active',
-            payment_method: 'card',
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', user.id);
-
-        if (updateError) throw updateError;
-
-        // Send confirmation email
-        await sendPlanChangeEmail(profile, newTier, paymentMethod, TIERS[newTier].monthlyPrice);
-
-        return {
-          status: 200,
-          jsonBody: { 
-            success: true, 
-            message: `Plan ændret til ${TIERS[newTier].name}`,
-            tier: newTier,
-          },
-        };
-      } catch (stripeError) {
-        console.error('Stripe update error:', stripeError);
-        return {
-          status: 500,
-          jsonBody: { error: 'Kunne ikke opdatere abonnement hos Stripe' },
-        };
-      }
-    }
-
-    // For bank transfer or invoice methods
-    else if (paymentMethod === 'bank_transfer' || paymentMethod === 'invoice') {
-      // Cancel Stripe subscription if they have one and switching to manual payment
-      if (stripeSubscriptionId) {
-        try {
-          await stripe.subscriptions.del(stripeSubscriptionId);
-        } catch (err) {
-          console.error('Error cancelling Stripe subscription:', err);
-        }
-      }
-
-      // Update database with new payment method
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({
-          subscription_tier: newTier,
-          subscription_status: paymentMethod === 'invoice' ? 'pending_payment' : 'pending_payment',
-          payment_method: paymentMethod,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id);
-
-      if (updateError) throw updateError;
-
-      // Send payment request email or invoice
-      await sendPaymentRequest(profile, newTier, paymentMethod, TIERS[newTier].monthlyPrice);
-
-      return {
-        status: 200,
-        jsonBody: { 
-          success: true, 
-          message: `Plan ændret til ${TIERS[newTier].name}. ${
-            paymentMethod === 'invoice' 
-              ? 'Vi sender en faktura til din email.' 
-              : 'Vi sender bankoplysninger til betaling.'
-          }`,
-          tier: newTier,
-        },
-      };
-    }
-
-    return {
-      status: 400,
-      jsonBody: { error: 'Invalid payment method' },
-    };
-  } catch (error) {
-    console.error('Error changing plan:', error);
-    return {
-      status: 500,
-      jsonBody: { error: 'Kunne ikke ændre plan' },
-    };
-  }
-}
 
 async function sendPlanChangeEmail(profile, newTier, paymentMethod, price) {
   try {
@@ -212,7 +51,6 @@ async function sendPlanChangeEmail(profile, newTier, paymentMethod, price) {
             .plan-details div { margin: 10px 0; }
             .label { font-weight: bold; color: #667eea; }
             .footer { text-align: center; color: #666; font-size: 12px; margin-top: 30px; }
-            .button { display: inline-block; background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
           </style>
         </head>
         <body>
@@ -233,10 +71,6 @@ async function sendPlanChangeEmail(profile, newTier, paymentMethod, price) {
               </div>
 
               <p>Du kan se detaljer om din plan anytime i dine indstillinger.</p>
-
-              <div style="text-align: center;">
-                <a href="https://app.lejio.dk/settings?tab=subscription" class="button">Se din plan</a>
-              </div>
 
               <p style="color: #666; margin-top: 30px;">
                 Spørgsmål? Kontakt os på <a href="mailto:support@lejio.dk">support@lejio.dk</a>
@@ -260,9 +94,9 @@ async function sendPlanChangeEmail(profile, newTier, paymentMethod, price) {
       text: `Din plan er ændret til ${tierInfo.name}-planen.`,
     });
 
-    console.log('Plan change email sent to:', profile.email);
+    console.log('[ChangePlan] Plan change email sent to:', profile.email);
   } catch (error) {
-    console.error('Error sending plan change email:', error);
+    console.error('[ChangePlan] Error sending plan change email:', error);
   }
 }
 
@@ -362,14 +196,206 @@ async function sendPaymentRequest(profile, newTier, paymentMethod, price) {
       text: `Betaling anmodet for ${tierInfo.name}-plan: ${price} kr/måned`,
     });
 
-    console.log('Payment request email sent to:', profile.email);
+    console.log('[ChangePlan] Payment request email sent to:', profile.email);
   } catch (error) {
-    console.error('Error sending payment request email:', error);
+    console.error('[ChangePlan] Error sending payment request email:', error);
   }
 }
 
-app.function('change-pro-plan', async (request, context) => {
-  return await changePlan(request);
-});
+module.exports = async function (context, req) {
+  context.res = context.res || {};
+  context.res.headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': req.headers?.origin || '*',
+    'Access-Control-Allow-Credentials': 'true',
+  };
 
-export default changePlan;
+  try {
+    const body = req.body || {};
+    const { newTier, paymentMethod } = body;
+
+    console.log('[ChangePlan] Request:', { newTier, paymentMethod });
+
+    if (!newTier || !paymentMethod) {
+      context.res.status = 400;
+      context.res.body = { error: 'Missing required fields: newTier, paymentMethod' };
+      return context.res;
+    }
+
+    if (!TIERS[newTier]) {
+      context.res.status = 400;
+      context.res.body = { error: 'Invalid tier: ' + newTier };
+      return context.res;
+    }
+
+    // Get authenticated user from session
+    const userId = await getSessionUserId(req);
+    if (!userId) {
+      console.log('[ChangePlan] Not authenticated');
+      context.res.status = 401;
+      context.res.body = { error: 'Not authenticated' };
+      return context.res;
+    }
+
+    console.log('[ChangePlan] Got userId:', userId);
+
+    // Get user profile with current subscription
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (profileError) {
+      console.error('[ChangePlan] Profile fetch error:', profileError);
+    }
+
+    if (!profile) {
+      console.log('[ChangePlan] Profile not found for user:', userId);
+      context.res.status = 404;
+      context.res.body = { error: 'Profile not found' };
+      return context.res;
+    }
+
+    console.log('[ChangePlan] Got profile:', {
+      id: profile.id,
+      subscription_tier: profile.subscription_tier,
+      stripe_subscription_id: profile.stripe_subscription_id,
+    });
+
+    const stripeSubscriptionId = profile.stripe_subscription_id;
+
+    // If changing via card payment and has Stripe subscription, use Stripe
+    if (paymentMethod === 'card') {
+      if (!stripeSubscriptionId) {
+        console.log('[ChangePlan] No Stripe subscription found for card payment');
+        context.res.status = 400;
+        context.res.body = { error: 'No active Stripe subscription found. Please use portal to upgrade.' };
+        return context.res;
+      }
+
+      try {
+        console.log('[ChangePlan] Updating Stripe subscription:', stripeSubscriptionId);
+        const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+        const itemId = subscription.items.data[0].id;
+        const tierConfig = TIERS[newTier];
+
+        await stripe.subscriptions.update(stripeSubscriptionId, {
+          items: [
+            {
+              id: itemId,
+              price: tierConfig.stripeId,
+            },
+          ],
+          proration_behavior: 'create_prorations',
+        });
+
+        console.log('[ChangePlan] Stripe subscription updated, now updating database');
+
+        // Update database
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
+            subscription_tier: newTier,
+            subscription_status: 'active',
+            payment_method: 'card',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', userId);
+
+        if (updateError) {
+          console.error('[ChangePlan] Database update error:', updateError);
+          throw updateError;
+        }
+
+        console.log('[ChangePlan] Database updated successfully');
+
+        // Send confirmation email
+        await sendPlanChangeEmail(profile, newTier, paymentMethod, TIERS[newTier].monthlyPrice);
+
+        context.res.status = 200;
+        context.res.body = {
+          success: true,
+          message: `Plan ændret til ${TIERS[newTier].name}`,
+          tier: newTier,
+        };
+        return context.res;
+      } catch (stripeError) {
+        console.error('[ChangePlan] Stripe error:', stripeError);
+        context.res.status = 500;
+        context.res.body = {
+          error: 'Kunne ikke opdatere abonnement hos Stripe: ' + (stripeError.message || 'Unknown error'),
+        };
+        return context.res;
+      }
+    }
+
+    // For bank transfer or invoice methods
+    if (paymentMethod === 'bank_transfer' || paymentMethod === 'invoice') {
+      try {
+        // Cancel Stripe subscription if they have one and switching to manual payment
+        if (stripeSubscriptionId) {
+          try {
+            console.log('[ChangePlan] Cancelling Stripe subscription:', stripeSubscriptionId);
+            await stripe.subscriptions.del(stripeSubscriptionId);
+          } catch (err) {
+            console.error('[ChangePlan] Error cancelling Stripe subscription:', err);
+          }
+        }
+
+        console.log('[ChangePlan] Updating database with manual payment method');
+
+        // Update database with new payment method
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
+            subscription_tier: newTier,
+            subscription_status: 'pending_payment',
+            payment_method: paymentMethod,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', userId);
+
+        if (updateError) {
+          console.error('[ChangePlan] Database update error:', updateError);
+          throw updateError;
+        }
+
+        console.log('[ChangePlan] Database updated, sending payment request email');
+
+        // Send payment request email
+        await sendPaymentRequest(profile, newTier, paymentMethod, TIERS[newTier].monthlyPrice);
+
+        context.res.status = 200;
+        context.res.body = {
+          success: true,
+          message: `Plan ændret til ${TIERS[newTier].name}. ${
+            paymentMethod === 'invoice'
+              ? 'Vi sender en faktura til din email.'
+              : 'Vi sender bankoplysninger til betaling.'
+          }`,
+          tier: newTier,
+        };
+        return context.res;
+      } catch (error) {
+        console.error('[ChangePlan] Error:', error);
+        context.res.status = 500;
+        context.res.body = {
+          error: 'Kunne ikke ændre plan: ' + (error.message || 'Unknown error'),
+        };
+        return context.res;
+      }
+    }
+
+    context.res.status = 400;
+    context.res.body = { error: 'Invalid payment method' };
+    return context.res;
+  } catch (error) {
+    console.error('[ChangePlan] Unhandled error:', error);
+    context.res.status = 500;
+    context.res.body = {
+      error: 'Kunde ikke ændre plan: ' + (error.message || 'Unknown error'),
+    };
+    return context.res;
+  }
+};

@@ -20,7 +20,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function sendEmailWithIntegration(request) {
   try {
-    const body: SendEmailRequest = await request.json();
+    const body = await request.json();
     const { lessorId, recipient, subject, html, text, emailType, integrationId } = body;
 
     if (!lessorId || !recipient || !subject || !html) {

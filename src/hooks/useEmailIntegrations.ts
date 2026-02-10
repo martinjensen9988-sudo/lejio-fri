@@ -23,12 +23,11 @@ export const useEmailIntegrations = (userId: string) => {
 
     try {
       setIsLoading(true);
-      const query = supabase
+      const { data, error } = await supabase
         .from('lessor_email_integrations')
         .select('*')
-        .eq('lessor_id', userId);
-
-      const { data, error } = await query.order('created_at', { ascending: false });
+        .eq('lessor_id', userId)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       setIntegrations(data || []);

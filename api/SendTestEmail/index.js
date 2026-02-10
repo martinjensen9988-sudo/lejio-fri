@@ -40,8 +40,8 @@ async function sendTestEmail(request) {
     }
 
     // Create transporter based on type
-    let transporter: nodemailer.Transporter;
-    const metadata = integration.metadata as Record<string, any>;
+    let transporter;
+    const metadata = integration.metadata;
 
     if (integration.type === 'gmail') {
       transporter = nodemailer.createTransport({
