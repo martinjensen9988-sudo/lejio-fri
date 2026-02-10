@@ -50,6 +50,12 @@ const FriDealerHubPage = lazy(() => import("./pages/fri/dashboard/DealerHubPage"
 
 // Workshop Pages - lazy loaded
 const GaragePlanPage = lazy(() => import("./pages/fri/workshop/GaragePlan").then(m => ({ default: m.GaragePlanPage })));
+const GarageTeamPage = lazy(() => import("./pages/fri/workshop/GarageTeam").then(m => ({ default: m.GarageTeamPage })));
+const GarageBooksPage = lazy(() => import("./pages/fri/workshop/GarageBooks").then(m => ({ default: m.GarageBooks })));
+const GarageSyncPage = lazy(() => import("./pages/fri/workshop/GarageSync").then(m => ({ default: m.GarageSyncPage })));
+const GarageChatPage = lazy(() => import("./pages/fri/workshop/GarageChat").then(m => ({ default: m.GarageChatPage })));
+const GarageDealPage = lazy(() => import("./pages/fri/workshop/GarageDeal").then(m => ({ default: m.GarageDealPage })));
+const GarageHubPage = lazy(() => import("./pages/fri/workshop/GarageHub").then(m => ({ default: m.GarageHubPage })));
 const WorkshopModulesPublic = lazy(() => import("./pages/fri/workshop/WorkshopModulesPublic").then(m => ({ default: m.WorkshopModulesPublic })));
 
 // Page Builder - lazy loaded
@@ -209,6 +215,12 @@ export default function App() {
                 
                 {/* Workshop Pages */}
                 <Route path="/fri/workshop/garageplan" element={<GaragePlanPage />} />
+                <Route path="/fri/workshop/garageteam" element={<GarageTeamPage />} />
+                <Route path="/fri/workshop/garagebooks" element={<GarageBooksPage />} />
+                <Route path="/fri/workshop/garagesync" element={<GarageSyncPage />} />
+                <Route path="/fri/workshop/garagechat" element={<GarageChatPage />} />
+                <Route path="/fri/workshop/garagedeal" element={<GarageDealPage />} />
+                <Route path="/fri/workshop/garagehub" element={<GarageHubPage />} />
                 <Route path="/fri/workshop/modules" element={<WorkshopModulesPublic />} />
                 
                 {/* Lejio Fri Admin */}
