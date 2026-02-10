@@ -1,1 +1,0 @@
-import{r as e}from"./index-DocEBNo8.js";var r=e.createContext(void 0);function u(u){const t=e.useContext(r);return u||t||"ltr"}function t(r){const u=e.useRef({value:r,previous:r});return e.useMemo(()=>(u.current.value!==r&&(u.current.previous=u.current.value,u.current.value=r),u.current.previous),[r])}export{u as a,t as u};

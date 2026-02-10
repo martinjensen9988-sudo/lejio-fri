@@ -1,1 +1,0 @@
-import{r,M as t,ab as a}from"./index-DocEBNo8.js";var s=a[" useId ".trim().toString()]||(()=>{}),i=0;function n(a){const[n,e]=r.useState(s());return t(()=>{e(r=>r??String(i++))},[a]),a||(n?`radix-${n}`:"")}export{n as u};

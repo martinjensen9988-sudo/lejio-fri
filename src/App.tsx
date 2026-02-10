@@ -57,6 +57,7 @@ const GarageChatPage = lazy(() => import("./pages/fri/workshop/GarageChat").then
 const GarageDealPage = lazy(() => import("./pages/fri/workshop/GarageDeal").then(m => ({ default: m.GarageDealPage })));
 const GarageHubPage = lazy(() => import("./pages/fri/workshop/GarageHub").then(m => ({ default: m.GarageHubPage })));
 const WorkshopModulesPublic = lazy(() => import("./pages/fri/workshop/WorkshopModulesPublic").then(m => ({ default: m.WorkshopModulesPublic })));
+const WorkshopPricingPage = lazy(() => import("./pages/fri/workshop/WorkshopPricingPage").then(m => ({ default: m.WorkshopPricingPage })));
 
 // Page Builder - lazy loaded
 const PagesDashboard = lazy(() => import("./pages/dashboard/PagesDashboard").then(m => ({ default: m.PagesDashboard })));
@@ -221,6 +222,7 @@ export default function App() {
                 <Route path="/fri/workshop/garagechat" element={<GarageChatPage />} />
                 <Route path="/fri/workshop/garagedeal" element={<GarageDealPage />} />
                 <Route path="/fri/workshop/garagehub" element={<GarageHubPage />} />
+                <Route path="/fri/workshop/pricing" element={<WorkshopPricingPage />} />
                 <Route path="/fri/workshop/modules" element={<WorkshopModulesPublic />} />
                 
                 {/* Lejio Fri Admin */}
