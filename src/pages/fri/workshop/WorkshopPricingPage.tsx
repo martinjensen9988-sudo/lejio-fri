@@ -37,7 +37,7 @@ export function WorkshopPricingPage() {
             key={tier.id}
             className={`relative overflow-hidden transition-all ${
               tier.highlighted
-                ? 'md:scale-105 border-amber-500 bg-gradient-to-br from-slate-800 to-slate-900 shadow-2xl'
+                ? 'md:scale-105 border-amber-500 bg-white shadow-2xl'
                 : 'bg-slate-800 border-slate-700'
             }`}
           >
@@ -50,18 +50,24 @@ export function WorkshopPricingPage() {
             )}
 
             <CardHeader>
-              <CardTitle className="text-white text-2xl">{tier.name}</CardTitle>
-              <CardDescription className="text-slate-300">{tier.description}</CardDescription>
+              <CardTitle className={`text-2xl ${tier.highlighted ? 'text-slate-900' : 'text-white'}`}>{tier.name}</CardTitle>
+              <CardDescription className={tier.highlighted ? 'text-slate-600' : 'text-slate-300'}>
+                {tier.description}
+              </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-6">
               {/* Price */}
               <div className="space-y-2">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-white">{tier.priceMonthly}</span>
-                  <span className="text-slate-300">kr/måned</span>
+                  <span className={`text-4xl font-bold ${tier.highlighted ? 'text-amber-600' : 'text-white'}`}>
+                    {tier.priceMonthly}
+                  </span>
+                  <span className={tier.highlighted ? 'text-slate-600' : 'text-slate-300'}>kr/måned</span>
                 </div>
-                <p className="text-xs text-slate-400">Factureres månedligt. Ingen binding.</p>
+                <p className={`text-xs ${tier.highlighted ? 'text-slate-500' : 'text-slate-400'}`}>
+                  Factureres månedligt. Ingen binding.
+                </p>
               </div>
 
               {/* CTA Button */}
@@ -78,23 +84,35 @@ export function WorkshopPricingPage() {
               </Button>
 
               {/* Module Count */}
-              <div className="bg-slate-700/50 rounded-lg p-4 text-center border border-slate-600">
+              <div className={`rounded-lg p-4 text-center border ${
+                tier.highlighted
+                  ? 'bg-amber-50 border-amber-300'
+                  : 'bg-slate-700/50 border-slate-600'
+              }`}>
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <Zap className="w-4 h-4 text-amber-400" />
-                  <span className="font-semibold text-white">{tier.modules.length} moduler</span>
+                  <Zap className={`w-4 h-4 ${tier.highlighted ? 'text-amber-600' : 'text-amber-400'}`} />
+                  <span className={`font-semibold ${tier.highlighted ? 'text-slate-900' : 'text-white'}`}>
+                    {tier.modules.length} moduler
+                  </span>
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className={`text-xs ${tier.highlighted ? 'text-slate-600' : 'text-slate-400'}`}>
                   Fulde adgang til alle {tier.modules.length} moduler i denne plan
                 </p>
               </div>
 
               {/* Features */}
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-slate-200">Hvad du får:</h4>
+                <h4 className={`text-sm font-semibold ${tier.highlighted ? 'text-slate-900' : 'text-slate-200'}`}>
+                  Hvad du får:
+                </h4>
                 <ul className="space-y-2">
                   {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3 text-sm text-slate-300">
-                      <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <li key={feature} className={`flex items-start gap-3 text-sm ${
+                      tier.highlighted ? 'text-slate-700' : 'text-slate-300'
+                    }`}>
+                      <Check className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
+                        tier.highlighted ? 'text-emerald-600' : 'text-emerald-400'
+                      }`} />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -102,8 +120,10 @@ export function WorkshopPricingPage() {
               </div>
 
               {/* Sample Modules */}
-              <div className="space-y-2 border-t border-slate-700 pt-6">
-                <h4 className="text-xs font-semibold text-slate-200 uppercase">
+              <div className={`space-y-2 border-t pt-6 ${tier.highlighted ? 'border-amber-200' : 'border-slate-700'}`}>
+                <h4 className={`text-xs font-semibold uppercase ${
+                  tier.highlighted ? 'text-slate-600' : 'text-slate-200'
+                }`}>
                   Eksempel moduler
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -111,7 +131,10 @@ export function WorkshopPricingPage() {
                     <Badge
                       key={module.id}
                       variant="outline"
-                      className="text-xs bg-slate-700 border-slate-600 text-slate-200"
+                      className={tier.highlighted 
+                        ? 'text-xs bg-white border-amber-300 text-slate-700'
+                        : 'text-xs bg-slate-700 border-slate-600 text-slate-200'
+                      }
                     >
                       {module.name}
                     </Badge>
@@ -120,7 +143,11 @@ export function WorkshopPricingPage() {
               </div>
 
               {/* Support Info */}
-              <div className="text-xs text-slate-400 text-center pt-4 border-t border-slate-700">
+              <div className={`text-xs text-center pt-4 border-t ${
+                tier.highlighted 
+                  ? 'border-amber-200 text-slate-600'
+                  : 'border-slate-700 text-slate-400'
+              }`}>
                 {tier.id === 'basic' && '✉️ Email support'}
                 {tier.id === 'professional' && '⭐ Prioriteret support'}
                 {tier.id === 'premium' && '🎯 VIP support (24/7)'}
